@@ -803,6 +803,7 @@
   (make-bib
    #:author (authors "Andrew J. Kennedy" "Dimitrios Vytiniotis")
    #:title "Every bit counts: The binary representation of typed data and programs"
+   #:date 2012
    #:location (journal-location jfp
                                 #:volume 22
                                 #:pages '(529 573))))
