@@ -38,7 +38,7 @@ are discussed.
 
 @section{An Example Derivation}
 
-@figure["fig:types"
+@figure*["fig:types"
         "Typing judgment for the simply-typed lambda calculus"
         @centered[stlc-type-pict-horiz]]
 
@@ -109,7 +109,7 @@ we now choose the @tt{lookup} rule that recurs on the tail of the environment (c
 to the second clause of the metafunction), the partial 
 derivation looks like: 
 
-@figure["fig:lookups"
+@figure*["fig:lookups"
         "Lookup as a metafunction (left), and as a judgment form."
         @centered[(lookup-both-pict)]]
 
@@ -193,7 +193,7 @@ any Racket number, is one example. Pattern variables @tt{x} match against
 a term and bind the variable to the term. 
 Finally, lists of patterns may be matched against lists of terms.
 
-@figure["fig:pat-terms" 
+@figure*["fig:pat-terms" 
         (list @"Simplified grammar for Redex patterns ("
               @italic{p}
               @") and terms ("
@@ -287,7 +287,7 @@ be necessary to add some new constraints to deal with metafunctions. The rules s
 exactly to those in @citet[clp-semantics], meaning the derivation generator is actually a random constraint
 logic programming system.
 
-@figure["fig:derivation" "Derivation generation"]{
+@figure*["fig:derivation" "Derivation generation"]{
   @centered[clp-pict]}
    
 The rules operate on a program state @italic{S}, which consists of the program @italic{P}, the current
@@ -473,7 +473,7 @@ in the term and replacing it with @italic{t}.
 A substitution validates an equation if both
 sides of the equation are syntactically identical after the substitution is applied.
 
-@figure["fig:language" "Grammar for the constraint solver model."]{
+@figure*["fig:language" "Grammar for the constraint solver model."]{
   @centered[lang-pict]
 }
 
@@ -486,7 +486,7 @@ in this area, including a similar presentation of syntactic unification
 that goes into greater detail.
 
 
-@figure["fig:unify-func"
+@figure*["fig:unify-func"
         @list{@literal{The metafunction } @tt{U} 
                @literal{ performs unification over the language of } @figure-ref["fig:language"]
                @literal{. (Cases apply in order.)}}
@@ -583,7 +583,7 @@ is sometimes referred to as disunification@~cite[equational-problems]. The new c
 We now provide an informal explanation of DU's operation. A formal justification
 can be found in Appendix A.
 
-@figure["fig:du-func"
+@figure*["fig:du-func"
         @list{@literal{Extensions to } @figure-ref["fig:unify-func"] 
                @literal{ to handle disequational constraints.
                         DU extends U with four new clauses.}}
@@ -699,7 +699,7 @@ pattern language that deal with evaluation contexts, compatible closure, or
 ``repeat'' patterns (ellipses). 
 
 
-@figure["fig:full-pats" "The subset of the internal pattern language supported by the generator"]{
+@figure*["fig:full-pats" "The subset of the internal pattern language supported by the generator"]{
   @centered[(pats-supp-lang-pict)]}
 
 The extensions to the pattern language are enumerated by the new@note{New with respect to

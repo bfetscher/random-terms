@@ -65,7 +65,7 @@ A thorough introduction to reduction semantics can be found
 in @citet[redex]; they were first introduced in @citet[felleisen-hieb].
 
 
-@figure["fig:stlc-model-big" 
+@figure*["fig:stlc-model-big" 
         "A reduction semantics and type system for the simply-typed lambda calculus."
         @(centered big-stlc-pict)]
 
@@ -526,7 +526,7 @@ Thus it is unsurprising that test coverage is so poor.
        (read in)
        (read in))))
 
-@figure["fig:stlc-stats-table"
+@figure*["fig:stlc-stats-table"
         (string-append
          "Statistics for " 
          (number->string (table-trials)) 
