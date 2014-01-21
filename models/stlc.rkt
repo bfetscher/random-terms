@@ -136,7 +136,7 @@
 
 (define old-style (rule-pict-style))
 
-(rule-pict-style 'horizontal-side-conditions-same-line)
+(rule-pict-style 'horizontal)
 
 (define stlc-lang-pict (render-language STLC #:nts '(e v τ E Γ)))
 (define stlc-red-pict (with-rewriters

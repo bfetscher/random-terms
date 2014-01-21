@@ -3,7 +3,7 @@
 @(require scriblib/figure
           scribble/manual
           scriblib/footnote
-          pict
+          slideshow/pict
           "citations.rkt")
 
 Quickcheck@~cite[QuickCheck] is a widely-used library

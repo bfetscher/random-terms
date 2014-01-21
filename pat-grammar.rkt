@@ -1,7 +1,7 @@
 #lang racket
 
 (require redex
-         pict)
+         slideshow/pict)
 
 (provide (all-defined-out))
 

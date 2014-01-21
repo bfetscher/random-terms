@@ -4,7 +4,7 @@
           scribble/core
           scribble/manual
           scriblib/footnote
-          (only-in pict scale-to-fit scale)
+          (only-in slideshow/pict scale-to-fit scale)
           (only-in "models/stlc.rkt" stlc-type-pict-horiz)
           "deriv-layout.rkt"
           "citations.rkt"

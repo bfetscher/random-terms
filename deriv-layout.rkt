@@ -2,7 +2,7 @@
 
 (require "models/stlc.rkt"
          redex
-         pict)
+         slideshow/pict)
 
 (provide STLC
          lookup

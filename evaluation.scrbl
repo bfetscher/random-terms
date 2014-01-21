@@ -3,7 +3,7 @@
 @(require scriblib/figure
           scribble/manual
           scriblib/footnote
-          pict
+          slideshow/pict
           "citations.rkt"
           "results/res-pict.rkt")
 

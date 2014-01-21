@@ -2,7 +2,7 @@
 
 (require "disunify-a.rkt"
          redex
-         pict)
+         slideshow/pict)
 
 (provide with-all-rewriters
          unify-func-pict

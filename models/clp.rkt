@@ -1,6 +1,6 @@
 #lang racket
 
-(require pict
+(require slideshow/pict
          redex)
 
 (provide clp-pict)
