@@ -7,8 +7,8 @@
           scribble/latex-prefix
           scribble/latex-properties
           (only-in slideshow/pict scale-to-fit scale)
-          (only-in "../models/stlc.rkt" stlc-type-pict-horiz)
-          "../deriv-layout.rkt")
+          (only-in "models/stlc.rkt" stlc-type-pict-horiz)
+          "deriv-layout.rkt")
 
 
 

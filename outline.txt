@@ -1,0 +1,6 @@
+- introduction
+- tour thru the random generation of a specific term (currently in deriv.pdf)
+- explanation of various details and some technical points that didn't make it in the previous section (stuff that got cut but once the rest is in place we can figure out what goes here)
+- evaluation (draft currently in the main pdf file)
+- related work
+- conclusion.
