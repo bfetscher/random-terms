@@ -2,7 +2,10 @@
 
 (require "models/stlc.rkt"
          redex
-         slideshow/pict)
+         slideshow/pict
+         racket/stxparam
+         (for-syntax racket/list
+                     racket/function))
 
 (provide STLC
          lookup
@@ -55,7 +58,46 @@
    space
    (render-term STLC t2)))
 
-(define (infer #:h-dec [max/min max] r . l)
+(define-for-syntax infer-ignored '(• eqt neqt λ typ infer 
+                                     ≠ lookup ⟦ ⟧ = : ⊢ →))
+
+(define-syntax-parameter infer-ids #f)
+
+(define-syntax (infer stx)
+  (syntax-case stx ()
+    [(_ #:h-dec m #:add-ids ais r . l)
+     (begin
+       (define if-ids (syntax-parameter-value #'infer-ids))
+       (define a-ids (syntax->datum #'ais))
+       (define open-ls (filter
+                        (λ (l)
+                          (syntax-case l (infer)
+                            [(infer . rest) #f]
+                            [_ #t]))
+                        (syntax->list #'l)))
+       (define ids (filter
+                    (λ (id)
+                      (not (member id infer-ignored)))
+                    (remove-duplicates (flatten (map syntax->datum (cons #'r open-ls))))))
+       (when if-ids
+         (define new-ids (filter (λ (id)
+                                   (not (member id (append a-ids if-ids))))
+                                 ids))
+         (unless (empty? new-ids)
+           (raise-syntax-error 'infer (format "new id(s): ~s, introduced" new-ids) #'r)))
+       (if if-ids
+           #`(syntax-parameterize ([infer-ids '#,(append a-ids if-ids)])
+                (infer/func #:h-dec m r . l))
+           #`(syntax-parameterize ([infer-ids '#,ids])
+                (infer/func #:h-dec m r . l))))]
+    [(infer #:h-dec m r . l)
+     #'(infer #:h-dec m #:add-ids () r . l)]
+    [(infer #:add-ids ais r . l)
+     #'(infer #:h-dec max #:add-ids ais r . l)]
+    [(infer r . l)
+     #`(infer #:h-dec max #:add-ids () r . l)]))
+
+(define (infer/func #:h-dec [max/min max] r . l)
   (define top
     (apply hb-append
           (* 2 (pict-width space))
