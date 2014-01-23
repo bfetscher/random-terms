@@ -3,14 +3,15 @@
 @(require scriblib/figure
           scribble/manual
           scriblib/footnote
-          "citations.rkt")
+          "citations.rkt"
+          "common.rkt")
 
 Testing is universally considered an integral part of the
 software development process. It is less widely accepted
 as a useful tool for semantics engineering, where
 formal proofs are the tool of choice. Since its
 inception, PLT Redex@~cite[redex] has challenged that assumption
-as a lightweight workbench for semantics modelling
+as a lightweight workbench for semantics modeling
 that utilizes testing, and specifically random
 testing, as an integral part of its toolbox. 
 Redex has used a straightforward approach to random 
@@ -81,3 +82,6 @@ random term generation works, and Chapter 4
 details work to evaluate its effectiveness.
 Chapter 5 discusses related work and
 Chapter 6 concludes.
+
+
+@one-col

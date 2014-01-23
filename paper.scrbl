@@ -1,13 +1,26 @@
-#lang scribble/sigplan
+#lang scribble/sigplan @onecolumn
 
-@(require "citations.rkt")
+@(require scribble/core
+          scribble/latex-prefix
+          scribble/latex-properties
+          "citations.rkt"
+          "common.rkt")
+
+@title[#:style 
+       (style #f (list (latex-defaults 
+                        (string->bytes/utf-8 
+                         (string-append "\\documentclass{article}\n"
+                                        unicode-encoding-packages
+                                        "\\usepackage{fullpage}\n"
+                                        "\\usepackage{multicol}\n"))
+                        #"" '())))]{Paper title}
+@two-cols
 
 @section{Introduction}
 @include-section{intro.scrbl}
 
-@section{Example Term Generation}
-@(larger @emph{Drop in "deriv.pdf" here, the new plan is for that to be the bulk of section 2.
-               (Once we figure out how to get it in here in the right format.)})
+
+@include-section{deriv.scrbl}
 
 @;@section{Random Testing in PLT Redex}
 @;@include-section{redex.scrbl}
@@ -25,4 +38,8 @@
 @section{Conclusion}
 @include-section{conclusion.scrbl}
 
+
 @(generate-bibliography)
+
+@section{Hi}
+@one-col

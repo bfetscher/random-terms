@@ -4,7 +4,7 @@
          redex
          "models/disunify-a.rkt"
          "models/du-typesetting.rkt"
-         "common.rkt")
+         "metafunc-ctcs.rkt")
 
 (provide lang-pict
          basic-red-pict
