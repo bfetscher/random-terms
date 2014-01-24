@@ -1,6 +1,6 @@
 #lang racket/base
 
-(require plot
+(require plot/no-gui
          racket/cmdline
          racket/list
          racket/match
@@ -213,7 +213,7 @@
    (log-ticks #:number 20 #:base 10))
   
   (if (output-file)
-      (plot
+      (plot-file
        (for/list ([t (if (empty? (types)) all-types (types))]
                   [n (in-naturals)])
          (plot-type t n))
@@ -228,8 +228,8 @@
        #:legend-anchor 'top-left
        #:width 1024
        #:height 768
-       #:out-file (output-file)
-       #:out-kind 'jpeg)
+       (output-file)
+       'jpeg)
       (plot-pict
        (for/list ([t (if (empty? (types)) all-types (types))]
                   [n (in-naturals)])

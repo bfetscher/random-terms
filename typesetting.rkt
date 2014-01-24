@@ -1,7 +1,8 @@
 #lang racket
 
 (require slideshow/pict
-         redex
+         redex/reduction-semantics
+         redex/pict
          "models/disunify-a.rkt"
          "models/du-typesetting.rkt"
          "metafunc-ctcs.rkt")

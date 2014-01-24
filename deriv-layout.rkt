@@ -1,7 +1,8 @@
 #lang racket
 
 (require "models/stlc.rkt"
-         redex
+         redex/reduction-semantics
+         redex/pict
          slideshow/pict
          racket/stxparam
          (for-syntax racket/list

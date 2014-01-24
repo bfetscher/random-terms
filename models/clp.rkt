@@ -1,7 +1,8 @@
 #lang racket
 
 (require slideshow/pict
-         redex)
+         redex/reduction-semantics
+         redex/pict)
 
 (provide clp-pict)
 

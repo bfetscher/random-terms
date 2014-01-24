@@ -1,6 +1,7 @@
 #lang racket
 
-(require redex
+(require redex/reduction-semantics
+         redex/pict
          slideshow/pict
          #;(only-in "unify.rkt"
                   unify))

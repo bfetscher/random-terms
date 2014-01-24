@@ -1,7 +1,8 @@
 #lang racket
 
 (require "disunify-a.rkt"
-         redex
+         redex/reduction-semantics
+         redex/pict
          slideshow/pict)
 
 (provide with-all-rewriters

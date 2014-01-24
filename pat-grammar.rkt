@@ -1,6 +1,7 @@
 #lang racket
 
-(require redex
+(require redex/reduction-semantics
+         redex/pict
          slideshow/pict)
 
 (provide (all-defined-out))
