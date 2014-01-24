@@ -1,9 +1,22 @@
 #lang racket
 
-(require scribble/core)
+(require scribble/core
+         scribble/latex-properties
+         scribble/latex-prefix)
 
 (provide (all-defined-out))
 
+(define (doc-style)
+  (style #f (list (latex-defaults 
+                        (string->bytes/utf-8 
+                         (string-append "\\documentclass[onecolumn, 9pt]{sigplanconf}\n"
+                                        unicode-encoding-packages
+                                        ;"\\usepackage{fullpage}\n"
+                                        "\\usepackage{times}\n"
+                                        "\\usepackage{qcourier}\n"
+                                        "\\usepackage{multicol}\n"))
+                        "style-old.tex"
+                        (list "sigplanconf.cls")))))
 
 (define two-cols (element (style "begin" '(exact-chars))
                            '("multicols}{2")))

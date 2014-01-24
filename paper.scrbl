@@ -1,4 +1,4 @@
-#lang scribble/sigplan @onecolumn
+#lang scribble/sigplan
 
 @(require scribble/core
           scribble/latex-prefix
@@ -6,14 +6,20 @@
           "citations.rkt"
           "common.rkt")
 
-@title[#:style 
-       (style #f (list (latex-defaults 
-                        (string->bytes/utf-8 
-                         (string-append "\\documentclass{article}\n"
-                                        unicode-encoding-packages
-                                        "\\usepackage{fullpage}\n"
-                                        "\\usepackage{multicol}\n"))
-                        #"" '())))]{Paper title}
+@title[#:style (doc-style)]{Paper title}
+
+@;title[#:version "1"]{Paper title}
+
+@(authorinfo "Burke Fetscher" "Northwestern University" "burke.fetscher@eecs.northwestern.edu")
+@(authorinfo "Robert Bruce Findler" "Northwestern University" "robby@eecs.northwestern.edu")
+@(authorinfo "Koen Claessen" "Chalmers University of Technology" "koen@chalmers.se")
+@(authorinfo "Micha\u0142 Pa\u0142ka" "Chalmers University of Technology" "michal.palka@chalmers.se")
+@(authorinfo "John Hughes" "Chalmers University of Technology" "rjmh@chalmers.se")
+
+@(conferenceinfo "ICFP" "Gothenburg, Sweden")
+
+@abstract{The abstract.}
+
 @two-cols
 
 @section{Introduction}
@@ -26,8 +32,8 @@
 @;@include-section{redex.scrbl}
 
 @section{Random Term Generation}
-@(larger @emph{The gory details section.})
-@;@include-section{semantics.scrbl}
+@;@(larger @emph{The gory details section.})
+@include-section{semantics.scrbl}
 
 @section{Evaluating the Generator}
 @include-section{evaluation.scrbl}
