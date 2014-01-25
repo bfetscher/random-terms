@@ -10,7 +10,8 @@
           "citations.rkt"
           "typesetting.rkt"
           "models/clp.rkt"
-          "pat-grammar.rkt")
+          "pat-grammar.rkt"
+          "common.rkt")
 
 @(define (mymath start end . strs)
    (make-element (make-style "relax" '(exact-chars)) `(,start ,@strs ,end)))
@@ -414,8 +415,8 @@ most general unifier for @italic{P} if for every @italic{γ} that is a unifier o
 @italic{σ ≤ γ}.
 
 @(define inline-init-pict
-   (scale
-    (unify-init-pict) 1.1))
+   (text-scale
+    (unify-init-pict)))
 
 Finally, we can state that U is correct (again, ignoring the @italic{D} part of the
 result for now):
@@ -522,8 +523,7 @@ it can be satisfied by simply choosing
 invalid so it must be checked by applying U and @tt{param-elim} once again.
 
 @(define inline-du-pict
-   (scale
-    (du-init-pict) 1.1))
+   (text-scale (du-init-pict)))
 
 @nested[ #:style 'inset]{@bold{Theorem 2} 
                           For any problem @italic{P}, @inline-du-pict terminates with

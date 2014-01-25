@@ -23,8 +23,8 @@ judgment. To motivate how it works, we will work through the
 generation of an example derivation for the type system shown
 in @figure-ref["fig:types"]. We can begin with a schema for
 how we would like the resulting judgment to look. We would like
-to find a derivation for some expression @(stlc-term e_^0)
-with some type @(stlc-term τ_^0) in the empty environment:
+to find a derivation for some expression @(text-scale(stlc-term e_^0))
+with some type @(text-scale (stlc-term τ_^0)) in the empty environment:
 
 @(centered
   (typ • e_^0 τ_^0))
@@ -37,7 +37,7 @@ rule of the derivation.
 The derivation will have to end with some rule, so 
 we randomly choose one, suppose it is the abstraction rule.
 Choosing that rule will require us to specialize the values
-of @(stlc-term e_^0) and @(stlc-term τ_^0) in order to agree
+of @(text-scale (stlc-term e_^0)) and @(text-scale (stlc-term τ_^0)) in order to agree
 with the form of the rule's conclusion.
 Once we do so, we have a partial derivation that looks like:
 
@@ -124,8 +124,8 @@ the first clause of @tt{lookup} to get:
 
 It is worth noting at this point that the form of the partial derivation may sometimes exclude
 rules from being chosen. For example, we couldn't satisfy the right branch of the derivation in the same way,
-since that would eventually mean that @(eqt τ_2^3 (τ_2^3 → τ_^2)), leaving us with no finite value
-for @(stlc-term τ_2^3). 
+since that would eventually mean that @(text-scale (eqt τ_2^3 (τ_2^3 → τ_^2))), leaving us with no finite value
+for @(text-scale (stlc-term τ_2^3)).
 However, we can complete the right branch by again choosing (randomly) the variable rule, followed
 by the rule corresponding to @tt{lookup}'s first clause, arriving at:
 
@@ -144,19 +144,20 @@ by the rule corresponding to @tt{lookup}'s first clause, arriving at:
 
 At this point we have a complete derivation for a pattern of non-terminals that is valid for
 any term that matches that pattern as long as the new premise that 
-@(neqt x_^2 x_^1) is also satisfied. Thus we can simply
-pick appropriate random values for @(stlc-term x_^1) and all other non-terminals
+@(text-scale (neqt x_^2 x_^1)) is also satisfied. Thus we can simply
+pick appropriate random values for @(text-scale (stlc-term x_^1)) and all other non-terminals
 in the pattern to get
 a random term that satisfies the typing judgment. An example would be:
 
 
 @(centered
-  (typ • (λ (f (num → num)) (λ (a num) (f a))) ((num → num) → (num → num))))
+  (text-scale
+   (typ • (λ (f (num → num)) (λ (a num) (f a))) ((num → num) → (num → num)))))
 
 
 and the constraint that @tt{f} ≠ @tt{a} is satisfied. We note however, the 
 importance of this constraint, since a term that does not satisfy it, such
-as @(stlc-term (λ (f (num → num)) (λ (f num) (f f)))), is not well-typed.
+as @(text-scale (stlc-term (λ (f (num → num)) (λ (f num) (f f))))), is not well-typed.
 
 In the remainder of this chapter, the approach used in this example
 is generalized to all Redex judgment forms and metafunctions.

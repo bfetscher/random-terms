@@ -2,7 +2,8 @@
 
 (require scribble/core
          scribble/latex-properties
-         scribble/latex-prefix)
+         scribble/latex-prefix
+         (except-in slideshow/pict table))
 
 (provide (all-defined-out))
 
@@ -23,4 +24,7 @@
 
 (define one-col (element (style "end" '(exact-chars))
                           '("multicols")))
+
+(define (text-scale p)
+  (scale p 0.85))
 

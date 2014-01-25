@@ -8,8 +8,6 @@
 
 @title[#:style (doc-style)]{Paper title}
 
-@;title[#:version "1"]{Paper title}
-
 @(authorinfo "Burke Fetscher" "Northwestern University" "burke.fetscher@eecs.northwestern.edu")
 @(authorinfo "Robert Bruce Findler" "Northwestern University" "robby@eecs.northwestern.edu")
 @(authorinfo "Koen Claessen" "Chalmers University of Technology" "koen@chalmers.se")
