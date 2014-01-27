@@ -7,21 +7,31 @@
           scribble/latex-prefix
           scribble/latex-properties
           (only-in slideshow/pict scale-to-fit scale)
-          (only-in "models/stlc.rkt" stlc-type-pict-horiz)
+          (only-in "models/stlc.rkt" stlc-min-lang-types)
           "deriv-layout.rkt"
           "common.rkt")
 
 @title{An Example Derivation}
 
 @figure["fig:types"
-        "Typing judgment for the simply-typed lambda calculus"
-        @centered[stlc-type-pict-horiz]]
+        @(list "Grammar and type system for the simply-typed lambda calculus"
+               " used in the example derivation. "
+              @tt{lookup}
+              " is a metafunction that returns the type " @italic{τ}
+              " matching some variable " @italic{x} " in the environment " 
+              @italic{Γ} " (or fails).")
+        (centered stlc-min-lang-types)]
 
-The judgment-form based random generator uses the strategy of
-attempting to generate a random derivation satisfying the
-judgment. To motivate how it works, we will work through the
-generation of an example derivation for the type system shown
-in @figure-ref["fig:types"]. We can begin with a schema for
+To introduce the method used to generate well-typed terms,
+we begin with an example that works through the generation
+of a single term. The term will satisfy
+the type system shown in @figure-ref["fig:types"], a simply-typed
+lambda calculus with base type of natural numbers (@tt{num}).
+We use the strategy of attempting to generate a random
+derivation satisfying the judgment. 
+Once we have such a derivation it is easy to fill in any
+remaining holes to create a well-typed term.
+We can begin with a schema for
 how we would like the resulting judgment to look. We would like
 to find a derivation for some expression @(text-scale(stlc-term e_^0))
 with some type @(text-scale (stlc-term τ_^0)) in the empty environment:
@@ -46,10 +56,11 @@ Once we do so, we have a partial derivation that looks like:
          (typ (x_^1 τ_x^1 •) e_^1 τ_^1)))
 
 Variables from this step are marked with a 1.
-This will work fine, so long as we can recursively generate a derivation
-for the premise we have added. We can randomly choose a rule again and try
-to do so. 
-
+The abstraction rule has added a new premise we must
+now satisfy, so we
+recursively attempt to generate a derivation that will do so.
+Again, we chose some rule from the judgment randomly and attempt
+to apply it.
 If we next choose abstraction again, followed by function application, 
 we arrive at the following partial derivation:
 

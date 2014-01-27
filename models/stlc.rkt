@@ -9,15 +9,23 @@
 
 (provide (all-defined-out))
 
-(define-language STLC
-  (e ::= (e e) (if0 e e e) (+ e e) x v)
-  (v ::= (λ (x τ) e) n)
+(define-language STLC-min
+  (e ::= (e e) 
+         (λ (x τ) e) 
+         x n)
+  (τ ::= (τ → τ) 
+         num)
+  (Γ ::= (x τ Γ) •)
   (n ::= number)
-  (x ::= variable-not-otherwise-mentioned)
-  (τ ::= num (τ → τ))
+  (x ::= variable-not-otherwise-mentioned))
+
+(define-extended-language STLC STLC-min
+  (e ::= ....
+         (if0 e e e) 
+         (+ e e))
+  (v ::= (λ (x τ) e) n)
   (E ::= (E e) (v E) (+ E e) (+ v E) 
-         (if0 E e e) hole)
-  (Γ ::= (x τ Γ) •))
+         (if0 E e e) hole))
 
 (define STLC-red
   (reduction-relation STLC
@@ -153,6 +161,14 @@
     (parameterize ([judgment-form-cases '(3 5)])
      (render-judgment-form tc)))))
 
+(define stlc-type-by-2s
+  (with-rewriters
+   (hb-append 20
+    (parameterize ([judgment-form-cases '(0 2)])
+     (render-judgment-form tc))
+    (parameterize ([judgment-form-cases '(1 3)])
+     (render-judgment-form tc)))))
+
 (define lookup-pict (with-rewriters
                      (render-metafunction lookup)))
 (define eval-pict (parameterize ([metafunction-style 'script]
@@ -177,7 +193,12 @@
              (text "Evaluation" "Menlo, bold")
              eval-pict))
 
-(rule-pict-style old-style)
+(define stlc-min-lang-types
+  (with-rewriters
+   (hc-append 30
+    (render-language STLC-min #:nts '(e τ Γ))
+    stlc-type-by-2s)))
+
 
 (define (well-typed? e)
   (judgment-holds (tc • ,e τ)))
@@ -236,4 +257,3 @@
          to-check))
   (for/list ([(k v) (in-hash stats)])
     (cons k (exact->inexact (/ v trials)))))
-
