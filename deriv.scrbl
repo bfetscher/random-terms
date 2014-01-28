@@ -17,16 +17,16 @@
         @(list "Grammar and type system for the simply-typed lambda calculus"
                " used in the example derivation. "
               @tt{lookup}
-              " is a metafunction that returns the type " @italic{τ}
-              " matching some variable " @italic{x} " in the environment " 
-              @italic{Γ} " (or fails).")
+              " is a metafunction that returns the corresponds type " @italic{τ}
+              " matching some variable " @italic{x} " (see "
+              @figure-ref["fig:lookups"] ").")
         (centered stlc-min-lang-types)]
 
 To introduce the method used to generate well-typed terms,
 we begin with an example that works through the generation
 of a single term. The term will satisfy
 the type system shown in @figure-ref["fig:types"], a simply-typed
-lambda calculus with base type of natural numbers (@tt{num}).
+lambda calculus with a single base type of natural numbers (@tt{num}).
 We use the strategy of attempting to generate a random
 derivation satisfying the judgment. 
 Once we have such a derivation it is easy to fill in any
@@ -44,8 +44,8 @@ in this step from those introduced later; since this is the initial
 step, we mark them with the index 0.
 The rule chosen in the initial generation step will be final
 rule of the derivation.
-The derivation will have to end with some rule, so 
-we randomly choose one, suppose it is the abstraction rule.
+At this point we can choose from any of the rules, so
+suppose that, choosing randomly, we pick the rule for abstraction.
 Choosing that rule will require us to specialize the values
 of @(text-scale (stlc-term e_^0)) and @(text-scale (stlc-term τ_^0)) in order to agree
 with the form of the rule's conclusion.
@@ -57,9 +57,9 @@ Once we do so, we have a partial derivation that looks like:
 
 Variables from this step are marked with a 1.
 The abstraction rule has added a new premise we must
-now satisfy, so we
+now satisfy, so we will
 recursively attempt to generate a derivation that will do so.
-Again, we chose some rule from the judgment randomly and attempt
+Again, we randomly chose some rule from the judgment and attempt
 to apply it.
 If we next choose abstraction again, followed by function application, 
 we arrive at the following partial derivation:
@@ -90,9 +90,10 @@ arrive at the following:
 
 
 At this point it isn't obvious how to continue, because @tt{lookup} is defined as
-a metafunction, and we are generating a derivation using a method based on judgment forms. 
-To complete the derivation for @tt{lookup}, we will treat it as a judgment form, except that 
-we have to be careful to preserve its meaning, since judgment form cases don't apply in order
+a metafunction (see @figure-ref["fig:lookups"]), not a judgment form,
+so we can't continue in exactly the same way.
+To complete the derivation for @tt{lookup}, we will treat it as a judgment form, with a 
+few caveats to. We must be careful to preserve its meaning since judgment form cases don't apply in order
 and, in fact, the second case of @tt{lookup} overlaps with the first. So that we can never
 apply the rule corresponding to the second case when we should be using the first, we
 will add a second premise to that rule stating that @italic{x@subscript{1} ≠ x@subscript{2}}.
@@ -134,9 +135,9 @@ the first clause of @tt{lookup} to get:
 
 
 It is worth noting at this point that the form of the partial derivation may sometimes exclude
-rules from being chosen. For example, we couldn't satisfy the right branch of the derivation in the same way,
-since that would eventually mean that @(text-scale (eqt τ_2^3 (τ_2^3 → τ_^2))), leaving us with no finite value
-for @(text-scale (stlc-term τ_2^3)).
+rules from being chosen. For example, we couldn't satisfy the right branch of the derivation in the same way
+as the laft, since that would eventually mean that @(text-scale (eqt τ_2^3 (τ_2^3 → τ_^2))), 
+leaving us with no finite value for @(text-scale (stlc-term τ_2^3)).
 However, we can complete the right branch by again choosing (randomly) the variable rule, followed
 by the rule corresponding to @tt{lookup}'s first clause, arriving at:
 
@@ -166,10 +167,8 @@ a random term that satisfies the typing judgment. An example would be:
    (typ • (λ (f (num → num)) (λ (a num) (f a))) ((num → num) → (num → num)))))
 
 
-and the constraint that @tt{f} ≠ @tt{a} is satisfied. We note however, the 
+The constraint that @tt{f} ≠ @tt{a} is satisfied. We note however, the 
 importance of this constraint, since a term that does not satisfy it, such
 as @(text-scale (stlc-term (λ (f (num → num)) (λ (f num) (f f))))), is not well-typed.
 
-In the remainder of this chapter, the approach used in this example
-is generalized to all Redex judgment forms and metafunctions.
 @two-cols
