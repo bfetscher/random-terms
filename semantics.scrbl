@@ -209,7 +209,7 @@ The implementation thus maintains a stack of derivation states that precede call
 @tt{select}, sometimes referred to as the failure continuation. The current goal
 is sometimes called the success continuation.}
 
-@section{Metafunction Generation}
+@section[#:tag "sec:metafunctions"]{Metafunction Generation}
 In this section the requirements of adding support for metafunctions to term 
 generation are considered.
 Aside from generating inputs and outputs of metafunctions directly, we have to

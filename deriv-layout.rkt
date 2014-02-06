@@ -1,6 +1,7 @@
 #lang racket
 
 (require "models/stlc.rkt"
+         "common.rkt"
          redex/reduction-semantics
          redex/pict
          slideshow/pict
@@ -122,11 +123,17 @@
          (eqt (lookup Γ x_2) τ))))
 
 (define (lookup-both-pict)
-  (hc-append 35
-             lookup-pict
-             (lookup-infer-pict)))
+  (define loc (blank))
+  (define main
+    (hc-append 20
+               lookup-pict
+               loc
+               (lookup-infer-pict)))
+  (pin-over main loc (lambda args (define-values (x y) (apply cc-find args)) (values x 0))
+            (frame (blank 0 (pict-height main)))))
 
 
 (define-syntax-rule (stlc-term e)
   (render-term STLC e))
 
+(define-syntax-rule (et exp) (text-scale (stlc-term exp)))

@@ -6,7 +6,7 @@
           "citations.rkt"
           "common.rkt")
 
-@title[#:style (doc-style)]{Paper title}
+@title[#:style (doc-style)]{Making Random Judgments@subtitle{Automatically Generating Well-typed Terms from the Definition of a Type-system}}
 
 @(authorinfo "Burke Fetscher" "Northwestern University" "burke.fetscher@eecs.northwestern.edu")
 @(authorinfo "Robert Bruce Findler" "Northwestern University" "robby@eecs.northwestern.edu")
