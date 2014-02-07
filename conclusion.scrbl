@@ -69,3 +69,8 @@ does demonstrate the potential of such an approach, both in
 terms of its utility and feasibility. We hope that 
 it can serve as a basis for more valuable work to be done 
 in this area.
+
+@(require scribble/core)
+@(element (style "noindent" '()) '())
+@bold{Acknowledgments.} Thanks to Casey Klein for help getting this
+project started and work on an initial prototype implementation.
