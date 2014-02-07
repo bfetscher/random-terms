@@ -1,22 +1,18 @@
 #lang racket
 
 (require slideshow/pict
-         redex/reduction-semantics
-         redex/pict)
+         redex
+         "pats.rkt"
+         "program.rkt")
 
-(provide clp-pict)
-
-(define-language CLP
+(define-extended-language CLP gen-prog
   (S ::= (P ⊢ G ∥ C))
-  (P ::= (R ...))
+  (P ::= (J ...))
   (G ::= (g ...))
   (C ::= (c ...))
-  (g ::= c L)
-  (c ::= (p = p))
-  (R ::= (L ← L ...))
-  (L ::= (J p ...))
-  (J ::= variable-not-otherwise-mentioned)
-  (p ::= variable-not-otherwise-mentioned))
+  (g ::= L)
+  (c ::= ....
+         (p = p)))
 
 
 
@@ -26,19 +22,11 @@
                            (P ⊢ (g ...) ∥ C)
                            (where C (add-constraint C_0 c_g))
                            "new constraint")
-                      (--> (P ⊢ ((J p_g ...) g ...) ∥ C)
-                           (P ⊢ ((p_f = p_g) ... L_f ... g ...) ∥ C)
-                           (where ((J p_r ...) ← L_r ...) (select J P))
-                           (where ((J p_f ...) ← L_f ...) (freshen ((J p_r ...) ← L_r ...)))
-                           "reduce")
-                      (--> (P ⊢ (c_g g ...) ∥ C_0)
-                           (P ⊢ () ∥ ⊥)
-                           (where ⊥ (add-constraint C_0 c_g))
-                           "invalid constraint")
-                      (--> (P ⊢ ((J p_g ...) g ...) ∥ C)
-                           (P ⊢ () ∥ ⊥)
-                           (where ⊥ (select J P))
-                           "invalid literal")))
+                      (--> (P ⊢ ((j p_g) g ...) ∥ C)
+                           (P ⊢ ((p_f = p_g) L_f ... g ...) ∥ C)
+                           (where (J_0 ... (r_0 ... ((j p_r) ← L_r ...) r_1 ...) J_1 ...) P)
+                           (where (((j p_f) ← L_f ...)) (freshen ((j p_r) ← L_r ...)))
+                           "reduce")))
 
 (define-metafunction CLP
   [(D (P ⊢ (c_g g ...) ∥ C_0))
@@ -52,6 +40,7 @@
    (P ⊢ () ∥ ⊥)
    (where ⊥ (add-constraint C_0 c_g))])
 
+;; TODO : implement the following....
 (define-metafunction CLP
   [(freshen any ...)
    (any ...)])
@@ -64,6 +53,7 @@
   [(select any ...)
    (any ...)])
 
+#;
 (define clp-pict
   (let*
       ([indent 0]
@@ -82,3 +72,14 @@
                 (hline (+ (pict-width gp) 80) 3))
                (render-reduction-relation R
                                           #:style 'horizontal))))
+
+(define test-P
+  (term
+   ((((j1 x_1) ←)
+     ((j1 (cons x_1 x_2)) ← (j1 x_1) (j1 x_2))))))
+
+(traces R
+          (term 
+           (,test-P ⊢
+                    ((j1 (cons 1 (cons 2 nil)))) ∥
+                    ())))

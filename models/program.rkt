@@ -3,6 +3,8 @@
 (require redex
          "pats.rkt")
 
+(provide (all-defined-out))
+
 (define-extended-language program pterms
   (P ::= (D ...))
   (D ::= J M)
@@ -13,9 +15,10 @@
   (j ::= variable-not-otherwise-mentioned))
 
 (define-extended-language gen-prog program
-  (r ::= ((j p) ← g ...))
-  (g ::= (j p)
-         (∀ (x ...) p ≠ p)))
+  (r ::= ((j p) ← l ...))
+  (l ::= L c)
+  (L ::= (j p))
+  (c ::= (∀ (x ...) p ≠ p)))
 
 (define-metafunction gen-prog
   [(compile (J ...))
@@ -60,20 +63,20 @@
    ((extract-apps-r r) ...)])
 
 (define-metafunction gen-prog
-  [(extract-apps-r ((j p) ← g ...))
-   ((j p_0) ← g_0 ... (f_1 p_1) ... (f_2 p_2) ... ...)
+  [(extract-apps-r ((j p) ← l ...))
+   ((j p_0) ← l_0 ... (f_1 p_1) ... (f_2 p_2) ... ...)
    (where (p_0 ((f_1 p_1) ...)) (extract-apps-p p))
-   (where ((g_0 ((f_2 p_2) ...)) ...) ((extract-apps-g g) ...))])
+   (where ((l_0 ((f_2 p_2) ...)) ...) ((extract-apps-l l) ...))])
 
 (define-metafunction gen-prog
-  [(extract-apps-g (j p))
+  [(extract-apps-l (j p))
    ((j p_0) ((f_1 p_1) ...))
    (where (p_0 ((f_1 p_1) ...)) (extract-apps-p p))]
   ;; we know these don't have any apps because
   ;; p_1 and p_2 come from the lhs of a metafunction and
   ;; thus must be actual pats, not term-pats...
   ;; need a nice way to work this in
-  [(extract-apps-g (∀ (x ...) p_1 ≠ p_2))
+  [(extract-apps-l (∀ (x ...) p_1 ≠ p_2))
    ((∀ (x ...) p_1 ≠ p_2) ())])
 
 (define-metafunction gen-prog
