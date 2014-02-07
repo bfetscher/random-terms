@@ -14,7 +14,8 @@
 
 (define-extended-language pterms pats
   (p ::= ....
-         (f p)))
+         (f p))
+  (f ::= variable-not-otherwise-mentioned))
 
 (define (pats-pict)
   (with-atomic-rewriter
@@ -24,6 +25,8 @@
     (render-language pats))))
 
 (define (pterms-pict)
-  (render-language pterms))
+  (with-atomic-rewriter
+   'variable-not-otherwise-mentioned "Metafuction id"
+   (render-language pterms)))
 
 

@@ -10,8 +10,7 @@
   (M ::= (c ...))
   (r ::= ((j p) ← (j p) ...))
   (c ::= ((f p) = p))
-  (j ::= variable-not-otherwise-mentioned)
-  (f ::= variable-not-otherwise-mentioned))
+  (j ::= variable-not-otherwise-mentioned))
 
 (define-extended-language gen-prog program
   (r ::= ((j p) ← g ...))
@@ -117,7 +116,19 @@
       ((((f (cons x 1)) ← (∀ (x_1 x_2) (cons x_1 x_2) ≠ x))
         ((f (cons (cons x_1 x_2) 2)) ←))
        (((J (cons 1 1)) ←)
-        ((J (cons x_1 x_100)) ← (J (cons 1 1)) (f (cons x_1 x_100)))))))))
+        ((J (cons x_1 x_100)) ← (J (cons 1 1)) (f (cons x_1 x_100))))))))
+  (parameterize ([fresh-inc 100])
+    (check-equal?
+     (term
+      (compile
+       ((((g (cons x_1 x_2)) = 2)
+         ((g x) = 1))
+        (((q (cons 1 1)) ←)
+         ((q (cons x_1 (g x_1))) ← (q (cons 1 1)))))))
+     (term
+      ((((g (cons x 1)) ← (∀ (x_1 x_2) (cons x_1 x_2) ≠ x))
+        ((g (cons (cons x_1 x_2) 2)) ←))
+       (((q (cons 1 1)) ←)
+        ((q (cons x_1 x_100)) ← (q (cons 1 1)) (g (cons x_1 x_100)))))))))
   
   
-
