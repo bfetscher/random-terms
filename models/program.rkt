@@ -16,9 +16,9 @@
 
 (define-extended-language gen-prog program
   (r ::= ((j p) ← l ...))
-  (l ::= L c)
+  (l ::= L e)
   (L ::= (j p))
-  (c ::= (∀ (x ...) p ≠ p)))
+  (e ::= (∀ (x ...) p ≠ p)))
 
 (define-metafunction gen-prog
   [(compile (J ...))
@@ -29,34 +29,21 @@
 (define-metafunction gen-prog
   compile-M : M -> J
   [(compile-M (((f p_in) = p_out)))
-   (((f (cons p_in p_out)) ←))]
+   (((f (lst p_in p_out)) ←))]
   [(compile-M (((f_0 p_1) = p_2) ... ((f p_in) = p_out)))
-   (((f (cons p_in p_out)) ← (∀ (vars p_1) p_1 ≠ p_in) ...) r ...)
+   (((f (lst p_in p_out)) ← (∀ (vars p_1) p_1 ≠ p_in) ...) r ...)
    (where (r ...) (compile-M (((f_0 p_1) = p_2) ...)))])
-
-(define-metafunction gen-prog
-  vars : p -> (x ...)
-  [(vars (cons p_1 p_2))
-   (x_1 ... x_2 ...)
-   (where (x_1 ...) (vars p_1))
-   (where (x_2 ...) (vars p_2))]
-  [(vars nil)
-   ()]
-  [(vars x_new)
-   (x_new)]
-  [(vars a)
-   ()])
 
 (module+ test
   (require rackunit)
   (check-equal?
    (term
     (compile-M
-     (((f (cons x_1 x_2)) = 2)
+     (((f (lst x_1 x_2)) = 2)
       ((f x) = 1))))
    (term
-    (((f (cons x 1)) ← (∀ (x_1 x_2) (cons x_1 x_2) ≠ x))
-     ((f (cons (cons x_1 x_2) 2)) ←)))))
+    (((f (lst x 1)) ← (∀ (x_1 x_2) (lst x_1 x_2) ≠ x))
+     ((f (lst (lst x_1 x_2) 2)) ←)))))
 
 (define-metafunction gen-prog
   [(extract-apps-J (r ...))
@@ -81,15 +68,12 @@
 
 (define-metafunction gen-prog
   [(extract-apps-p (f p_0))
-   (x ((f (cons p x)) (f_1 p_1) ...))
+   (x ((f (lst p x)) (f_1 p_1) ...))
    (where x (fresh-var x))
    (where (p ((f_1 p_1) ...)) (extract-apps-p p_0))]
-  [(extract-apps-p (cons p_1 p_2))
-   ((cons p_3 p_4) ((f_5 p_5) ... (f_6 p_6) ...))
-   (where (p_3 ((f_5 p_5) ...)) (extract-apps-p p_1))
-   (where (p_4 ((f_6 p_6) ...)) (extract-apps-p p_2))]
-  [(extract-apps-p nil)
-   (nil ())]
+  [(extract-apps-p (lst p ...))
+   ((lst p_1 ...) ((f_2 p_2) ... ...))
+   (where ((p_1 ((f_2 p_2) ...)) ...) ((extract-apps-p p) ...))]
   [(extract-apps-p x)
    (x ())]
   [(extract-apps-p a)
@@ -111,27 +95,27 @@
     (check-equal?
      (term
       (compile
-       ((((f (cons x_1 x_2)) = 2)
+       ((((f (lst x_1 x_2)) = 2)
          ((f x) = 1))
-        (((J (cons 1 1)) ←)
-         ((J (cons x_1 (f x_1))) ← (J (cons 1 1)))))))
+        (((J (lst 1 1)) ←)
+         ((J (lst x_1 (f x_1))) ← (J (lst 1 1)))))))
      (term
-      ((((f (cons x 1)) ← (∀ (x_1 x_2) (cons x_1 x_2) ≠ x))
-        ((f (cons (cons x_1 x_2) 2)) ←))
-       (((J (cons 1 1)) ←)
-        ((J (cons x_1 x_100)) ← (J (cons 1 1)) (f (cons x_1 x_100))))))))
+      ((((f (lst x 1)) ← (∀ (x_1 x_2) (lst x_1 x_2) ≠ x))
+        ((f (lst (lst x_1 x_2) 2)) ←))
+       (((J (lst 1 1)) ←)
+        ((J (lst x_1 x_100)) ← (J (lst 1 1)) (f (lst x_1 x_100))))))))
   (parameterize ([fresh-inc 100])
     (check-equal?
      (term
       (compile
-       ((((g (cons x_1 x_2)) = 2)
+       ((((g (lst x_1 x_2)) = 2)
          ((g x) = 1))
-        (((q (cons 1 1)) ←)
-         ((q (cons x_1 (g x_1))) ← (q (cons 1 1)))))))
+        (((q (lst 1 1)) ←)
+         ((q (lst x_1 (g x_1))) ← (q (lst 1 1)))))))
      (term
-      ((((g (cons x 1)) ← (∀ (x_1 x_2) (cons x_1 x_2) ≠ x))
-        ((g (cons (cons x_1 x_2) 2)) ←))
-       (((q (cons 1 1)) ←)
-        ((q (cons x_1 x_100)) ← (q (cons 1 1)) (g (cons x_1 x_100)))))))))
+      ((((g (lst x 1)) ← (∀ (x_1 x_2) (lst x_1 x_2) ≠ x))
+        ((g (lst (lst x_1 x_2) 2)) ←))
+       (((q (lst 1 1)) ←)
+        ((q (lst x_1 x_100)) ← (q (lst 1 1)) (g (lst x_1 x_100)))))))))
   
   

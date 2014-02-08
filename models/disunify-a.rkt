@@ -3,24 +3,12 @@
 (require redex/reduction-semantics
          redex/pict
          slideshow/pict
-         #;(only-in "unify.rkt"
-                  unify))
+         "pats.rkt")
 
-(provide trees
-         U
-         DU
-         param-elim
-         U-red
-         DU-red
-         subst
-         vars
-         unify)
+(provide (all-defined-out))
 
-(define-language trees
-  (s t ::= (f t ...) x)
-  (x   ::= variable-not-otherwise-mentioned))
-
-(define-extended-language U trees
+(define-extended-language U pats
+  (s t  ::= p)
   (Γ    ::= (P : S : D) 
             ⊥)
   (P    ::= (c ...))
@@ -28,15 +16,7 @@
   (D    ::= ((∀ (x ...) (s ≠ t)) ...))
   (c    ::= eq dq)
   (eq   ::= (s = t))
-  (dq    ::= (∀ (x ...) (s ≠ t))))
-
-#;(define-metafunction U
-  [(disunify P)
-   (S : D)
-   (where (() : S : D) ,(car (apply-reduction-relation* DU-red (term (P : () : ())))))]
-  [(disunify P)
-   ⊥
-   (where ⊥ ,(car (apply-reduction-relation* DU-red (term (P : () : ())))))])
+  (dq   ::= (∀ (x ...) (s ≠ t))))
 
 (define-metafunction U
   occurs? : x t -> boolean
@@ -46,44 +26,16 @@
   [(occurs? x t)
    #f])
 
-(define U-red
-  (reduction-relation 
-   U #:domain Γ
-   (--> (((t = t) c ...) : S : D)
-        ((c ...) : S : D)
-        "identity")
-   (--> ((((f t ..._1) = (f s ..._1)) c ...) : S : D)
-        (((t = s) ... c ...) : S : D)
-        (side-condition (term (different (f t ...) (f s ...))))
-        "decompose")
-   (--> ((((f t ..._!_1) = (f s ..._!_1)) c ...) : S : D)
-        ⊥
-        "clash")
-   (--> (((t = x) c ...) : S : D)
-        (((x = t) c ...) : S : D)
-        (side-condition (term (not-variable t)))
-        (side-condition (term (different x t)))
-        "orient")
-   (--> (((x = t) c ...) : S : D)
-        ⊥
-        (side-condition (term (occurs? x t)))
-        (side-condition (term (different x t)))
-        "occurs")
-   (--> (((x = t) c ...) : (c_s ...) : (dq ...))
-        (((subst-c/dq c x t) ...) : ((subst-c/dq c_s x t) ... (x = t)) : ((subst-c/dq dq x t) ...))
-        (side-condition (term (¬ (occurs? x t))))
-        "variable elim")))
-
 (define-metafunction U
   unify : P S D -> (S : D) or ⊥
   [(unify ((t = t) c ...) S D)
    (unify (c ...) S  D)
    (clause-name "identity")]
-  [(unify (((f s ..._1) = (f t ..._1)) c ...) S D)
+  [(unify (((lst s ..._1) = (lst t ..._1)) c ...) S D)
    (unify ((s = t) ... c ...) S D)
    (side-condition (term (length-eq (s ...) (t ...))))
    (clause-name "decompose")]
-  [(unify (((f s ..._!_1) = (f t ..._!_1)) c ...) S D)
+  [(unify (((lst s ..._!_1) = (lst t ..._!_1)) c ...) S D)
    ⊥
    (clause-name "clash")]
   [(unify ((x = t) c ...) S D)
@@ -101,44 +53,6 @@
    (S : D)
    (clause-name "success")])
 
-(define-metafunction U
-  [(length-eq any_1 any_2) #t
-   (side-condition (equal? (length (term any_1)) (length (term any_2))))]
-  [(length-eq any_1 any_2) #f])
-
-(define DU-red
-  (extend-reduction-relation
-   U-red U
-   (--> (((∀ (x ...) (s ≠ t)) c ...) : S : D)
-        ((unify_d (((s = t)) : ()) (x ...)) (x ...) ≫ ((c ...) : S : D))
-        "simplify")
-   (--> ((() : ()) (x ...) ≫ Γ)
-        ⊥
-        "failed constraint")
-   (--> ((() : S_0) (x ...) ≫ (P : S : (dq ...)))
-        (P : S : ((∀ (x ...) (env->dq S_0)) dq ...))
-        (side-condition (term (different S_0 ())))
-        (where ((x_s = t_s) ...) S_0)
-        (side-condition (term (disjoint (x ...) (x_s ...))))
-        "add constraint")
-   (--> (⊥ (x ...) ≫ Γ)
-        Γ
-        "empty constraint")
-   (--> (P : S : (c_1 ... (∀ (x_a ...) (∨ ((f s ...) ≠ t) ...)) c_2 ...))
-        ((unify_d ((((f s ...) = t) ...) : ()) (x_a ...)) (x_a ...) ≫ (P : S : (c_1 ... c_2 ...)))
-        "resimplify")
-   (--> ((() : ((x_0 = t_0) ... (x = t) (x_1 = t_1) ...)) (x_2 ... x x_3 ...) ≫ Γ)
-        ((() : ((x_0 = t_0) ... (x_1 = t_1) ...)) (x_2 ... x x_3 ...) ≫ Γ)
-        (side-condition (term (not-in x (x_0 ... x_1 ...))))
-        "param-elim-1")
-   (--> ((() : (c_0 ... (x = s) c_1 ... (x = t) c_3 ...)) (x_2 ... x x_3 ...) ≫ Γ)
-        ((unify_d (((x = s) (x = t) c_0 ... c_1 ... c_3 ...) : ()) (x_2 ... x x_3 ...)) (x_2 ... x x_3 ...) ≫ Γ)
-        "param-elim-2")))
-
-(define-metafunction U
-  [(disunify P)
-   (DUa P () ())])
-
 (define-metafunction/extension unify U
   [(DU ((∀ (x ...) (s ≠ t)) c ...) S (dq ...)) 
    ⊥
@@ -149,12 +63,16 @@
    (where ⊥ (param-elim (unify ((s = t)) () ()) (x ...)))
    (clause-name "empty constraint")]
   [(DU ((∀ (x ...) (s ≠ t)) c ...) S (dq ...))
-   (DU (c ...) S ((∀ (x ...) ((f x_s ...) ≠ (f t_s ...))) dq ...))
+   (DU (c ...) S ((∀ (x ...) ((lst x_s ...) ≠ (lst t_s ...))) dq ...))
    (where (((x_s = t_s) ...) : ()) (param-elim (unify ((s = t)) () ()) (x ...)))
    (clause-name "simplify constraint")]
-  [(DU (c ...) S (c_1 ... (∀ (x_a ...) ((f (f s ...) ... ) ≠ (f t ...))) c_2 ...))
-   (DU ((∀ (x_a ...) ((f (f s ...) ...) ≠ (f t ...))) c ...) S (c_1 ... c_2 ...))
+  [(DU (c ...) S (c_1 ... (∀ (x_a ...) ((lst (lst s ...) ... ) ≠ (lst t ...))) c_2 ...))
+   (DU ((∀ (x_a ...) ((lst (lst s ...) ...) ≠ (lst t ...))) c ...) S (c_1 ... c_2 ...))
    (clause-name "resimplify")])
+
+(define-metafunction U
+  [(solve c (S : D))
+   (DUa (c) S D)])
 
 (define-metafunction U
   [(DUa ((∀ (x ...) (s ≠ t)) c ...) S (dq ...)) 
@@ -166,19 +84,19 @@
    (where ⊥ (param-elim (unify ((s = t)) () ()) (x ...)))
    (clause-name "empty constraint")]
   [(DUa ((∀ (x ...) (s ≠ t)) c ...) S (dq ...))
-   (DUa (c ...) S ((∀ (x ...) ((f x_s ...) ≠ (f t_s ...))) dq ...))
+   (DUa (c ...) S ((∀ (x ...) ((lst x_s ...) ≠ (lst t_s ...))) dq ...))
    (where (((x_s = t_s) ...) : ()) (param-elim (unify ((s = t)) () ()) (x ...)))
    (clause-name "simplify constraint")]
-  [(DUa (c ...) S (c_1 ... (∀ (x_a ...) ((f (f s ...) ... ) ≠ (f t ...))) c_2 ...))
-   (DUa ((∀ (x_a ...) ((f (f s ...) ...) ≠ (f t ...))) c ...) S (c_1 ... c_2 ...))
+  [(DUa (c ...) S (c_1 ... (∀ (x_a ...) ((lst (lst s ...) ... ) ≠ (lst t ...))) c_2 ...))
+   (DUa ((∀ (x_a ...) ((lst (lst s ...) ...) ≠ (lst t ...))) c ...) S (c_1 ... c_2 ...))
    (clause-name "resimplify")]
   [(DUa ((t = t) c ...) S D)
    (DUa (c ...) S  D)
    (clause-name "identity")]
-  [(DUa (((f t ..._1) = (f s ..._1)) c ...) S D)
+  [(DUa (((lst t ..._1) = (lst s ..._1)) c ...) S D)
    (DUa ((t = s) ... c ...) S D)
    (clause-name "decompose")]
-  [(DUa (((f t ..._!_1) = (f s ..._!_1)) c ...) S D)
+  [(DUa (((lst t ..._!_1) = (lst s ..._!_1)) c ...) S D)
    ⊥
    (clause-name "clash")]
   [(DUa ((x = t) c ...) S D)
@@ -195,6 +113,10 @@
   [(DUa () S D)
    (S : D)
    (clause-name "success")])
+
+(define-metafunction U
+  [(disunify P)
+   (DUa P () ())])
 
 (define-metafunction U
   [(param-elim (((x_0 = t_0) ... (x = t) (x_1 = t_1) ...) : ()) (x_2 ... x x_3 ...))
@@ -234,7 +156,7 @@
 
 (define-metafunction U
   [(∨ (t_l ≠ t_r) ...)
-   ((f t_l ...) ≠ (f t_r ...))])
+   ((lst t_l ...) ≠ (lst t_r ...))])
 
 (define-metafunction U
   [(unify_d (P : S_0) (x ...))
@@ -254,15 +176,6 @@
    (orient-params (() : (c ...)) (x_1 ...))]
   [(orient-params (() : (c ...)) ())
    (() : (c ...))])
-   
-
-(define-metafunction trees
-  vars : t -> (x ...)
-  [(vars x)
-   (x)]
-  [(vars (f t ...))
-   (x ... ...)
-   (where ((x ...) ...) ((vars t) ...))])
 
 (define-metafunction U
   subst-cs : x t (c ...) -> (c ...)
@@ -280,15 +193,6 @@
    ((subst x t s_1) ≠ (subst x t s_2))]
   [(subst-c/dq (∀ (x_a ...) (s_1 ≠ s_2)) x t)
    (∀ (x_a ...) ((subst x t s_1) ≠ (subst x t s_2)))])
-
-(define-metafunction trees
-  subst : x t t -> t
-  [(subst x t x)
-   t]
-  [(subst x_1 t x_2)
-   x_2]
-  [(subst x t (f s ...))
-   (f (subst x t s) ...)])
 
 (define-metafunction U
   env->dq : S -> (∨ (x ≠ t) ...)
@@ -351,9 +255,6 @@
                #:attempts n)
   (printf "successful unifications: ~s\n" num-successes))
 
-(define-syntax-rule (utest in out)
-  (test-->> U-red in out))
-
 (define (narrow-P-vars P [vars (hash)])
   (match P
     [`(,eq ,eqs ...)
@@ -375,14 +276,14 @@
 
 (define (narrow-e-vars e vars)
   (match e
-    [`(f ,es ...)
+    [`(lst ,es ...)
      (define-values (new-es new-vs)
        (for/fold ([new-es '()]
                   [new-vs vars])
          ([e es])
          (define-values (new-e new-v) (narrow-e-vars e vars))
          (values (cons new-e new-es) new-v)))
-     (values `(f ,@(reverse new-es)) new-vs)]
+     (values `(lst ,@(reverse new-es)) new-vs)]
     [(? symbol? var)
      (narrow-var var vars)]))
 
@@ -406,65 +307,76 @@
               (set! vars (hash-set vars var v))
               v)))
   (values new-v vars))
-  
+   
+ (define-syntax-rule (utest a b)
+   (redex-let U ([(P_1 : S_1 : D_1) a])
+       (test-equal
+        (term (DUa P_1 S_1 D_1))
+        (if (equal? b '⊥) 
+            '⊥
+            (redex-let U ([(P_2 : S_2 : D_2) b])
+               (term (S_2 : D_2)))))))
+
 (module+ 
  test
+
+  
  ;(current-traced-metafunctions 'all)
- (utest (term ((((f) = (f))) : () : ()))
+ (utest (term ((((lst)  = (lst))) : () : ()))
         (term (() : () : ())))
- (utest (term ((((f) = (f))) : ((y = (f))) : ()))
-        (term (() : ((y = (f))) : ())))
- (utest (term ((((f y) = (f (f))) (y = z)) : () : ()))
-        (term (() : ((y = (f)) (z = (f))) : ())))
- (utest (term ((((f y (f)) = (f z (f))) (y = z)) : () : ()))
+ (utest (term ((((lst)  = (lst) )) : ((y = (lst) )) : ()))
+        (term (() : ((y = (lst) )) : ())))
+ (utest (term ((((lst y) = (lst (lst) )) (y = z)) : () : ()))
+        (term (() : ((z = (lst) ) (y = (lst) )) : ())))
+ (utest (term ((((lst y (lst) ) = (lst z (lst) )) (y = z)) : () : ()))
         (term (() : ((y = z)) : ())))
- (utest (term ((((f y (f)) = (f z)) (y = z)) : () : ()))
+ (utest (term ((((lst y (lst) ) = (lst z)) (y = z)) : () : ()))
         '⊥)
- (utest (term ((((f) = y) ((f) = (f x))) : () : ()))
+ (utest (term ((((lst)  = y) ((lst)  = (lst x))) : () : ()))
         '⊥)
- (utest (term (((y = (f y)) ((f) = (f))) : () : ()))
+ (utest (term (((y = (lst y)) ((lst)  = (lst) )) : () : ()))
         (term ⊥))
- (utest (term (((y = y) ((f) = (f))) : () : ()))
+ (utest (term (((y = y) ((lst)  = (lst) )) : () : ()))
         (term (() : () : ())))
- (utest (term (((y = (f)) (y = z)) : ((w = (f y))) : ()))
-        (term (() : ((w = (f (f))) (y = (f)) (z = (f))) : ())))
+ (utest (term (((y = (lst) ) (y = z)) : ((w = (lst y))) : ()))
+        (term (() : ((z = (lst)) (y = (lst)) (w = (lst (lst)))) : ())))
  )
 
 (module+
  test
- (test-equal (term (disunify (((f x x) = (f (f) (f))))))
-             (term (((x = (f))) : ())))
- (test-equal (term (disunify (((f x x) = (f (f) (f))) (∀ () (x ≠ (f))))))
+ (test-equal (term (disunify (((lst x x) = (lst (lst)  (lst) )))))
+             (term (((x = (lst) )) : ())))
+ (test-equal (term (disunify (((lst x x) = (lst (lst)  (lst) )) (∀ () (x ≠ (lst) )))))
              (term ⊥))
- (test-equal (term (disunify (((f y x) = (f (f) (f))))))
-             (term (((x = (f)) (y = (f))) : ())))
- (test-equal (term (disunify (((f y x) = (f (f) (f))) (∀ () (x ≠ y)))))
+ (test-equal (term (disunify (((lst y x) = (lst (lst)  (lst) )))))
+             (term (((x = (lst) ) (y = (lst) )) : ())))
+ (test-equal (term (disunify (((lst y x) = (lst (lst)  (lst) )) (∀ () (x ≠ y)))))
              (term ⊥))
- (test-equal (term (disunify (((f y x) = (f (f) (f))) (∀ () ((f x) ≠ (f y))))))
+ (test-equal (term (disunify (((lst y x) = (lst (lst)  (lst) )) (∀ () ((lst x) ≠ (lst y))))))
              (term ⊥))
- (test-equal (term (disunify ((x = (f (f) (f))) (∀ () (x ≠ (f y y))))))
-             (term (((x = (f (f) (f)))) : ((∀ () (∨ (y ≠ (f))))))))
- (test-equal (term (disunify ((x = (f (f) (f))) (y = (f)) (∀ () (x ≠ (f y y))))))
+ (test-equal (term (disunify ((x = (lst (lst)  (lst) )) (∀ () (x ≠ (lst y y))))))
+             (term (((x = (lst (lst)  (lst) ))) : ((∀ () (∨ (y ≠ (lst) )))))))
+ (test-equal (term (disunify ((x = (lst (lst)  (lst) )) (y = (lst) ) (∀ () (x ≠ (lst y y))))))
              (term ⊥))
- (test-equal (term (disunify ((x = (f (f) (f))) (y = (f (f))) (∀ () (x ≠ (f y y))))))
-             (term (((y = (f (f))) (x = (f (f) (f)))) : ())))
+ (test-equal (term (disunify ((x = (lst (lst)  (lst) )) (y = (lst (lst) )) (∀ () (x ≠ (lst y y))))))
+             (term (((y = (lst (lst) )) (x = (lst (lst)  (lst) ))) : ())))
  )
 
 (module+
  test
- (test-equal (term (disunify ((x = (f (f) (f))) (∀ (y) (x ≠ (f y y))))))
+ (test-equal (term (disunify ((x = (lst (lst)  (lst) )) (∀ (y) (x ≠ (lst y y))))))
              (term ⊥))
- (test-equal (term (disunify ((x = (f (f))) (∀ (y) (x ≠ (f y y))))))
-             (term (((x = (f (f)))) : ())))
- (test-equal (term (disunify ((x = (f a b)) (∀ (y) (x ≠ (f y y))))))
-             (term (((x = (f a b))) : ((∀ (y) (∨ (b ≠ a)))))))
- (test-equal (term (disunify ((x = (f a b)) (a = (f)) (∀ (y) (x ≠ (f y y))))))
-             (term (((a = (f)) (x = (f (f) b))) : ((∀ (y) (∨ (b ≠ (f))))))))
+ (test-equal (term (disunify ((x = (lst (lst) )) (∀ (y) (x ≠ (lst y y))))))
+             (term (((x = (lst (lst) ))) : ())))
+ (test-equal (term (disunify ((x = (lst a b)) (∀ (y) (x ≠ (lst y y))))))
+             (term (((x = (lst a b))) : ((∀ (y) (∨ (b ≠ a)))))))
+ (test-equal (term (disunify ((x = (lst a b)) (a = (lst) ) (∀ (y) (x ≠ (lst y y))))))
+             (term (((a = (lst) ) (x = (lst (lst)  b))) : ((∀ (y) (∨ (b ≠ (lst) )))))))
   (test-equal (term 
                (disunify 
-                ((x = (f a b))
+                ((x = (lst a b))
                  (a = b)
-                 (∀ (y) (x ≠ (f y y))))))
+                 (∀ (y) (x ≠ (lst y y))))))
               (term ⊥)))
              
              
@@ -479,65 +391,65 @@
   (test-equal
    (term
     (disunify
-     ((∀ (a b) ((f a b) ≠ x))
-      (x = (f (f) (f(f)))))))
+     ((∀ (a b) ((lst a b) ≠ x))
+      (x = (lst (lst) (lst (lst)))))))
    (term ⊥))
   
   (test-equal
    (term
     (disunify
-     ((x = (f (f) (f(f))))
-      (∀ (a b) ((f a b) ≠ x)))))
+     ((x = (lst (lst) (lst (lst))))
+      (∀ (a b) ((lst a b) ≠ x)))))
    (term ⊥))
   
   (not-failed
    (term
     (disunify
-     ((∀ (a b) ((f a a) ≠ x))
-      (x = (f (f) (f(f))))))))
+     ((∀ (a b) ((lst a a) ≠ x))
+      (x = (lst (lst) (lst (lst))))))))
   
   (not-failed
    (term
     (disunify
-     ((x = (f (f) (f(f))))
-      (∀ (a b) ((f a a) ≠ x))))))
+     ((x = (lst (lst)  (lst (lst))))
+      (∀ (a b) ((lst a a) ≠ x))))))
   
   (test-equal
    (term
     (disunify
-     ((x = (f (f) (f(f))))
-      (∀ (c d) (x ≠ (f c d)))
-      (x = (f a b)))))
+     ((x = (lst (lst)  (lst (lst))))
+      (∀ (c d) (x ≠ (lst c d)))
+      (x = (lst a b)))))
    (term ⊥))
   
   (test-equal
    (term
     (disunify
-     ((∀ (c d) (x ≠ (f c d)))
-      (x = (f (f) (f(f))))
-      (x = (f a b)))))
+     ((∀ (c d) (x ≠ (lst c d)))
+      (x = (lst (lst) (lst (lst) )))
+      (x = (lst a b)))))
    (term ⊥))
   
   (not-failed
    (term
     (disunify
-     ((x = (f (f) (f(f))))
-      (∀ (c d) (x ≠ (f c c)))
-      (x = (f a b))))))
+     ((x = (lst (lst) (lst (lst))))
+      (∀ (c d) (x ≠ (lst c c)))
+      (x = (lst a b))))))
   
   (not-failed
    (term
     (disunify
-     ((∀ (c d) (x ≠ (f c c)))
-      (x = (f (f) (f(f))))
-      (x = (f a b))))))
+     ((∀ (c d) (x ≠ (lst c c)))
+      (x = (lst (lst) (lst (lst) )))
+      (x = (lst a b))))))
   
   (test-equal
    (term
     (disunify
-     ((∀ (c d) (x ≠ (f c c)))
-      (x = (f (f) (f)))
-      (x = (f a b)))))
+     ((∀ (c d) (x ≠ (lst c c)))
+      (x = (lst (lst) (lst) ))
+      (x = (lst a b)))))
    (term ⊥))
   
   )
