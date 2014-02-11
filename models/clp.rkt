@@ -6,10 +6,12 @@
          "program.rkt"
          "disunify-a.rkt")
 
-(define-extended-language CLP gen-prog
+(provide (all-defined-out))
+
+(define-extended-language CLP program
   (S ::= (P ⊢ G ∥ C))
   (P ::= (J ...))
-  (G ::= (g ...))
+  (G ::= (l ...))
   (C ::= s ⊥)
   (s ::= ((e ...) : (e ...)))
   (g ::= L e)

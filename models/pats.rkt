@@ -37,16 +37,4 @@
   [(subst x p a)
    a])
 
-(define (pats-pict)
-  (with-atomic-rewriter
-   'variable-not-otherwise-mentioned "Variables"
-   (with-atomic-rewriter
-    'number "Literal"
-    (render-language pats))))
-
-(define (pterms-pict)
-  (with-atomic-rewriter
-   'variable-not-otherwise-mentioned "Metafuction id"
-   (render-language pterms)))
-
 

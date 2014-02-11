@@ -10,28 +10,25 @@
   (D ::= J M)
   (J ::= (r ...))
   (M ::= (c ...))
-  (r ::= ((j p) ← (j p) ...))
+  (r ::= ((j p) ← l ...))
   (c ::= ((f p) = p))
+  (l ::= (j p) e)
+  (L ::= (j p))
+  (e ::= (∀ (x ...) p ≠ p))
   (j ::= variable-not-otherwise-mentioned))
 
-(define-extended-language gen-prog program
-  (r ::= ((j p) ← l ...))
-  (l ::= L e)
-  (L ::= (j p))
-  (e ::= (∀ (x ...) p ≠ p)))
-
-(define-metafunction gen-prog
+(define-metafunction program
   [(compile (J ...))
    ((extract-apps-J J) ...)]
   [(compile (D_0 ... M D_1 ...))
    (compile (D_0 ... (compile-M M) D_1 ...))])
 
-(define-metafunction gen-prog
+(define-metafunction program
   compile-M : M -> J
   [(compile-M (((f p_in) = p_out)))
    (((f (lst p_in p_out)) ←))]
   [(compile-M (((f_0 p_1) = p_2) ... ((f p_in) = p_out)))
-   (((f (lst p_in p_out)) ← (∀ (vars p_1) p_1 ≠ p_in) ...) r ...)
+   (r ... ((f (lst p_in p_out)) ← (∀ (vars p_1) p_1 ≠ p_in) ...))
    (where (r ...) (compile-M (((f_0 p_1) = p_2) ...)))])
 
 (module+ test
@@ -42,20 +39,20 @@
      (((f (lst x_1 x_2)) = 2)
       ((f x) = 1))))
    (term
-    (((f (lst x 1)) ← (∀ (x_1 x_2) (lst x_1 x_2) ≠ x))
-     ((f (lst (lst x_1 x_2) 2)) ←)))))
+    (((f (lst (lst x_1 x_2) 2)) ←)
+     ((f (lst x 1)) ← (∀ (x_1 x_2) (lst x_1 x_2) ≠ x))))))
 
-(define-metafunction gen-prog
+(define-metafunction program
   [(extract-apps-J (r ...))
    ((extract-apps-r r) ...)])
 
-(define-metafunction gen-prog
+(define-metafunction program
   [(extract-apps-r ((j p) ← l ...))
    ((j p_0) ← l_0 ... (f_1 p_1) ... (f_2 p_2) ... ...)
    (where (p_0 ((f_1 p_1) ...)) (extract-apps-p p))
    (where ((l_0 ((f_2 p_2) ...)) ...) ((extract-apps-l l) ...))])
 
-(define-metafunction gen-prog
+(define-metafunction program
   [(extract-apps-l (j p))
    ((j p_0) ((f_1 p_1) ...))
    (where (p_0 ((f_1 p_1) ...)) (extract-apps-p p))]
@@ -66,7 +63,7 @@
   [(extract-apps-l (∀ (x ...) p_1 ≠ p_2))
    ((∀ (x ...) p_1 ≠ p_2) ())])
 
-(define-metafunction gen-prog
+(define-metafunction program
   [(extract-apps-p (f p_0))
    (x ((f (lst p x)) (f_1 p_1) ...))
    (where x (fresh-var x))
@@ -81,7 +78,7 @@
 
 (define fresh-inc (make-parameter 0))
 
-(define-metafunction gen-prog
+(define-metafunction program
   [(fresh-var x)
    ,(begin0
       (string->symbol
@@ -100,8 +97,8 @@
         (((J (lst 1 1)) ←)
          ((J (lst x_1 (f x_1))) ← (J (lst 1 1)))))))
      (term
-      ((((f (lst x 1)) ← (∀ (x_1 x_2) (lst x_1 x_2) ≠ x))
-        ((f (lst (lst x_1 x_2) 2)) ←))
+      ((((f (lst (lst x_1 x_2) 2)) ←)
+        ((f (lst x 1)) ← (∀ (x_1 x_2) (lst x_1 x_2) ≠ x)))
        (((J (lst 1 1)) ←)
         ((J (lst x_1 x_100)) ← (J (lst 1 1)) (f (lst x_1 x_100))))))))
   (parameterize ([fresh-inc 100])
@@ -113,8 +110,8 @@
         (((q (lst 1 1)) ←)
          ((q (lst x_1 (g x_1))) ← (q (lst 1 1)))))))
      (term
-      ((((g (lst x 1)) ← (∀ (x_1 x_2) (lst x_1 x_2) ≠ x))
-        ((g (lst (lst x_1 x_2) 2)) ←))
+      ((((g (lst (lst x_1 x_2) 2)) ←)
+        ((g (lst x 1)) ← (∀ (x_1 x_2) (lst x_1 x_2) ≠ x)))
        (((q (lst 1 1)) ←)
         ((q (lst x_1 x_100)) ← (q (lst 1 1)) (g (lst x_1 x_100)))))))))
   
