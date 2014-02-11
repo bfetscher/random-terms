@@ -71,52 +71,48 @@
    (clause-name "resimplify")])
 
 (define-metafunction U
-  [(solve c (S : D))
-   (DUa (c) S D)])
-
-(define-metafunction U
-  [(DUa ((∀ (x ...) (s ≠ t)) c ...) S (dq ...)) 
+  [(solve ((∀ (x ...) (s ≠ t)) c ...) S (dq ...)) 
    ⊥
    (where (() : ()) (param-elim (unify ((s = t)) () ()) (x ...)))
    (clause-name "failed constraint")]
-  [(DUa ((∀ (x ...) (s ≠ t)) c ...) S (dq ...)) 
-   (DUa (c ...) S (dq ...))
+  [(solve ((∀ (x ...) (s ≠ t)) c ...) S (dq ...)) 
+   (solve (c ...) S (dq ...))
    (where ⊥ (param-elim (unify ((s = t)) () ()) (x ...)))
    (clause-name "empty constraint")]
-  [(DUa ((∀ (x ...) (s ≠ t)) c ...) S (dq ...))
-   (DUa (c ...) S ((∀ (x ...) ((lst x_s ...) ≠ (lst t_s ...))) dq ...))
+  [(solve ((∀ (x ...) (s ≠ t)) c ...) S (dq ...))
+   (solve (c ...) S ((∀ (x ...) ((lst x_s ...) ≠ (lst t_s ...))) dq ...))
    (where (((x_s = t_s) ...) : ()) (param-elim (unify ((s = t)) () ()) (x ...)))
    (clause-name "simplify constraint")]
-  [(DUa (c ...) S (c_1 ... (∀ (x_a ...) ((lst (lst s ...) ... ) ≠ (lst t ...))) c_2 ...))
-   (DUa ((∀ (x_a ...) ((lst (lst s ...) ...) ≠ (lst t ...))) c ...) S (c_1 ... c_2 ...))
+  [(solve (c ...) S (c_1 ... (∀ (x_a ...) ((lst (lst s ...) ... ) ≠ (lst t ...))) c_2 ...))
+   (solve ((∀ (x_a ...) ((lst (lst s ...) ...) ≠ (lst t ...))) c ...) S (c_1 ... c_2 ...))
    (clause-name "resimplify")]
-  [(DUa ((t = t) c ...) S D)
-   (DUa (c ...) S  D)
+  [(solve ((t = t) c ...) S D)
+   (solve (c ...) S  D)
    (clause-name "identity")]
-  [(DUa (((lst t ..._1) = (lst s ..._1)) c ...) S D)
-   (DUa ((t = s) ... c ...) S D)
+  [(solve (((lst t ..._1) = (lst s ..._1)) c ...) S D)
+   (solve ((t = s) ... c ...) S D)
    (clause-name "decompose")]
-  [(DUa (((lst t ..._!_1) = (lst s ..._!_1)) c ...) S D)
+  [(solve (((lst t ..._!_1) = (lst s ..._!_1)) c ...) S D)
    ⊥
    (clause-name "clash")]
-  [(DUa ((x = t) c ...) S D)
+  [(solve ((x = t) c ...) S D)
    ⊥
    (side-condition (term (occurs? x t)))
    (side-condition (term (different x t)))
    (clause-name "occurs")]
-  [(DUa ((x = t) c ...) (c_s ...) (dq ...))
-   (DUa ((subst-c/dq c x t) ...) ((x = t) (subst-c/dq c_s x t) ...) ((subst-c/dq dq x t) ...))
+  [(solve ((x = t) c ...) (c_s ...) (dq ...))
+   (solve ((subst-c/dq c x t) ...) ((x = t) (subst-c/dq c_s x t) ...) ((subst-c/dq dq x t) ...))
    (clause-name "variable elim")]
-  [(DUa ((t = x) c ...) S D)
-   (DUa ((x = t) c ...) S D)
+  [(solve ((t = x) c ...) S D)
+   (solve ((x = t) c ...) S D)
    (clause-name "orient")]
-  [(DUa () S D)
+  [(solve () S D)
    (S : D)
    (clause-name "success")])
 
 (define-metafunction U
   [(disunify P)
-   (DUa P () ())])
+   (solve P () ())])
 
 (define-metafunction U
   [(param-elim (((x_0 = t_0) ... (x = t) (x_1 = t_1) ...) : ()) (x_2 ... x x_3 ...))
@@ -311,7 +307,7 @@
  (define-syntax-rule (utest a b)
    (redex-let U ([(P_1 : S_1 : D_1) a])
        (test-equal
-        (term (DUa P_1 S_1 D_1))
+        (term (solve P_1 S_1 D_1))
         (if (equal? b '⊥) 
             '⊥
             (redex-let U ([(P_2 : S_2 : D_2) b])

@@ -24,7 +24,8 @@
    CLP
    (--> (P ⊢ (e_g g ...) ∥ s)
         (P ⊢ (g ...) ∥ C)
-        (where C (solve e_g s))
+        (where ((e_1 ...) : (e_2 ...)) s)
+        (where C (solve (e_g) (e_1 ...) (e_2 ...)))
         "new constraint")
    (--> (P ⊢ ((j p_g) g ...) ∥ s)
         (P ⊢ ((p_f = p_g) l_f ... g ...) ∥ s)

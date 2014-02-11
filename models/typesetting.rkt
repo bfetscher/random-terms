@@ -4,7 +4,9 @@
          slideshow/pict
          "pats.rkt"
          "program.rkt"
-         "clp.rkt")
+         "clp.rkt"
+         "disunify-a.rkt"
+         "du-typesetting.rkt")
 
 ;; TODO: fix layout
 
@@ -50,7 +52,16 @@
   (render-reduction-relation R
                              #:style 'compact-vertical))
 
+(define (solve-pict)
+  (with-all-rewriters
+   (render-metafunction solve)))
+
+(define (param-elim-pict)
+  (with-all-rewriters
+   (render-metafunction param-elim)))
+
 (define (big-pict)
+  (vc-append 40
   (hc-append 40
              (vl-append
               (pats-pict)
@@ -66,4 +77,6 @@
                                    (extract-apps-J-pict)
                                    (extract-apps-r-pict)
                                    (extract-apps-l-pict)
-                                   (extract-apps-p-pict)))))
+                                   (extract-apps-p-pict))))
+  (solve-pict)
+  (param-elim-pict)))
