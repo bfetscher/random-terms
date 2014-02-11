@@ -1,7 +1,8 @@
 #lang racket
 
 (require slideshow/pict
-         redex
+         redex/reduction-semantics
+         redex/pict
          "pats.rkt"
          "program.rkt"
          "disunify-a.rkt")
@@ -26,35 +27,45 @@
         (where C (solve e_g s))
         "new constraint")
    (--> (P ⊢ ((j p_g) g ...) ∥ s)
-        (P ⊢ ((p_f = p_g) L_f ... g ...) ∥ s)
-        (where (J_0 ... (r_0 ... ((j p_r) ← L_r ...) r_1 ...) J_1 ...) P)
-        (where (((j p_f) ← L_f ...)) (freshen ((j p_r) ← L_r ...)))
+        (P ⊢ ((p_f = p_g) l_f ... g ...) ∥ s)
+        (where (J_0 ... (r_0 ... ((j p_r) ← l_r ...) r_1 ...) J_1 ...) P)
+        (where ((j p_f) ← l_f ...) (freshen ((j p_r) ← l_r ...)))
         "reduce")))
 
-(define-metafunction CLP
-  [(D (P ⊢ (e_g g ...) ∥ C_0))
-   (D (P ⊢ (g ...) ∥ C))
-   (where C (add-constraint C_0 e_g))]
-  [(D (P ⊢ ((J p_g ...) g ...) ∥ C))
-   (D (P ⊢ ((p_f = p_g) ... L_f ... g ...) ∥ C))
-   (where ((J p_r ...) ← L_r ...) (select J P))
-   (where ((J p_f ...) ← L_f ...) (freshen ((J p_r ...) ← L_r ...)))]
-  [(D (P ⊢ (c_g g ...) ∥ C_0))
-   (P ⊢ () ∥ ⊥)
-   (where ⊥ (add-constraint C_0 c_g))])
-
-;; TODO : implement the following....
-(define-metafunction CLP
-  [(freshen any ...)
-   (any ...)])
 
 (define-metafunction CLP
-  [(add-constraint (c ...) c_1)
-   (c_1 c ...)])
+  [(freshen ((j p_r) ← L_r ...))
+   ((freshen-l (j p_r)) ← (freshen-l L_r) ...)
+   (side-condition (inc-fresh-index))])
 
 (define-metafunction CLP
-  [(select any ...)
-   (any ...)])
+  [(freshen-l (j p))
+   (j (freshen-p () p))]
+  [(freshen-l (∀ (x ...) p_1 ≠ p_2))
+   (∀ (x ...) (freshen-p (x ...) p_1) ≠ (freshen-p (x ...) p_2))])
+
+(define-metafunction CLP
+  [(freshen-p (x ...) (lst p ...))
+   (lst (freshen-p (x ...) p) ...)]
+  [(freshen-p (x ...) a)
+   a]
+  [(freshen-p (x_0 ... x x_1 ...) x)
+   x]
+  [(freshen-p (x_0 ...) x)
+   ,(fresh-v (term x))])
+
+(define fresh-index (make-parameter 0))
+
+(define (inc-fresh-index)
+  (fresh-index (add1 (fresh-index)))
+  (void))
+
+(define (fresh-v x)
+  (string->symbol
+   (string-append
+    (symbol->string x)
+    "_"
+    (number->string (fresh-index)))))
 
 (define clp-pict
   (let*

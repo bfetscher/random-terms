@@ -1,6 +1,6 @@
 #lang racket
 
-(require redex
+(require redex/pict
          slideshow/pict
          "pats.rkt"
          "program.rkt"
