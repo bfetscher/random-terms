@@ -47,21 +47,23 @@
   (render-language CLP))
 
 (define (clp-red-pict)
-  (render-reduction-relation R))
+  (render-reduction-relation R
+                             #:style 'compact-vertical))
 
 (define (big-pict)
-  (vc-append 20
-             (hc-append 40
-                        (vl-append
-                         (pats-pict)
-                         (pterms-lang-pict)
-                         (program-lang-pict)
-                         (clp-lang-pict))
+  (hc-append 40
+             (vl-append
+              (pats-pict)
+              (pterms-lang-pict)
+              (program-lang-pict)
+              (clp-lang-pict))
+             (vl-append 40
+                        (clp-red-pict)
                         (vl-append 10
                                    (compile-pict)
-                                   (compile-M-pict)
+                                   (compile-M-pict))
+                        (vl-append 10
                                    (extract-apps-J-pict)
                                    (extract-apps-r-pict)
                                    (extract-apps-l-pict)
-                                   (extract-apps-p-pict)))
-             (clp-red-pict)))
+                                   (extract-apps-p-pict)))))
