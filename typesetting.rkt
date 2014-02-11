@@ -3,13 +3,12 @@
 (require slideshow/pict
          redex/reduction-semantics
          redex/pict
+         "models/pats.rkt"
          "models/disunify-a.rkt"
          "models/du-typesetting.rkt"
          "metafunc-ctcs.rkt")
 
 (provide lang-pict
-         basic-red-pict
-         du-red-pict
          judgment-pict
          f-pict
          J-L
@@ -35,15 +34,8 @@
      (render-language U #:nts '(P S D))
      (vl-append
       (render-language U #:nts '(c eq dq))
-      (render-language trees #:nts '(s t))))
+      (render-language pats)))
     1.0)))
-(define basic-red-pict 
-  (with-all-rewriters
-   (scale (render-reduction-relation U-red) 1.0)))
-(define du-red-pict 
-  (with-all-rewriters
-   (scale (render-reduction-relation DU-red) 1.0)))
-
 
 
 (module f1 racket

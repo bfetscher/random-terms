@@ -56,7 +56,6 @@
   [(select any ...)
    (any ...)])
 
-#;
 (define clp-pict
   (let*
       ([indent 0]
@@ -64,10 +63,7 @@
             (render-language CLP #:nts '(S))
             (htl-append 40
                        ;(ghost (rectangle indent 40))
-                       (render-language CLP
-                                        #:nts '(P R L))
-                       (render-language CLP
-                                        #:nts '(G g c))))])
+                       (render-language CLP)))])
     (vc-append 15
                gp
                (hc-append
