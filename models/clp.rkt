@@ -9,12 +9,7 @@
 
 (provide (all-defined-out))
 
-(define-extended-language CLP program
-  (S ::= (P ⊢ (l ...) ∥ C))
-  (C ::= s ⊥)
-  (s ::= ((e ...) : (d ...)))
-  (e ::= (p = p))
-  (d ::= (∀ (x ...) p ≠ p)))
+(define-extended-language CLP pats)
 
 (define R
   (reduction-relation 
@@ -66,20 +61,8 @@
     (number->string (fresh-index)))))
 
 (define clp-pict
-  (let*
-      ([indent 0]
-       [gp (vc-append 5
-            (render-language CLP #:nts '(S))
-            (htl-append 40
-                       ;(ghost (rectangle indent 40))
-                       (render-language CLP)))])
-    (vc-append 15
-               gp
-               (hc-append
-                (ghost (hline indent 5))
-                (hline (+ (pict-width gp) 80) 3))
-               (render-reduction-relation R
-                                          #:style 'horizontal))))
+  (render-reduction-relation R
+                             #:style 'horizontal))
 
 (define test-P
   (term

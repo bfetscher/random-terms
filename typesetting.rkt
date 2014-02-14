@@ -6,6 +6,8 @@
          "models/pats.rkt"
          "models/disunify-a.rkt"
          "models/du-typesetting.rkt"
+         (rename-in "models/typesetting.rkt" 
+                    [lang-pict lp])
          "metafunc-ctcs.rkt")
 
 (provide lang-pict
@@ -27,15 +29,9 @@
          du-func-pict/contract
          param-elim-func-pict/contract)
 
+
 (define lang-pict 
-  (with-all-rewriters
-   (scale 
-    (ht-append 20
-     (render-language U #:nts '(P S D))
-     (vl-append
-      (render-language U #:nts '(c eq dq))
-      (render-language pats)))
-    1.0)))
+  (lp))
 
 
 (module f1 racket
