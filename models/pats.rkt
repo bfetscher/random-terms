@@ -7,9 +7,9 @@
 (define-language pats
   (p     (lst p ...)
          (f p)
-         a
+         m
          x)
-  (a     number)
+  (m     number)
   (x     variable-not-otherwise-mentioned)
   ((f j) id)
   (id    variable-not-otherwise-mentioned))
@@ -21,7 +21,7 @@
    (where ((x_1 ...) ...) ((vars p) ...))]
   [(vars x_new)
    (x_new)]
-  [(vars a)
+  [(vars m)
    ()])
 
 (define-metafunction pats
@@ -32,7 +32,7 @@
    x_2]
   [(subst x p (lst p_1 ...))
    (lst (subst x p p_1) ...)]
-  [(subst x p a)
-   a])
+  [(subst x p m)
+   m])
 
 
