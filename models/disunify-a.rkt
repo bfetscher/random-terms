@@ -72,10 +72,6 @@
 
 (define-metafunction U
   [(solve ((∀ (x ...) (s ≠ t)) c ...) S (dq ...)) 
-   ⊥
-   (where (() : ()) (param-elim (unify ((s = t)) () ()) (x ...)))
-   (clause-name "failed constraint")]
-  [(solve ((∀ (x ...) (s ≠ t)) c ...) S (dq ...)) 
    (solve (c ...) S (dq ...))
    (where ⊥ (param-elim (unify ((s = t)) () ()) (x ...)))
    (clause-name "empty constraint")]
@@ -83,6 +79,10 @@
    (solve (c ...) S ((∀ (x ...) ((lst x_s ...) ≠ (lst t_s ...))) dq ...))
    (where (((x_s = t_s) ...) : ()) (param-elim (unify ((s = t)) () ()) (x ...)))
    (clause-name "simplify constraint")]
+  [(solve ((∀ (x ...) (s ≠ t)) c ...) S (dq ...)) 
+   ⊥
+   (where (() : ()) (param-elim (unify ((s = t)) () ()) (x ...)))
+   (clause-name "failed constraint")]
   [(solve (c ...) S (c_1 ... (∀ (x_a ...) ((lst (lst s ...) ... ) ≠ (lst t ...))) c_2 ...))
    (solve ((∀ (x_a ...) ((lst (lst s ...) ...) ≠ (lst t ...))) c ...) S (c_1 ... c_2 ...))
    (clause-name "resimplify")]
@@ -92,6 +92,12 @@
   [(solve (((lst t ..._1) = (lst s ..._1)) c ...) S D)
    (solve ((t = s) ... c ...) S D)
    (clause-name "decompose")]
+  [(solve ((x = t) c ...) (c_s ...) (dq ...))
+   (solve ((subst-c/dq c x t) ...) ((x = t) (subst-c/dq c_s x t) ...) ((subst-c/dq dq x t) ...))
+   (clause-name "variable elim")]
+  [(solve ((t = x) c ...) S D)
+   (solve ((x = t) c ...) S D)
+   (clause-name "orient")]
   [(solve (((lst t ..._!_1) = (lst s ..._!_1)) c ...) S D)
    ⊥
    (clause-name "clash")]
@@ -100,12 +106,6 @@
    (side-condition (term (occurs? x t)))
    (side-condition (term (different x t)))
    (clause-name "occurs")]
-  [(solve ((x = t) c ...) (c_s ...) (dq ...))
-   (solve ((subst-c/dq c x t) ...) ((x = t) (subst-c/dq c_s x t) ...) ((subst-c/dq dq x t) ...))
-   (clause-name "variable elim")]
-  [(solve ((t = x) c ...) S D)
-   (solve ((x = t) c ...) S D)
-   (clause-name "orient")]
   [(solve () S D)
    (S : D)
    (clause-name "success")])

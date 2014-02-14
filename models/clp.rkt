@@ -10,33 +10,30 @@
 (provide (all-defined-out))
 
 (define-extended-language CLP program
-  (S ::= (P ⊢ G ∥ C))
-  (P ::= (J ...))
-  (G ::= (l ...))
+  (S ::= (P ⊢ (l ...) ∥ C))
   (C ::= s ⊥)
-  (s ::= ((e ...) : (e ...)))
-  (g ::= L e)
-  (e ::= ....
-         (p = p)))
+  (s ::= ((e ...) : (d ...)))
+  (e ::= (p = p))
+  (d ::= (∀ (x ...) p ≠ p)))
 
 (define R
   (reduction-relation 
    CLP
-   (--> (P ⊢ (e_g g ...) ∥ s)
-        (P ⊢ (g ...) ∥ C)
-        (where ((e_1 ...) : (e_2 ...)) s)
-        (where C (solve (e_g) (e_1 ...) (e_2 ...)))
+   (--> (P ⊢ (e_g a ...) ∥ s)
+        (P ⊢ (a ...) ∥ C)
+        (where ((e ...) : (d ...)) s)
+        (where C (solve (e_g) (e ...) (d ...)))
         "new constraint")
-   (--> (P ⊢ ((j p_g) g ...) ∥ s)
-        (P ⊢ ((p_f = p_g) l_f ... g ...) ∥ s)
-        (where (J_0 ... (r_0 ... ((j p_r) ← l_r ...) r_1 ...) J_1 ...) P)
-        (where ((j p_f) ← l_f ...) (freshen ((j p_r) ← l_r ...)))
+   (--> (P ⊢ ((j p_g) a ...) ∥ s)
+        (P ⊢ ((p_f = p_g) a_f ... a ...) ∥ s)
+        (where (J_0 ... (r_0 ... ((j p_r) ← a_r ...) r_1 ...) J_1 ...) P)
+        (where ((j p_f) ← a_f ...) (freshen ((j p_r) ← a_r ...)))
         "reduce")))
 
 
 (define-metafunction CLP
-  [(freshen ((j p_r) ← L_r ...))
-   ((freshen-l (j p_r)) ← (freshen-l L_r) ...)
+  [(freshen ((j p_c) ← (j_a p_a) ...))
+   ((freshen-l (j p_c)) ← (freshen-l (j_a p_a)) ...)
    (side-condition (inc-fresh-index))])
 
 (define-metafunction CLP

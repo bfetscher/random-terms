@@ -5,16 +5,14 @@
 (provide (all-defined-out))
 
 (define-language pats
-  (p ::= (lst p ...)
-         x
-         a)
-  (x ::= variable-not-otherwise-mentioned)
-  (a ::= number))
-
-(define-extended-language pterms pats
-  (p ::= ....
-         (f p))
-  (f ::= variable-not-otherwise-mentioned))
+  (p     (lst p ...)
+         (f p)
+         a
+         x)
+  (a     number)
+  (x     variable-not-otherwise-mentioned)
+  ((f j) id)
+  (id    variable-not-otherwise-mentioned))
 
 (define-metafunction pats
   vars : p -> (x ...)

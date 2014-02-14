@@ -5,17 +5,15 @@
 
 (provide (all-defined-out))
 
-(define-extended-language program pterms
+(define-extended-language program pats
   (P ::= (D ...))
   (D ::= J M)
   (J ::= (r ...))
   (M ::= (c ...))
-  (r ::= ((j p) ← l ...))
+  (r ::= ((j p) ← a ...))
   (c ::= ((f p) = p))
-  (l ::= (j p) e)
-  (L ::= (j p))
-  (e ::= (∀ (x ...) p ≠ p))
-  (j ::= variable-not-otherwise-mentioned))
+  (a ::= (j p) d)
+  (d ::= (∀ (x ...) p ≠ p)))
 
 (define-metafunction program
   [(compile (J ...))
@@ -47,20 +45,20 @@
    ((extract-apps-r r) ...)])
 
 (define-metafunction program
-  [(extract-apps-r ((j p) ← l ...))
-   ((j p_0) ← l_0 ... (f_1 p_1) ... (f_2 p_2) ... ...)
+  [(extract-apps-r ((j p) ← a ...))
+   ((j p_0) ← a_0 ... (f_1 p_1) ... (f_2 p_2) ... ...)
    (where (p_0 ((f_1 p_1) ...)) (extract-apps-p p))
-   (where ((l_0 ((f_2 p_2) ...)) ...) ((extract-apps-l l) ...))])
+   (where ((a_0 ((f_2 p_2) ...)) ...) ((extract-apps-a a) ...))])
 
 (define-metafunction program
-  [(extract-apps-l (j p))
+  [(extract-apps-a (j p))
    ((j p_0) ((f_1 p_1) ...))
    (where (p_0 ((f_1 p_1) ...)) (extract-apps-p p))]
   ;; we know these don't have any apps because
   ;; p_1 and p_2 come from the lhs of a metafunction and
   ;; thus must be actual pats, not term-pats...
   ;; need a nice way to work this in
-  [(extract-apps-l (∀ (x ...) p_1 ≠ p_2))
+  [(extract-apps-a (∀ (x ...) p_1 ≠ p_2))
    ((∀ (x ...) p_1 ≠ p_2) ())])
 
 (define-metafunction program

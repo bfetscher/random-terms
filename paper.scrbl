@@ -45,5 +45,8 @@
 
 @(generate-bibliography)
 
-@section{Hi}
+@section{Appendix}
+@include-section{appendix.scrbl}
+
+@section[#:style (style #f '(hidden unnumbered))]{}
 @one-col
