@@ -48,8 +48,7 @@
   (render-language CLP))
 
 (define (clp-red-pict)
-  (render-reduction-relation R
-                             #:style 'horizontal))
+  (render-reduction-relation R #:style 'vertical))
 
 (define (solve-pict)
   (with-all-rewriters
@@ -69,6 +68,7 @@
   (vc-append 
    40
    (all-lang-pict)
+  (vl-append 40
    (vl-append 10
               (compile-pict)
               (compile-M-pict))
@@ -78,5 +78,5 @@
               (extract-apps-a-pict)
               (extract-apps-p-pict))
    (clp-red-pict)
-  (solve-pict)
-  (param-elim-pict)))
+   (solve-pict)
+   (param-elim-pict))))
