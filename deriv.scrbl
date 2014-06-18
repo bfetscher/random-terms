@@ -82,7 +82,7 @@ our method treats a metafunction as a judgment form, however, adding
 premises to reflect the ordering. 
 
 For the lookup function, we can use the judgment form shown on the
-right of @figure-ref["fig:lookups"].  The only addition premise
+right of @figure-ref["fig:lookups"].  The only additional premise
 appears in the right-most rule and ensures that we only recur with the
 tail of the environment when the head does not contain the variable
 we're looking for. The general process is more complex than
