@@ -1,7 +1,7 @@
 #lang racket
 
 (require slideshow/pict
-         redex/reduction-semantics
+         redex
          redex/pict
          "pats.rkt"
          "program.rkt"
@@ -47,10 +47,11 @@
   [(freshen-p (x_0 ...) x)
    ,(fresh-v (term x))])
 
-(define fresh-index (make-parameter 0))
+(define fresh-index 0)
 
 (define (inc-fresh-index)
-  (fresh-index (add1 (fresh-index)))
+  (set! fresh-index (add1 fresh-index))
+  (printf "~s\n" fresh-index)
   (void))
 
 (define (fresh-v x)
@@ -58,7 +59,7 @@
    (string-append
     (symbol->string x)
     "_"
-    (number->string (fresh-index)))))
+    (number->string fresh-index))))
 
 (define clp-pict
   (render-reduction-relation R

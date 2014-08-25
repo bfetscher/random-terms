@@ -41,16 +41,19 @@
      ((f (lst x 1)) ← (∀ (x_1 x_2) (lst x_1 x_2) ≠ x))))))
 
 (define-metafunction program
+  extract-apps-J : J -> J
   [(extract-apps-J (r ...))
    ((extract-apps-r r) ...)])
 
 (define-metafunction program
+  extract-apps-r : r -> r
   [(extract-apps-r ((j p) ← a ...))
    ((j p_0) ← a_0 ... (f_1 p_1) ... (f_2 p_2) ... ...)
    (where (p_0 ((f_1 p_1) ...)) (extract-apps-p p))
    (where ((a_0 ((f_2 p_2) ...)) ...) ((extract-apps-a a) ...))])
 
 (define-metafunction program
+  extract-apps-a : a -> (a (a ...))
   [(extract-apps-a (j p))
    ((j p_0) ((f_1 p_1) ...))
    (where (p_0 ((f_1 p_1) ...)) (extract-apps-p p))]
@@ -62,6 +65,7 @@
    ((∀ (x ...) p_1 ≠ p_2) ())])
 
 (define-metafunction program
+  extract-apps-p : p -> (p (a ...))
   [(extract-apps-p (f p_0))
    (x ((f (lst p x)) (f_1 p_1) ...))
    (where x (fresh-var x))
@@ -71,8 +75,8 @@
    (where ((p_1 ((f_2 p_2) ...)) ...) ((extract-apps-p p) ...))]
   [(extract-apps-p x)
    (x ())]
-  [(extract-apps-p a)
-   (a ())])
+  [(extract-apps-p m)
+   (m ())])
 
 (define fresh-inc (make-parameter 0))
 

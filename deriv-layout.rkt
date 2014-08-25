@@ -100,6 +100,8 @@
      #`(infer #:h-dec max #:add-ids () r . l)]))
 
 (define (infer/func #:h-dec [max/min max] r . l)
+  (when (empty? l)
+    (set! l (list (ghost (text "X")))))
   (define top
     (apply hb-append
           (* 2 (pict-width space))

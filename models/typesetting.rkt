@@ -27,33 +27,33 @@
       (render-language pats #:nts '(p m x f j)))))))
 
 (define (compile-pict)
-  (render-metafunction compile))
+  (render-metafunction compile #:contract? #t))
 
 (define (compile-M-pict)
-  (render-metafunction compile-M))
+  (render-metafunction compile-M #:contract? #t))
 
 (define (extract-apps-J-pict)
-  (render-metafunction extract-apps-J))
+  (render-metafunction extract-apps-J #:contract? #t))
 
 (define (extract-apps-r-pict)
-  (render-metafunction extract-apps-r))
+  (render-metafunction extract-apps-r #:contract? #t))
 
 (define (extract-apps-a-pict)
-  (render-metafunction extract-apps-a))
+  (render-metafunction extract-apps-a #:contract? #t))
 
 (define (extract-apps-p-pict)
-  (render-metafunction extract-apps-p))
+  (render-metafunction extract-apps-p #:contract? #t))
 
 (define (clp-red-pict)
   (render-reduction-relation R #:style 'vertical))
 
 (define (solve-pict)
   (with-all-rewriters
-   (render-metafunction solve)))
+   (render-metafunction solve #:contract? #t)))
 
 (define (param-elim-pict)
   (with-all-rewriters
-   (render-metafunction param-elim)))
+   (render-metafunction param-elim #:contract? #t)))
 
 
 (define (big-pict)
