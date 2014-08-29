@@ -94,7 +94,10 @@
   [(solve ((p = x) π ...) Σ Ω)
    (solve ((x = p) π ...) Σ Ω)
    (clause-name "orient")]
-  [(solve (((lst p_2 ..._!_1) = (lst p_1 ..._!_1)) π ...) Σ Ω)
+  #;[(solve (((lst p_2 ..._!_1) = (lst p_1 ..._!_1)) π ...) Σ Ω)
+   ⊥
+   (clause-name "clash")]
+  [(solve ((p_1 = p_2) π ...) Σ Ω) ;; everything valid is covered?
    ⊥
    (clause-name "clash")]
   [(solve () Σ Ω)
@@ -217,13 +220,11 @@
   `(,P : () : ()))
 
 (define (apply-subst subst init-c)
-  (match (for/fold ([e `(,init-c)])
-           ([s (in-list subst)])
-           (match s
-             [`(,x = ,t)
-              (term (subst-cs ,x ,t ,e))]))
-    [`(,c)
-     c]))
+  (for/fold ([e init-c])
+    ([s (in-list subst)])
+    (match s
+      [`(,x = ,t)
+       (term (subst-c/dq ,e ,x ,t))])))
 
 (define print-terms (make-parameter #f))
 

@@ -3,7 +3,8 @@
 (require scribble/core
          scribble/latex-properties
          scribble/latex-prefix
-         (except-in slideshow/pict table))
+         (except-in slideshow/pict table)
+         redex/pict)
 
 (provide (all-defined-out))
 
@@ -27,4 +28,14 @@
 
 (define (text-scale p)
   (scale p 0.85))
+
+(define-syntax-rule
+  (with-font-params e)
+  #;(parameterize ([default-style "Menlo"]
+                 [grammar-style "CMU Serif"]
+                 [literal-style "CMU Serif"]
+                 [metafunction-style '(bold . "Menlo")]
+                 [non-terminal-style '(italic . "CMU Serif")])
+    e)
+  e)
 

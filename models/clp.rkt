@@ -14,10 +14,10 @@
 (define R
   (reduction-relation 
    CLP
-   (--> (P ⊢ (e_g a ...) ∥ s)
+   (--> (P ⊢ (π_g a ...) ∥ s)
         (P ⊢ (a ...) ∥ C)
         (where ((e ...) : (d ...)) s)
-        (where C (solve (e_g) (e ...) (d ...)))
+        (where C (solve (,(apply-subst (term (e ...)) (term π_g))) (e ...) (d ...)))
         "new constraint")
    (--> (P ⊢ ((j p_g) a ...) ∥ s)
         (P ⊢ ((p_f = p_g) a_f ... a ...) ∥ s)
@@ -27,39 +27,15 @@
 
 
 (define-metafunction CLP
-  [(freshen ((j p_c) ← (j_a p_a) ...))
-   ((freshen-l (j p_c)) ← (freshen-l (j_a p_a)) ...)
+  [(freshen ((j p_c) ← a ...))
+   ((freshen-l (j p_c)) ← (freshen-l a) ...)
    (side-condition (inc-fresh-index))])
 
 (define-metafunction CLP
   [(freshen-l (j p))
    (j (freshen-p () p))]
-  [(freshen-l (∀ (x ...) p_1 ≠ p_2))
-   (∀ (x ...) (freshen-p (x ...) p_1) ≠ (freshen-p (x ...) p_2))])
-
-(define-metafunction CLP
-  [(freshen-p (x ...) (lst p ...))
-   (lst (freshen-p (x ...) p) ...)]
-  [(freshen-p (x ...) a)
-   a]
-  [(freshen-p (x_0 ... x x_1 ...) x)
-   x]
-  [(freshen-p (x_0 ...) x)
-   ,(fresh-v (term x))])
-
-(define fresh-index 0)
-
-(define (inc-fresh-index)
-  (set! fresh-index (add1 fresh-index))
-  (printf "~s\n" fresh-index)
-  (void))
-
-(define (fresh-v x)
-  (string->symbol
-   (string-append
-    (symbol->string x)
-    "_"
-    (number->string fresh-index))))
+  [(freshen-l (∀ (x ...) (p_1 ≠ p_2)))
+   (∀ (x ...) ((freshen-p (x ...) p_1) ≠ (freshen-p (x ...) p_2)))])
 
 (define clp-pict
   (render-reduction-relation R

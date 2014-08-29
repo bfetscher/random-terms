@@ -104,16 +104,17 @@
     (set! l (list (ghost (text "X")))))
   (define top
     (apply hb-append
-          (* 2 (pict-width space))
-          l))
-  (vc-append 2
-             top
-   (linewidth 1
-              (hline 
-               (max/min (pict-width r)
-                        (pict-width top))
-               1))
-   r))
+           (* 2 (pict-width space))
+           l))
+  (with-font-params
+   (vc-append 2
+              top
+              (linewidth 1
+                         (hline 
+                          (max/min (pict-width r)
+                                   (pict-width top))
+                          1))
+              r)))
 
 (define (lookup-infer-pict)
   (hc-append 20

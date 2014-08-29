@@ -6,7 +6,8 @@
          "program.rkt"
          "clp.rkt"
          "disunify-a.rkt"
-         "du-typesetting.rkt")
+         "du-typesetting.rkt"
+         "../common.rkt")
 
 (provide (all-defined-out))
 
@@ -57,9 +58,10 @@
 
 
 (define (big-pict)
-  (vc-append 
-   40
-   (lang-pict)
+  (with-font-params
+   (vc-append 
+    40
+    (lang-pict)
    (vl-append 40
               (vl-append 10
                          (compile-pict)
@@ -71,4 +73,4 @@
                          (extract-apps-p-pict))
               (clp-red-pict)
               (solve-pict)
-              (param-elim-pict))))
+              (param-elim-pict)))))
