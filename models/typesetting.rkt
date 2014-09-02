@@ -13,6 +13,13 @@
 
 ;; TODO: fix layout
 
+(define (init-lang)
+  (ht-append 
+   40
+   (render-language pats #:nts '(P D J π))
+   (render-language pats #:nts '(a s C e))
+   (render-language pats #:nts '(p))))
+
 (define (lang-pict)
   (with-atomic-rewriter
    'variable-not-otherwise-mentioned "Variable"

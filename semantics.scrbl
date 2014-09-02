@@ -10,9 +10,42 @@
           "citations.rkt"
           "typesetting.rkt"
           "models/clp.rkt"
+          (only-in "models/typesetting.rkt" clp-red-pict init-lang)
           "pat-grammar.rkt"
           "common.rkt")
 
+This section describes a complete model of the derivation generator.
+Following the process introduced in the previous section, the model uses
+a set of definitions consisting of judgment forms and metafunctions
+along with an answer pattern as inputs and produces a random output
+derivation. The output derivation satisfies the definitions and
+its conclusion matches the answer pattern.
+
+As described informally in the example, metafunctions are actually
+compiled to judgment forms through the addition of new constraints
+and the core generation algorithm acts on judgment forms. Thus we
+begin by describing how generation works for judgment forms only
+(without the additional constraints necessary to support
+metafunctions) and then explain how metafunctions are added to
+this framework.
+
+@section{Formalizing the Generation Process}
+
+@figure["fig:clp-grammar"
+        @list{Grammar for the derivation generation model.}
+              @(init-lang)]
+
+@figure["fig:clp-red"
+        @list{Reduction rules describing generation of the complete
+              tree of derivations.}
+        @(clp-red-pict)]
+
+@section{Compiling Metafunctions to Judgment Forms}
+
+@section{The Constraint Solver}
+
+@;{
+   
 @(define (mymath start end . strs)
    (make-element (make-style "relax" '(exact-chars)) `(,start ,@strs ,end)))
 
@@ -657,3 +690,4 @@ the context-free generation method, and @tt{list} terms are converted to racket 
 Then the disequational constraints are checked for consistency with the new environment.
 Finally, the goal pattern is converted to a term by using the same process and resolving
 the necessary variables.
+}

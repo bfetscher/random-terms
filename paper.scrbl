@@ -26,11 +26,7 @@
 
 @include-section{deriv.scrbl}
 
-@;@section{Random Testing in PLT Redex}
-@;@include-section{redex.scrbl}
-
-@section{Random Term Generation}
-@;@(larger @emph{The gory details section.})
+@section{Derivation Generation in detail}
 @include-section{semantics.scrbl}
 
 @section{Evaluating the Generator}

@@ -12,8 +12,8 @@
           "common.rkt")
 
 
-@(define (center-rule rule-pict [factor 0.9])
-   (centered (scale rule-pict factor)))
+@(define (center-rule rule-pict [w-f 0.9] [h-f 0.9])
+   (centered (scale rule-pict w-f h-f)))
 
 @figure["fig:types"
         @list{Grammar and type system for the simply-typed lambda calculus
@@ -114,7 +114,9 @@ the left branch of the derivation.
                               (infer (eqt (lookup (x_^2 τ_x^2 (x_^1 (τ_2^3 → τ_^2) •)) x_^1) (τ_2^3 → τ_^2))
                                      (neqt x_^2 x_^1)
                                      (infer (eqt (lookup (x_^1 (τ_2^3 → τ_^2) •) x_^1) (τ_2^3 → τ_^2)))))
-                       (typ (x_^2 τ_x^2 (x_^1 (τ_2^3 → τ_^2) •)) e_2^3 τ_2^3)))))
+                       (typ (x_^2 τ_x^2 (x_^1 (τ_2^3 → τ_^2) •)) e_2^3 τ_2^3))))
+  0.85
+  0.9)
 
 
 
@@ -140,7 +142,8 @@ derivation:
                                      (infer (eqt (lookup (x_^1 (τ_x^2 → τ_^2) •) x_^1) (τ_x^2 → τ_^2)))))
                        (infer (typ (x_^2 τ_x^2 (x_^1 (τ_x^2 → τ_^2) •)) x_^2 τ_x^2)
                               (infer (eqt (lookup (x_^2 τ_x^2 (x_^1 (τ_x^2 → τ_^2) •)) x_^2) τ_x^2))))))
-  0.85)
+  0.8
+  0.9)
 
 To finish the construction of a random well-typed term, we simply pick
 appropriate random values for the non-terminals in the pattern:
