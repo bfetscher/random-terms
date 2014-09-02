@@ -117,13 +117,12 @@
               r)))
 
 (define (lookup-infer-pict)
-  (hc-append 20
-   (vc-append 10
-    (infer (eqt (lookup (x τ Γ) x) τ))
-    (infer (eqt (lookup • x) #f)))
-   (infer (eqt (lookup (x_1 τ_x Γ) x_2) τ)
-          (neqt x_1 x_2)
-         (eqt (lookup Γ x_2) τ))))
+  (vc-append 10
+             (infer (eqt (lookup (x τ Γ) x) τ))
+             (infer (eqt (lookup • x) #f))
+             (infer (eqt (lookup (x_1 τ_x Γ) x_2) τ)
+                    (neqt x_1 x_2)
+                    (eqt (lookup Γ x_2) τ))))
 
 (define (lookup-both-pict)
   (define loc (blank))
