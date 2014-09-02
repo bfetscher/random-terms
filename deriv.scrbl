@@ -156,5 +156,3 @@ We must be careful to obey the constraint that @et[x_1] and @et[x_2]
 are different, however, or else we would not get a well-typed
 term. For example, @et[(λ (f (num → num)) (λ (f num) (f f)))] is not
 well-typed but is a valid instantiation of the non-terminals.
-
-@two-cols

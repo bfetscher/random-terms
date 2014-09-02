@@ -1,4 +1,4 @@
-#lang scribble/sigplan
+#lang scribble/lncs
 
 @(require scribble/core
           scribble/latex-prefix
@@ -6,23 +6,23 @@
           "citations.rkt"
           "common.rkt")
 
-@title[#:style (doc-style)]{Making Random Judgments@subtitle{Automatically Generating Well-typed Terms from the Definition of a Type-system}}
 
-@(authorinfo "Burke Fetscher" "Northwestern University" "burke.fetscher@eecs.northwestern.edu")
-@(authorinfo "Robert Bruce Findler" "Northwestern University" "robby@eecs.northwestern.edu")
-@(authorinfo "Koen Claessen" "Chalmers University of Technology" "koen@chalmers.se")
-@(authorinfo "Micha\u0142 Pa\u0142ka" "Chalmers University of Technology" "michal.palka@chalmers.se")
-@(authorinfo "John Hughes" "Chalmers University of Technology" "rjmh@chalmers.se")
+@authors[@(author #:inst "1" "Burke Fetscher")
+          @(author #:inst "1" "Robert Bruce Findler")
+          @(author #:inst "2" "Koen Claessen")
+          @(author #:inst "2" "Micha\u0142 Pa\u0142ka")
+          @(author #:inst "2" "John Hughes")]
 
-@(conferenceinfo "ICFP" "Gothenburg, Sweden")
+@institutes[@institute{Northwestern University}
+             @institute{Chalmers University of Technology}]
+
+@title{Making Random Judgments:
+       Automatically Generating Well-typed Terms from the Definition of a Type-system}
 
 @abstract{The abstract.}
 
-@two-cols
-
 @section{Introduction}
 @include-section{intro.scrbl}
-
 
 @include-section{deriv.scrbl}
 
@@ -47,6 +47,3 @@
 
 @section{Appendix}
 @include-section{appendix.scrbl}
-
-@section[#:style (style #f '(hidden unnumbered))]{}
-@one-col

@@ -83,5 +83,3 @@ details work to evaluate its effectiveness.
 Chapter 5 discusses related work and
 Chapter 6 concludes.
 
-
-@one-col
