@@ -18,6 +18,7 @@
         (P ⊢ (a ...) ∥ C)
         (where ((e ...) : (d ...)) s)
         (where C (solve (,(apply-subst (term (e ...)) (term π_g))) (e ...) (d ...)))
+        ;; TODO : this substitution should be happening inside the call to solve!
         "new constraint")
    (--> (P ⊢ ((j p_g) a ...) ∥ s)
         (P ⊢ ((p_f = p_g) a_f ... a ...) ∥ s)

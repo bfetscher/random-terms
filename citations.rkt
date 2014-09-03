@@ -742,7 +742,7 @@
 (define delim-cont-cont
   (make-bib
    #:author (authors "Asumu Takikawa" "T. Stephen Strickland" "Sam Tobin-Hochstadt")
-   #:title "Constraining Delimited Control with Contract"
+   #:title "Constraining Delimited Control with Contracts"
    #:location (proceedings-location esop
                                     #:pages '(229 248))
    #:date 2013))
