@@ -5,7 +5,8 @@
          redex/pict
          "pats.rkt"
          "program.rkt"
-         "disunify-a.rkt")
+         "disunify-a.rkt"
+         "../common.rkt")
 
 (provide (all-defined-out))
 
@@ -52,3 +53,6 @@
            (,test-P ⊢
                     ((j1 (lst 1 (lst 2 3)))) ∥
                     (():()))))
+
+(define-syntax-rule (clpt exp) 
+  (text-scale (render-term CLP exp)))

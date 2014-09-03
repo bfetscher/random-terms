@@ -5,7 +5,7 @@
           scribble/manual
           scriblib/footnote
           (only-in slideshow/pict scale-to-fit scale)
-          (only-in redex/pict render-term)
+          ;(only-in redex/pict render-term)
           (only-in "models/stlc.rkt" stlc-type-pict-horiz)
           "deriv-layout.rkt"
           "citations.rkt"
@@ -52,39 +52,39 @@ Our model is based on the CLP semantics described in
         @(clp-red-pict)]
 
 The reduction relation shown in @figure-ref["fig:clp-red"] generates
-a complete tree of derivations for some program @(render-term CLP P)
-with an initial goal of the form @(render-term CLP (j p)), where
-@(render-term CLP j) is the identifier of some judgment form
-defined in @(render-term CLP P) and @(render-term CLP p) is a pattern
+a complete tree of derivations for some program @(clpt P)
+with an initial goal of the form @(clpt (j p)), where
+@(clpt j) is the identifier of some judgment form
+defined in @(clpt P) and @(clpt p) is a pattern
 that must match the conclusion of all derivations in the tree.
-The reduction acts on states of the form @(render-term CLP (P ⊢ (π ...) ∥ C)),
-where @(render-term CLP (π ...)) represents a stack of goals, which can
-be either literal goals of the form @(render-term CLP (j p)), indicating a 
+The reduction acts on states of the form @(clpt (P ⊢ (π ...) ∥ C)),
+where @(clpt (π ...)) represents a stack of goals, which can
+be either literal goals of the form @(clpt (j p)), indicating a 
 judgment that must be satisfied to complete the derivation, or constraints 
 that must be satisfied by adding them to the constraint store 
-@(render-term CLP C) (if they are consistent with the store).
+@(clpt C) (if they are consistent with the store).
 
-When a literal goal @(render-term CLP (j p)) is the first element
+When a literal goal @(clpt (j p)) is the first element
 of the goal stack (as is the root case, when the initial goal is the
-sole element), then the @tt{reduce} rule applies. For every
-rule of the form @(render-term CLP ((j p_r) ← a_r ...)) in the program such
-that the judgment form ids @(render-term CLP j) are identical, a reduction
-step can occur that adds the constraint goal @(render-term CLP (p = p_r)) 
-along with the literal goals @(render-term CLP (a_r ...)) to the current
+sole element), then the @(clpt reduce) rule applies. For every
+rule of the form @(clpt ((j p_r) ← a_r ...)) in the program such
+that the judgment form ids @(clpt j) are identical, a reduction
+step can occur that adds the constraint goal @(clpt (p = p_r)) 
+along with the literal goals @(clpt (a_r ...)) to the current
 goal stack. (All variables in the rule are freshened before this takes place).
 This corresponds to attempting to satisfy the literal goal using a rule
 of the appropriate judgment, and adding the premises of that rule as new goals.
 
-When a constraint @(render-term CLP a) is the first element in the goal
-stack, then the constraint solver (the @tt{solve} metafunction) is called
+When a constraint @(clpt a) is the first element in the goal
+stack, then the constraint solver (the @(clpt solve) metafunction) is called
 with that constraint and the current store. The result will either be a new
-store or @(render-term CLP ⊥), if the constraint is inconsistent with the store.
+store or @(clpt ⊥), if the constraint is inconsistent with the store.
 The latter corresponds to an invalid branch of the derivation tree.
 
 The complete reduction graph generated from some initial goal state is
 the derivation tree for that state. Terminal states (those that cannot
 reduce) represent valid derivations if the goal stack is empty and they have 
-a valid (not @(render-term CLP ⊥)) constraint store. Other terminal states 
+a valid (not @(clpt ⊥)) constraint store. Other terminal states 
 represent invalid derivations.
 
 @section{Compiling Metafunctions to Judgment Forms}
