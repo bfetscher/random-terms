@@ -75,7 +75,7 @@
           [(lw (list _ inner2-lw ellips _) _ _ _ _ _ _)
            (match inner2-lw
              [(lw (list _ x _ p _) _ _ _ _ _ _)
-              (list pi "({" x " → " p "} ...)")])])]))
+              (list "" pi "({" x " → " p "} ...)")])])]))
    (render-metafunction solve-cstr)))
 
 (define (param-elim-pict)
