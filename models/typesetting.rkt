@@ -65,9 +65,36 @@
   (with-all-rewriters
    (render-metafunction solve #:contract? #t)))
 
+(define (solve-cstr-pict)
+  (with-compound-rewriter
+   'do-subst
+   (λ (lws)
+     (match lws
+       [(list _ _ pi inner-lw _)
+        (match inner-lw
+          [(lw (list _ inner2-lw ellips _) _ _ _ _ _ _)
+           (match inner2-lw
+             [(lw (list _ x _ p _) _ _ _ _ _ _)
+              (list pi "({" x " → " p "} ...)")])])]))
+   (render-metafunction solve-cstr)))
+
 (define (param-elim-pict)
   (with-all-rewriters
    (render-metafunction param-elim #:contract? #t)))
+
+(define (get-lw lw content)
+  (let recur ([lw lw])
+    (and (lw? lw)
+        (match (lw-e lw)
+          [(? ((curry equal?) content) _)
+           lw]
+          [(list lws ...)
+           (for/or ([lw lws])
+             (recur lw))]
+          [(? lw? lw)
+                (recur lw)]
+          [_ #f]))))
+    
 
 
 (define (big-pict)
@@ -85,5 +112,6 @@
                          (extract-apps-a-pict)
                          (extract-apps-p-pict))
               (clp-red-pict)
+              (solve-cstr-pict)
               (solve-pict)
               (param-elim-pict)))))

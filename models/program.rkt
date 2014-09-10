@@ -16,6 +16,7 @@
   (d ::= (∀ (x ...) (p ≠ p))))
 
 (define-metafunction program
+  compile : P -> (J ...)
   [(compile (J ...))
    ((extract-apps-J J) ...)]
   [(compile (D_0 ... M D_1 ...))

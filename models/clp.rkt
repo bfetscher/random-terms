@@ -18,7 +18,7 @@
    (--> (P ⊢ (π_g a ...) ∥ s)
         (P ⊢ (a ...) ∥ C)
         (where ((e ...) : (d ...)) s)
-        (where C (solve (,(apply-subst (term (e ...)) (term π_g))) (e ...) (d ...)))
+        (where C (solve-cstr π_g (e ...) (d ...)))
         ;; TODO : this substitution should be happening inside the call to solve!
         "new constraint")
    (--> (P ⊢ ((j p_g) a ...) ∥ s)
@@ -27,6 +27,14 @@
         (where ((j p_f) ← a_f ...) (freshen ((j p_r) ← a_r ...)))
         "reduce")))
 
+(define-metafunction CLP
+  [(solve-cstr π (e ...) (d ...))
+   (solve (do-subst π_g ((x = p) ...)) (e ...) (d ...))
+   (where ((x = p) ...) (e ...))])
+
+(define-metafunction CLP
+  [(do-subst π ((x = p) ...))
+   ,(apply-subst (term ((x = p) ...)) (term π_g))])
 
 (define-metafunction CLP
   [(freshen ((j p_c) ← a ...))

@@ -40,7 +40,20 @@ a randomized@note{Within limits, as described in section XXX.
 Our model is based on the CLP semantics described in 
 @citet[clp-semantics].
 
-@; TODO: transition
+A program @(clpt P) consists of judgment form definitions 
+@(clpt J).@note{The derivation generation
+                process considers only judgment forms, as described in the previous
+                section, and we discuss the conversion of metafunctions to judgment
+                forms in the next section, ignoring metafuctions for the time being.
+                (Along with their applications in patterns @(clpt (f p)), which are
+                also eliminated.)}
+A judgment form consists of a set of rules @(clpt ((j p) ← a ...)), here written
+horizontally with the conclusion on the left and premises on the right. 
+The conclusion always has the form @(clpt (j p)), where @(clpt j) is the 
+name of the judgment and @(clpt p) is a pattern.
+The premises may consist of literal goals @(clpt (j p)) or disequational
+constraints @(clpt d), which are added by the process of metafunction elimination
+and are discussed in section XXX.
 
 @figure["fig:clp-grammar"
         @list{Grammar for the derivation generation model. Metafunctions
@@ -78,7 +91,7 @@ This corresponds to attempting to satisfy the literal goal using a rule
 of the appropriate judgment, and adding the premises of that rule as new goals.
 
 When a constraint @(clpt π) is the first element in the goal
-stack, then the constraint solver (the @(clpt solve) metafunction) is called
+stack, then the constraint solver (the @(clpt solve-cstr) metafunction) is called
 with that constraint and the current store. The result will either be a new
 store or @(clpt ⊥), if the constraint is inconsistent with the store.
 The latter corresponds to an invalid branch of the derivation tree.
