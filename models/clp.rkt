@@ -29,12 +29,12 @@
 
 (define-metafunction CLP
   [(solve-cstr π (e ...) (d ...))
-   (solve (do-subst π_g ((x = p) ...)) (e ...) (d ...))
+   (solve ((do-subst π ((x = p) ...))) (e ...) (d ...))
    (where ((x = p) ...) (e ...))])
 
 (define-metafunction CLP
   [(do-subst π ((x = p) ...))
-   ,(apply-subst (term ((x = p) ...)) (term π_g))])
+   ,(apply-subst (term ((x = p) ...)) (term π))])
 
 (define-metafunction CLP
   [(freshen ((j p_c) ← a ...))

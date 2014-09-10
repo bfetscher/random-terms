@@ -82,20 +82,6 @@
   (with-all-rewriters
    (render-metafunction param-elim #:contract? #t)))
 
-(define (get-lw lw content)
-  (let recur ([lw lw])
-    (and (lw? lw)
-        (match (lw-e lw)
-          [(? ((curry equal?) content) _)
-           lw]
-          [(list lws ...)
-           (for/or ([lw lws])
-             (recur lw))]
-          [(? lw? lw)
-                (recur lw)]
-          [_ #f]))))
-    
-
 
 (define (big-pict)
   (with-font-params
