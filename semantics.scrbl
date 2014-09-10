@@ -34,7 +34,7 @@ this framework.
 
 The derivation generator is in essence a constraint logic
 programming system using a specialized constraint solver and
-a randomized @note{Within limits, as described in section XXX.
+a randomized@note{Within limits, as described in section XXX.
                   Unrestrained randomization frequently
                   leads to non-termination.} search space.
 Our model is based on the CLP semantics described in 
@@ -43,7 +43,9 @@ Our model is based on the CLP semantics described in
 @; TODO: transition
 
 @figure["fig:clp-grammar"
-        @list{Grammar for the derivation generation model.}
+        @list{Grammar for the derivation generation model. Metafunctions
+              @(clpt M), which appear in patterns as applications @(clpt (f p)),
+              are explained along with disequational constraints @(clpt d) in section XXX}
               @(init-lang)]
 
 @figure["fig:clp-red"
@@ -68,14 +70,14 @@ When a literal goal @(clpt (j p)) is the first element
 of the goal stack (as is the root case, when the initial goal is the
 sole element), then the @(clpt reduce) rule applies. For every
 rule of the form @(clpt ((j p_r) ← a_r ...)) in the program such
-that the judgment form ids @(clpt j) are identical, a reduction
+that the judgment form id @(clpt j) agrees with the goal's, a reduction
 step can occur that adds the constraint goal @(clpt (p = p_r)) 
 along with the literal goals @(clpt (a_r ...)) to the current
 goal stack. (All variables in the rule are freshened before this takes place).
 This corresponds to attempting to satisfy the literal goal using a rule
 of the appropriate judgment, and adding the premises of that rule as new goals.
 
-When a constraint @(clpt a) is the first element in the goal
+When a constraint @(clpt π) is the first element in the goal
 stack, then the constraint solver (the @(clpt solve) metafunction) is called
 with that constraint and the current store. The result will either be a new
 store or @(clpt ⊥), if the constraint is inconsistent with the store.

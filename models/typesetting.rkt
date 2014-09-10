@@ -14,11 +14,17 @@
 ;; TODO: fix layout
 
 (define (init-lang)
-  (hc-append 
-   40
-   (render-language pats #:nts '(P D J π))
-   (render-language pats #:nts '(a s C e))
-   (render-language pats #:nts '(p))))
+  (with-atomic-rewriter 
+   'number "Literal"
+   (with-atomic-rewriter 
+    'variable-not-otherwise-mentioned "Variable"
+    (with-atomic-rewriter
+     'id "Identifier"
+     (hc-append 
+      40
+      (render-language pats #:nts '(P D J r π))
+      (render-language pats #:nts '(a s C e j))
+      (render-language pats #:nts '(p m x f)))))))
 
 (define (lang-pict)
   (with-atomic-rewriter

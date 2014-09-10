@@ -26,7 +26,7 @@
 
 @include-section{deriv.scrbl}
 
-@section{Derivation Generation in detail}
+@section{Derivation Generation in Detail}
 @include-section{semantics.scrbl}
 
 @section{Evaluating the Generator}

@@ -29,7 +29,8 @@ like the one in @figure-ref["fig:types"], a simply-typed
 lambda calculus with a single base type of natural numbers (@tt{num}).
 It then builds a random derivation and reads the term off of the derivation.
 
-We start with a schema:
+We start with a goal pattern, which the conclusion of the generated
+derivation will match:
 @(center-rule
   (typ • e_^0 τ_^0))
 and then randomly select one of the type rules. This time, the
@@ -156,4 +157,4 @@ appropriate random values for the non-terminals in the pattern:
 We must be careful to obey the constraint that @et[x_1] and @et[x_2]
 are different, however, or else we would not get a well-typed
 term. For example, @et[(λ (f (num → num)) (λ (f num) (f f)))] is not
-well-typed but is a valid instantiation of the non-terminals.
+well-typed but is an otherwise valid instantiation of the non-terminals.
