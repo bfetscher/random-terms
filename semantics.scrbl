@@ -102,10 +102,47 @@ reduce) represent valid derivations if the goal stack is empty and they have
 a valid (not @(clpt ⊥)) constraint store. Other terminal states 
 represent invalid derivations.
 
+Of course, in practice the generator does not generate the complete tree.
+We use a randomized search strategy with some simple heuristics (described
+in section XXX) to search for random valid derivations.
+
 @section{Compiling Metafunctions to Judgment Forms}
+
+The idea behind translating a metafunction to a judgment form is to generate
+a judgment that contains one rule for each clause of the metafunction, and add
+constraints as necessary to ensure that the resulting rules are consistent with
+the original definition. As an illlustrative example, consider the following
+metafunction definition, alongside some example applications:
+@(centered (f-ex-pict))
+The first clause matches any two-element list, and the second clause matches
+any pattern at all. Since the clauses apply in order, an application where the
+argument is a two-element list will reduce to @(clpt 2) and an argument of any
+other form will reduce to @(clpt 1). To generate conclusions of the judgment
+corresponding to the second clause, we have to be careful not to generate
+anything that @italic{matches} the first.
+
+@;{This goes here:
+   Suppose p are patterns, t are terms (essentially patterns with no variables from this perspective), and s are substitutions (finite maps from variables to patterns). s(p) applies a substitution to a pattern.
+
+1. Matching is easy to define:
+Matches[p,t] <=> \exists s, s(p) = t
+
+2. If a match doesn’t exist:
+\not Matches[p,t] <=> \not \exists s, s)p) = t <=> \forall s, s(p) =/= t
+
+3: Finally, given two patterns, there is a notion of it being possible to cause the match to fail by instantiating the second pattern in some way, call it “excludable”:
+Excludable[p_1, p_2] <=> \exists s, \not Matches[p_1, s(p_2)]
+
+Expanding out the final definition, it becomes the more complicated looking:
+\exists s_1, \forall s, s(p_1) =/= s_1(p_2)
+   
+   }
 
 @section{The Constraint Solver}
 
+
+@; leftover from previous draft...
+@; contains some useful stuff though
 @;{
    
 @(define (mymath start end . strs)

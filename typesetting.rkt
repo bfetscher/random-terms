@@ -172,10 +172,26 @@
              (render-language c-ext)))
 
 
-(define f-ex-pict
-  (vc-append
-   (ghost (rectangle 15 15))
-   (render-metafunction g)))
+(define (f-ex-pict)
+  (define g-p (render-term FexL g))
+  (define (align p) 
+    (lbl-superimpose p (ghost (render-term FexL | (a b c))|))))
+  (hc-append 
+   40
+   (render-metafunction g)
+   (vl-append
+    #;(hbl-append (render-term FexL |(|)
+                g-p
+                (align (render-term FexL | (a))|))
+                (render-term FexL | → 1|))
+    (hbl-append (render-term FexL |(|)
+                g-p
+                (align (render-term FexL | (a b))|))
+                (render-term FexL | → 2|))
+    (hbl-append (render-term FexL |(|)
+                g-p
+                (render-term FexL | (a b c))|)
+                (render-term FexL | → 1|))))) 
 
 (define j-pict/p
   (let
