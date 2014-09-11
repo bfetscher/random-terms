@@ -5,34 +5,23 @@
 
 (provide (all-defined-out))
 
-(define-extended-language program pats/mf
-  #|
-  (P ::= (D ...))
-  (D ::= J M)
-  (J ::= (r ...))
-  (M ::= (c ...))
-  (r ::= ((j p) ← a ...))
-  (c ::= ((f p) = p))
-  (a ::= (j p) d)
-  (d ::= (∀ (x ...) (p ≠ p)))
-|#
-)
+(define-extended-language program pats/mf)
 
 (define-metafunction program
-  compile : P -> (J ...)
-  [(compile (J ...))
-   ((extract-apps-J J) ...)]
+  compile : P -> (D ...)
+  [(compile ((r ...) ...))
+   ((extract-apps-D (r ...)) ...)]
   [(compile (D_0 ... M D_1 ...))
    (compile (D_0 ... (compile-M M) D_1 ...))])
 
 (define-metafunction program
-  compile-M : M -> J
+  compile-M : M -> D
   [(compile-M M)
    ,(parameterize ([fresh-index 0])
       (term (compile-M-help (freshen-cases M))))])
 
 (define-metafunction program
-  compile-M-help : M -> J
+  compile-M-help : M -> D
   [(compile-M-help (((f p_in) = p_out)))
    (((f (lst p_in p_out)) ←))]
   [(compile-M-help (((f_0 p_1) = p_2) ... ((f p_in) = p_out)))
@@ -48,7 +37,7 @@
    (where (c_f ...) (freshen-cases (c ...)))
    (side-condition (inc-fresh-index))])
 
-(define-metafunction pats
+(define-metafunction program
   [(freshen-p (x ...) (lst p ...))
    (lst (freshen-p (x ...) p) ...)]
   [(freshen-p (x ...) (f p))
@@ -86,21 +75,21 @@
      ((f (lst x_1 1)) ← (∀ (x_1_2 x_2_2) ((lst x_1_2 x_2_2) ≠ x_1)))))))
 
 (define-metafunction program
-  extract-apps-J : J -> J
-  [(extract-apps-J (r ...))
+  extract-apps-D : (r ...) -> (r ...)
+  [(extract-apps-D (r ...))
    ((extract-apps-r r) ...)])
 
 (define-metafunction program
   extract-apps-r : r -> r
-  [(extract-apps-r ((j p) ← a ...))
-   ((j p_0) ← a_0 ... (f_1 p_1) ... (f_2 p_2) ... ...)
+  [(extract-apps-r ((d p) ← a ...))
+   ((d p_0) ← a_0 ... (f_1 p_1) ... (f_2 p_2) ... ...)
    (where (p_0 ((f_1 p_1) ...)) (extract-apps-p p))
    (where ((a_0 ((f_2 p_2) ...)) ...) ((extract-apps-a a) ...))])
 
 (define-metafunction program
   extract-apps-a : a -> (a (a ...))
-  [(extract-apps-a (j p))
-   ((j p_0) ((f_1 p_1) ...))
+  [(extract-apps-a (d p))
+   ((d p_0) ((f_1 p_1) ...))
    (where (p_0 ((f_1 p_1) ...)) (extract-apps-p p))]
   ;; we know these don't have any apps because
   ;; p_1 and p_2 come from the lhs of a metafunction and

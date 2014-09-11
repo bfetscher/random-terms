@@ -22,8 +22,8 @@
      'id "Identifier"
      (hc-append 
       40
-      (render-language pats #:nts '(P J r a j))
-      (render-language pats #:nts '(π s C e d))
+      (render-language pats #:nts '(P D r a d))
+      (render-language pats #:nts '(π s C e δ))
       (render-language base-pats))))))
 
 (define (lang-pict)
@@ -47,7 +47,7 @@
   (render-metafunction compile-M #:contract? #t))
 
 (define (extract-apps-J-pict)
-  (render-metafunction extract-apps-J #:contract? #t))
+  (render-metafunction extract-apps-D #:contract? #t))
 
 (define (extract-apps-r-pict)
   (render-metafunction extract-apps-r #:contract? #t))

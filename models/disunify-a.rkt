@@ -34,8 +34,8 @@
    (side-condition (term (occurs? x p)))
    (side-condition (term (different x p)))
    (clause-name "occurs")]
-  [(unify ((x = p) π ...) (π_s ...) (d ...))
-   (unify ((subst-c/dq π x p) ...) ((x = p) (subst-c/dq π_s x p) ...) ((subst-c/dq d x p) ...))
+  [(unify ((x = p) π ...) (π_s ...) (δ ...))
+   (unify ((subst-c/dq π x p) ...) ((x = p) (subst-c/dq π_s x p) ...) ((subst-c/dq δ x p) ...))
    (clause-name "variable elim")]
   [(unify ((p = x) π ...) Σ Ω)
    (unify ((x = p) π ...) Σ Ω)
@@ -45,16 +45,16 @@
    (clause-name "success")])
 
 (define-metafunction/extension unify U
-  [(DU ((∀ (x ...) (p_1 ≠ p_2)) π ...) Σ (d ...)) 
+  [(DU ((∀ (x ...) (p_1 ≠ p_2)) π ...) Σ (δ ...)) 
    ⊥
    (where (() : ()) (param-elim (unify ((p_1 = p_2)) () ()) (x ...)))
    (clause-name "failed constraint")]
-  [(DU ((∀ (x ...) (p_1 ≠ p_2)) π ...) Σ (d ...)) 
-   (DU (π ...) Σ (d ...))
+  [(DU ((∀ (x ...) (p_1 ≠ p_2)) π ...) Σ (δ ...)) 
+   (DU (π ...) Σ (δ ...))
    (where ⊥ (param-elim (unify ((p_1= p_2)) () ()) (x ...)))
    (clause-name "empty constraint")]
-  [(DU ((∀ (x ...) (p_1 ≠ p_2)) π ...) Σ (d ...))
-   (DU (π ...) Σ ((∀ (x ...) ((lst x_s ...) ≠ (lst p_s ...))) d ...))
+  [(DU ((∀ (x ...) (p_1 ≠ p_2)) π ...) Σ (δ ...))
+   (DU (π ...) Σ ((∀ (x ...) ((lst x_s ...) ≠ (lst p_s ...))) δ ...))
    (where (((x_s = p_s) ...) : ()) (param-elim (unify ((p_1 = p_2)) () ()) (x ...)))
    (clause-name "simplify constraint")]
   [(DU (π ...) Σ (π_1 ... (∀ (x_a ...) ((lst (lst p_1 ...) ... ) ≠ (lst p_2  ...))) π_2 ...))
@@ -62,16 +62,16 @@
    (clause-name "resimplify")])
 
 (define-metafunction U
-  [(solve ((∀ (x ...) (p_1 ≠ p_2)) π ...) Σ (d ...)) 
-   (solve (π ...) Σ (d ...))
+  [(solve ((∀ (x ...) (p_1 ≠ p_2)) π ...) Σ (δ ...)) 
+   (solve (π ...) Σ (δ ...))
    (where ⊥ (param-elim (solve ((p_1 = p_2)) () ()) (x ...)))
    (clause-name "empty constraint")]
-  [(solve ((∀ (x ...) (p_1 ≠ p_2)) π ...) Σ (d ...)) 
+  [(solve ((∀ (x ...) (p_1 ≠ p_2)) π ...) Σ (δ ...)) 
    ⊥
    (where (() : ()) (param-elim (solve ((p_1 = p_2)) () ()) (x ...)))
    (clause-name "failed constraint")]
-  [(solve ((∀ (x ...) (p_1 ≠ p_2)) π ...) Σ (d ...))
-   (solve (π ...) Σ ((∀ (x ...) ((lst x_s ...) ≠ (lst p_s ...))) d ...))
+  [(solve ((∀ (x ...) (p_1 ≠ p_2)) π ...) Σ (δ ...))
+   (solve (π ...) Σ ((∀ (x ...) ((lst x_s ...) ≠ (lst p_s ...))) δ ...))
    (where (((x_s = p_s) ...) : ()) (param-elim (solve ((p_1 = p_2)) () ()) (x ...)))
    (clause-name "simplify constraint")]
   [(solve (π ...) Σ (π_1 ... (∀ (x_a ...) ((lst (lst p_1 ...) ... ) ≠ (lst p_2  ...))) π_2 ...))
@@ -88,8 +88,8 @@
    (side-condition (term (occurs? x p)))
    (side-condition (term (different x p)))
    (clause-name "occurs")]
-  [(solve ((x = p) π ...) (π_s ...) (d ...))
-   (solve ((subst-c/dq π x p) ...) ((x = p) (subst-c/dq π_s x p) ...) ((subst-c/dq d x p) ...))
+  [(solve ((x = p) π ...) (π_s ...) (δ ...))
+   (solve ((subst-c/dq π x p) ...) ((x = p) (subst-c/dq π_s x p) ...) ((subst-c/dq δ x p) ...))
    (clause-name "variable elim")]
   [(solve ((p = x) π ...) Σ Ω)
    (solve ((x = p) π ...) Σ Ω)
@@ -407,14 +407,14 @@
    (term
     (disunify
      ((x = (lst (lst)  (lst (lst))))
-      (∀ (c d) (x ≠ (lst c d)))
+      (∀ (c e) (x ≠ (lst c e)))
       (x = (lst a b)))))
    (term ⊥))
   
   (test-equal
    (term
     (disunify
-     ((∀ (c d) (x ≠ (lst c d)))
+     ((∀ (c e) (x ≠ (lst c e)))
       (x = (lst (lst) (lst (lst) )))
       (x = (lst a b)))))
    (term ⊥))
@@ -423,20 +423,20 @@
    (term
     (disunify
      ((x = (lst (lst) (lst (lst))))
-      (∀ (c d) (x ≠ (lst c c)))
+      (∀ (c e) (x ≠ (lst c c)))
       (x = (lst a b))))))
   
   (not-failed
    (term
     (disunify
-     ((∀ (c d) (x ≠ (lst c c)))
+     ((∀ (c e) (x ≠ (lst c c)))
       (x = (lst (lst) (lst (lst) )))
       (x = (lst a b))))))
   
   (test-equal
    (term
     (disunify
-     ((∀ (c d) (x ≠ (lst c c)))
+     ((∀ (c e) (x ≠ (lst c c)))
       (x = (lst (lst) (lst) ))
       (x = (lst a b)))))
    (term ⊥))

@@ -17,19 +17,19 @@
    CLP
    (--> (P ⊢ (π_g a ...) ∥ s)
         (P ⊢ (a ...) ∥ C)
-        (where ((e ...) : (d ...)) s)
-        (where C (solve-cstr π_g (e ...) (d ...)))
+        (where ((e ...) : (δ ...)) s)
+        (where C (solve-cstr π_g (e ...) (δ ...)))
         ;; TODO : this substitution should be happening inside the call to solve!
         "new constraint")
-   (--> (P ⊢ ((j p_g) a ...) ∥ s)
+   (--> (P ⊢ ((d p_g) a ...) ∥ s)
         (P ⊢ ((p_f = p_g) a_f ... a ...) ∥ s)
-        (where (J_0 ... (r_0 ... ((j p_r) ← a_r ...) r_1 ...) J_1 ...) P)
-        (where ((j p_f) ← a_f ...) (freshen ((j p_r) ← a_r ...)))
+        (where (D_0 ... (r_0 ... ((d p_r) ← a_r ...) r_1 ...) D_1 ...) P)
+        (where ((d p_f) ← a_f ...) (freshen ((d p_r) ← a_r ...)))
         "reduce")))
 
 (define-metafunction CLP
-  [(solve-cstr π (e ...) (d ...))
-   (solve ((do-subst π ((x = p) ...))) (e ...) (d ...))
+  [(solve-cstr π (e ...) (δ ...))
+   (solve ((do-subst π ((x = p) ...))) (e ...) (δ ...))
    (where ((x = p) ...) (e ...))])
 
 (define-metafunction CLP
@@ -37,13 +37,13 @@
    ,(apply-subst (term ((x = p) ...)) (term π))])
 
 (define-metafunction CLP
-  [(freshen ((j p_c) ← a ...))
-   ((freshen-l (j p_c)) ← (freshen-l a) ...)
+  [(freshen ((d p_c) ← a ...))
+   ((freshen-l (d p_c)) ← (freshen-l a) ...)
    (side-condition (inc-fresh-index))])
 
 (define-metafunction CLP
-  [(freshen-l (j p))
-   (j (freshen-p () p))]
+  [(freshen-l (d p))
+   (d (freshen-p () p))]
   [(freshen-l (∀ (x ...) (p_1 ≠ p_2)))
    (∀ (x ...) ((freshen-p (x ...) p_1) ≠ (freshen-p (x ...) p_2)))])
 

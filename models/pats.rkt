@@ -16,28 +16,28 @@
      (f p)))
 
 (define-extended-language pats base-pats
-  (P (J ...))
-  (J (r ...))
-  (r ((j p) ← a ...))
-  (a (j p) d)
+  (P (D ...))
+  (D (r ...))
+  (r ((d p) ← a ...))
+  (a (d p) δ)
   (S (P ⊢ (π ...) ∥ C))
   (C s ⊥)
   (s ((e ...) : (d ...)))
-  (π e d)
+  (π e δ)
   (e (p = p))
-  (d (∀ (x ...) (p ≠ p)))
+  (δ (∀ (x ...) (p ≠ p)))
   (Γ (Π : Σ : Ω))
   (Π (π ...))
   (Σ (e ...))
-  (Ω (d ...))
-  (j id)
+  (Ω (δ ...))
+  (d id)
   (id variable-not-otherwise-mentioned))
 
 (define-extended-language pats/mf pats
   (p ....
      (f p))
-  (P (D ...))
-  (D J M)
+  (D ....
+     M)
   (M (c ...))
   (c ((f p) = p))
   (f id))
