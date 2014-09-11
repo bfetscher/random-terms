@@ -13,6 +13,9 @@
           "pat-grammar.rkt"
           "common.rkt")
 
+@title{Derivation Generation in Detail}
+
+
 This section describes a complete model of the derivation generator.
 Following the process introduced in the previous section, the model uses
 a set of definitions consisting of judgment forms and metafunctions

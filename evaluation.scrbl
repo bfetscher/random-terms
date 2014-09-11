@@ -7,6 +7,8 @@
           "citations.rkt"
           "results/res-pict.rkt")
 
+@title{Evaluating the Generator}
+
 This chapter describes the evaluation of the new random
 generator. The generator was evaluated by comparing it to 
 other methods of random generation that can be applied to

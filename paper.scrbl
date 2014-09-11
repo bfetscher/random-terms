@@ -21,25 +21,18 @@
 
 @abstract{The abstract.}
 
-@section{Introduction}
 @include-section{intro.scrbl}
 
 @include-section{deriv.scrbl}
 
-@section{Derivation Generation in Detail}
 @include-section{semantics.scrbl}
 
-@section{Evaluating the Generator}
 @include-section{evaluation.scrbl}
 
-@section{Related Work}
 @include-section{related-work.scrbl}
 
-@section{Conclusion}
 @include-section{conclusion.scrbl}
-
 
 @(generate-bibliography)
 
-@section{Appendix}
 @include-section{appendix.scrbl}

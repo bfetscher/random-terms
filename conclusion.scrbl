@@ -5,6 +5,8 @@
           scriblib/footnote
           "citations.rkt")
 
+@title{Conclusion}
+
 We extended the random testing capabilities of PLT Redex
 to support the generation of terms satisfying judgment
 forms and metafunctions. The previous method was an 

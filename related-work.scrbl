@@ -6,6 +6,8 @@
           slideshow/pict
           "citations.rkt")
 
+@title{Related Work}
+
 Quickcheck@~cite[QuickCheck] is a widely-used library
 for random testing in Haskell. It provides combinators supporting the
 definition of testable properties, random generators, and analysis
