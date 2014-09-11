@@ -5,9 +5,7 @@
           scribble/manual
           scriblib/footnote
           (only-in slideshow/pict scale-to-fit scale)
-          ;(only-in redex/pict render-term)
           (only-in "models/stlc.rkt" stlc-type-pict-horiz)
-          "deriv-layout.rkt"
           "citations.rkt"
           "typesetting.rkt"
           "models/clp.rkt"
@@ -22,38 +20,44 @@ along with an answer pattern as inputs and produces a random output
 derivation. The output derivation satisfies the definitions and
 its conclusion matches the answer pattern.
 
-As described informally in the example, metafunctions are actually
-compiled to judgment forms through the addition of new constraints
-and the core generation algorithm acts on judgment forms. Thus we
-begin by describing how generation works for judgment forms only
-(without the additional constraints necessary to support
-metafunctions) and then explain how metafunctions are added to
-this framework.
+To simplify our presentation, we start by describing a core model
+of the generation process that works on judgment forms only with
+a simplified pattern language, omitting
+the addition of metafunctions, the details of the constraint solver,
+and the heuristics used to control the search.
+Metafunctions are added via a translation to judgment forms using
+appropriate disequational constraints, generalizing the process
+described for lookup in @secref["sec:deriv"]. The addition of
+metafunctions is described in @secref["sec:mf-semantics"].
+The core model is a reduction relation that generates the complete
+set of derivations; in practice we use heuristics to find random
+valid derivations, as described in @secref["sec:search"].
+During the generation process, when a new constraint
+(in our case, an equation or disequation) is encountered,
+the current set of consistent constraints is checked against it and
+updated using the constraint solver, discussed in @secref["sec:solve"].
+Finally, in @secref["sec:pats"], we address extending the generator
+beyond the model to support more of Redex's full pattern language.
 
-@section{Formalizing the Generation Process}
 
 The derivation generator is in essence a constraint logic
 programming system using a specialized constraint solver and
-a randomized@note{Within limits, as described in section XXX.
-                  Unrestrained randomization frequently
-                  leads to non-termination.} search space.
+a randomized search space.
 Our model is based on the CLP semantics described in 
 @citet[clp-semantics].
 
-A program @(clpt P) consists of judgment form definitions 
-@(clpt J).@note{The derivation generation
-                process considers only judgment forms, as described in the previous
-                section, and we discuss the conversion of metafunctions to judgment
-                forms in the next section, ignoring metafuctions for the time being.
-                (Along with their applications in patterns @(clpt (f p)), which are
-                also eliminated.)}
+The grammar in @figure-ref["fig:clp-grammar"] describes the language on
+which the generator model operates.
+A program @(clpt P) consists of judgment form definitions @(clpt J).
 A judgment form consists of a set of rules @(clpt ((j p) ← a ...)), here written
 horizontally with the conclusion on the left and premises on the right. 
 The conclusion always has the form @(clpt (j p)), where @(clpt j) is the 
 name of the judgment and @(clpt p) is a pattern.
 The premises may consist of literal goals @(clpt (j p)) or disequational
-constraints @(clpt d), which are added by the process of metafunction elimination
-and are discussed in section XXX.
+constraints @(clpt d). We discuss the operational meaning behind
+disequational constraints @(clpt d) in both @secref["sec:mf-semantics"] and 
+@secref["sec:solve"], but as their form suggests, they are essentially
+the negation of a equation, in which some variables are universally quantified.
 
 @figure["fig:clp-grammar"
         @list{Grammar for the derivation generation model. Metafunctions
@@ -77,7 +81,10 @@ where @(clpt (π ...)) represents a stack of goals, which can
 be either literal goals of the form @(clpt (j p)), indicating a 
 judgment that must be satisfied to complete the derivation, or constraints 
 that must be satisfied by adding them to the constraint store 
-@(clpt C) (if they are consistent with the store).
+@(clpt C) (if they are consistent with the store). A consistent
+constraint store @(clpt s) is just a set of 
+simplified@note{We discuss what simplified means in @secref["sec:solve"].} 
+equations and disequations.
 
 When a literal goal @(clpt (j p)) is the first element
 of the goal stack (as is the root case, when the initial goal is the
@@ -98,15 +105,15 @@ The latter corresponds to an invalid branch of the derivation tree.
 
 The complete reduction graph generated from some initial goal state is
 the derivation tree for that state. Terminal states (those that cannot
-reduce) represent valid derivations if the goal stack is empty and they have 
-a valid (not @(clpt ⊥)) constraint store. Other terminal states 
+be further reduced) represent valid derivations if the goal stack is empty 
+and they have a valid (not @(clpt ⊥)) constraint store. Other terminal states 
 represent invalid derivations.
 
 Of course, in practice the generator does not generate the complete tree.
 We use a randomized search strategy with some simple heuristics (described
-in section XXX) to search for random valid derivations.
+in @secref["sec:search"]) to search for random valid derivations.
 
-@section{Compiling Metafunctions to Judgment Forms}
+@section[#:tag "sec:mf-semantics"]{Compiling Metafunctions to Judgment Forms}
 
 The idea behind translating a metafunction to a judgment form is to generate
 a judgment that contains one rule for each clause of the metafunction, and add
@@ -138,8 +145,11 @@ Expanding out the final definition, it becomes the more complicated looking:
    
    }
 
-@section{The Constraint Solver}
+@section[#:tag "sec:solve"]{The Constraint Solver}
 
+@section[#:tag "sec:search"]{Search Heuristics}
+
+@section[#:tag "sec:pats"]{A Richer Pattern Language}
 
 @; leftover from previous draft...
 @; contains some useful stuff though

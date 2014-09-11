@@ -22,9 +22,9 @@
      'id "Identifier"
      (hc-append 
       40
-      (render-language pats #:nts '(P D J r π))
-      (render-language pats #:nts '(a s C e j))
-      (render-language pats #:nts '(p m x f)))))))
+      (render-language pats #:nts '(P J r a j))
+      (render-language pats #:nts '(π s C e d))
+      (render-language base-pats))))))
 
 (define (lang-pict)
   (with-atomic-rewriter
@@ -35,10 +35,10 @@
      'id "Identifier"
      (htl-append 
       40
-      (render-language pats #:nts '(P D J M r c a))
-      (render-language pats #:nts '(S C s e d))
-      (render-language pats #:nts '(Γ Π Σ Ω π))
-      (render-language pats #:nts '(p m x f j)))))))
+      (render-language base-pats)
+      (render-language pats)
+      (render-language base-pats/mf)
+      (render-language pats/mf))))))
 
 (define (compile-pict)
   (render-metafunction compile #:contract? #t))

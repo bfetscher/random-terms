@@ -5,7 +5,8 @@
 
 (provide (all-defined-out))
 
-(define-extended-language program pats
+(define-extended-language program pats/mf
+  #|
   (P ::= (D ...))
   (D ::= J M)
   (J ::= (r ...))
@@ -13,7 +14,9 @@
   (r ::= ((j p) ← a ...))
   (c ::= ((f p) = p))
   (a ::= (j p) d)
-  (d ::= (∀ (x ...) (p ≠ p))))
+  (d ::= (∀ (x ...) (p ≠ p)))
+|#
+)
 
 (define-metafunction program
   compile : P -> (J ...)

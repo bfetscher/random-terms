@@ -4,6 +4,45 @@
 
 (provide (all-defined-out))
 
+(define-language base-pats
+  (p (lst p ...)
+     m
+     x)
+  (m number)
+  (x variable-not-otherwise-mentioned))
+
+(define-extended-language base-pats/mf base-pats
+  (p ....
+     (f p)))
+
+(define-extended-language pats base-pats
+  (P (J ...))
+  (J (r ...))
+  (r ((j p) ← a ...))
+  (a (j p) d)
+  (S (P ⊢ (π ...) ∥ C))
+  (C s ⊥)
+  (s ((e ...) : (d ...)))
+  (π e d)
+  (e (p = p))
+  (d (∀ (x ...) (p ≠ p)))
+  (Γ (Π : Σ : Ω))
+  (Π (π ...))
+  (Σ (e ...))
+  (Ω (d ...))
+  (j id)
+  (id variable-not-otherwise-mentioned))
+
+(define-extended-language pats/mf pats
+  (p ....
+     (f p))
+  (P (D ...))
+  (D J M)
+  (M (c ...))
+  (c ((f p) = p))
+  (f id))
+
+#;
 (define-language pats
   (P (D ...))
   (D J M)

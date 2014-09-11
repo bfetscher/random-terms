@@ -20,7 +20,7 @@
 	      used in the example derivation.}
         @(center-rule stlc-min-lang-types)]
 
-@title{Example: Generating a Well-Typed Term}
+@title[#:tag "sec:deriv"]{Example: Generating a Well-Typed Term}
 
 This section gives an overview of our method for generating well-typed
 terms by working through the generation of an example term.
