@@ -18,20 +18,19 @@
 
 This section describes a complete model of the derivation generator.
 Following the process introduced in the previous section, the model uses
-a set of definitions consisting of judgment forms and metafunctions
+a set of definitions generalizing Redex's judgment forms and metafunctions
 along with an answer pattern as inputs and produces a random output
 derivation. The output derivation satisfies the definitions and
 its conclusion matches the answer pattern.
 
 To simplify our presentation, we start by describing a core model
-of the generation process that works on judgment forms only with
+of the generation process that with
 a simplified pattern language, omitting
 the addition of metafunctions, the details of the constraint solver,
 and the heuristics used to control the search.
-Metafunctions are added via a translation to judgment forms using
-appropriate disequational constraints, generalizing the process
-described for lookup in @secref["sec:deriv"]. The addition of
-metafunctions is described in @secref["sec:mf-semantics"].
+Metafunctions are added via a procedure generalizing the 
+process used for lookup in @secref["sec:deriv"], 
+which we examine in @secref["sec:mf-semantics"].
 The core model is a reduction relation that generates the complete
 set of derivations; in practice we use heuristics to find random
 valid derivations, as described in @secref["sec:search"].
@@ -51,21 +50,20 @@ Our model is based on the CLP semantics described in
 
 The grammar in @figure-ref["fig:clp-grammar"] describes the language on
 which the generator model operates.
-A program @(clpt P) consists of judgment form definitions @(clpt J).
-A judgment form consists of a set of rules @(clpt ((j p) ← a ...)), here written
+A program @(clpt P) consists of  definitions @(clpt D), which generalize both
+judgment forms and metafunctions in Redex.
+A definition consists of a set of rules @(clpt ((d p) ← a ...)), here written
 horizontally with the conclusion on the left and premises on the right. 
-The conclusion always has the form @(clpt (j p)), where @(clpt j) is the 
-name of the judgment and @(clpt p) is a pattern.
-The premises may consist of literal goals @(clpt (j p)) or disequational
-constraints @(clpt d). We discuss the operational meaning behind
-disequational constraints @(clpt d) in both @secref["sec:mf-semantics"] and 
+The conclusion always has the form @(clpt (d p)), where @(clpt d) is the 
+identifier of the definition and @(clpt p) is a pattern.
+The premises may consist of literal goals @(clpt (d p)) or disequational
+constraints @(clpt δ). We discuss the operational meaning behind
+disequational constraints @(clpt δ) in both @secref["sec:mf-semantics"] and 
 @secref["sec:solve"], but as their form suggests, they are essentially
 the negation of a equation, in which some variables are universally quantified.
 
 @figure["fig:clp-grammar"
-        @list{Grammar for the derivation generation model. Metafunctions
-              @(clpt M), which appear in patterns as applications @(clpt (f p)),
-              are explained along with disequational constraints @(clpt d) in section XXX}
+        @list{Grammar for the derivation generation model.}
               @(init-lang)]
 
 @figure["fig:clp-red"
@@ -75,30 +73,30 @@ the negation of a equation, in which some variables are universally quantified.
 
 The reduction relation shown in @figure-ref["fig:clp-red"] generates
 a complete tree of derivations for some program @(clpt P)
-with an initial goal of the form @(clpt (j p)), where
-@(clpt j) is the identifier of some judgment form
-defined in @(clpt P) and @(clpt p) is a pattern
+with an initial goal of the form @(clpt (d p)), where
+@(clpt d) is the identifier of some definition
+in @(clpt P) and @(clpt p) is a pattern
 that must match the conclusion of all derivations in the tree.
 The reduction acts on states of the form @(clpt (P ⊢ (π ...) ∥ C)),
 where @(clpt (π ...)) represents a stack of goals, which can
-be either literal goals of the form @(clpt (j p)), indicating a 
-judgment that must be satisfied to complete the derivation, or constraints 
+be either incomplete derivations of the form @(clpt (d p)), indicating a 
+goal that must be satisfied to complete the derivation, or constraints 
 that must be satisfied by adding them to the constraint store 
 @(clpt C) (if they are consistent with the store). A consistent
 constraint store @(clpt s) is just a set of 
 simplified@note{We discuss what simplified means in @secref["sec:solve"].} 
 equations and disequations.
 
-When a literal goal @(clpt (j p)) is the first element
+When a literal goal @(clpt (d p)) is the first element
 of the goal stack (as is the root case, when the initial goal is the
 sole element), then the @(clpt reduce) rule applies. For every
-rule of the form @(clpt ((j p_r) ← a_r ...)) in the program such
-that the judgment form id @(clpt j) agrees with the goal's, a reduction
+rule of the form @(clpt ((d p_r) ← a_r ...)) in the program such
+that the defintion's id @(clpt d) agrees with the goal's, a reduction
 step can occur that adds the constraint goal @(clpt (p = p_r)) 
-along with the literal goals @(clpt (a_r ...)) to the current
+along with the premises @(clpt (a_r ...)) to the current
 goal stack. (All variables in the rule are freshened before this takes place).
 This corresponds to attempting to satisfy the literal goal using a rule
-of the appropriate judgment, and adding the premises of that rule as new goals.
+of the appropriate definition, and adding the premises of that rule as new goals.
 
 When a constraint @(clpt π) is the first element in the goal
 stack, then the constraint solver (the @(clpt solve-cstr) metafunction) is called
