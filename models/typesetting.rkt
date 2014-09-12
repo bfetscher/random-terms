@@ -14,17 +14,18 @@
 ;; TODO: fix layout
 
 (define (init-lang)
-  (with-atomic-rewriter 
-   'number "Literal"
+  (with-font-params
    (with-atomic-rewriter 
-    'variable-not-otherwise-mentioned "Variable"
-    (with-atomic-rewriter
-     'id "Identifier"
-     (hc-append 
-      40
-      (render-language pats #:nts '(P D r a d))
-      (render-language pats #:nts '(π s C e δ))
-      (render-language base-pats))))))
+    'number "Literal"
+    (with-atomic-rewriter 
+     'variable-not-otherwise-mentioned "Variable"
+     (with-atomic-rewriter
+      'id "Identifier"
+      (hc-append 
+       40
+       (render-language pats #:nts '(P D r a d))
+       (render-language pats #:nts '(π s C e δ))
+       (render-language base-pats)))))))
 
 (define (lang-pict)
   (with-atomic-rewriter
@@ -59,7 +60,8 @@
   (render-metafunction extract-apps-p #:contract? #t))
 
 (define (clp-red-pict)
-  (render-reduction-relation R #:style 'vertical))
+  (with-font-params
+   (render-reduction-relation R #:style 'compact-vertical)))
 
 (define (solve-pict)
   (with-all-rewriters
@@ -88,16 +90,16 @@
    (vc-append 
     40
     (lang-pict)
-   (vl-append 40
-              (vl-append 10
-                         (compile-pict)
-                         (compile-M-pict))
-              (vl-append 10
-                         (extract-apps-J-pict)
-                         (extract-apps-r-pict)
-                         (extract-apps-a-pict)
-                         (extract-apps-p-pict))
-              (clp-red-pict)
-              (solve-cstr-pict)
-              (solve-pict)
-              (param-elim-pict)))))
+    (vl-append 40
+               (vl-append 10
+                          (compile-pict)
+                          (compile-M-pict))
+               (vl-append 10
+                          (extract-apps-J-pict)
+                          (extract-apps-r-pict)
+                          (extract-apps-a-pict)
+                          (extract-apps-p-pict))
+               (clp-red-pict)
+               (solve-cstr-pict)
+               (solve-pict)
+               (param-elim-pict)))))

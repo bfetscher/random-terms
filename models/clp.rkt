@@ -46,10 +46,6 @@
   [(freshen-l (∀ (x ...) (p_1 ≠ p_2)))
    (∀ (x ...) ((freshen-p (x ...) p_1) ≠ (freshen-p (x ...) p_2)))])
 
-(define clp-pict
-  (render-reduction-relation R
-                             #:style 'horizontal))
-
 (define test-P
   (term
    ((((j1 x_1) ←)
@@ -62,4 +58,4 @@
                     (():()))))
 
 (define-syntax-rule (clpt exp) 
-  (text-scale (render-term CLP exp)))
+  (with-font-params (render-term CLP exp)))

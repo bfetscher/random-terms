@@ -27,15 +27,12 @@
                           '("multicols")))
 
 (define (text-scale p)
-  (scale p 0.85))
+  (with-font-params p))
 
 (define-syntax-rule
   (with-font-params e)
-  #;(parameterize ([default-style "Menlo"]
-                 [grammar-style "CMU Serif"]
-                 [literal-style "CMU Serif"]
-                 [metafunction-style '(bold . "Menlo")]
-                 [non-terminal-style '(italic . "CMU Serif")])
-    e)
-  e)
+  (parameterize ([default-font-size 13]
+                 [metafunction-font-size 13]
+                 [default-font-size 13])
+    e))
 

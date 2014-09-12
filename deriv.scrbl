@@ -12,13 +12,13 @@
           "common.rkt")
 
 
-@(define (center-rule rule-pict [w-f 0.9] [h-f 0.9])
+@(define (center-rule rule-pict [w-f 1] [h-f 1])
    (centered (scale rule-pict w-f h-f)))
 
 @figure["fig:types"
         @list{Grammar and type system for the simply-typed lambda calculus
 	      used in the example derivation.}
-        @(center-rule stlc-min-lang-types)]
+        @(center-rule (stlc-min-lang-types))]
 
 @title[#:tag "sec:deriv"]{Example: Generating a Well-Typed Term}
 
@@ -116,8 +116,8 @@ the left branch of the derivation.
                                      (neqt x_^2 x_^1)
                                      (infer (eqt (lookup (x_^1 (τ_2^3 → τ_^2) •) x_^1) (τ_2^3 → τ_^2)))))
                        (typ (x_^2 τ_x^2 (x_^1 (τ_2^3 → τ_^2) •)) e_2^3 τ_2^3))))
-  0.85
-  0.9)
+  0.92
+  1)
 
 
 
@@ -126,7 +126,7 @@ example the application rule's @et[τ_2] appears in both premises),
 choices in one part of the tree affect the valid choices in other
 parts of the tree.  In our example, we couldn't satisfy the right
 branch of the derivation with the same choices we made on the left,
-since that would require @(text-scale (eqt τ_2^3 (τ_2^3 → τ_^2))).
+since that would require @(eqt τ_2^3 (τ_2^3 → τ_^2)).
 [[NOTE: discussed in section XXX.]]
 
 This time, however, the generator picks the variable rule and then
@@ -143,16 +143,15 @@ derivation:
                                      (infer (eqt (lookup (x_^1 (τ_x^2 → τ_^2) •) x_^1) (τ_x^2 → τ_^2)))))
                        (infer (typ (x_^2 τ_x^2 (x_^1 (τ_x^2 → τ_^2) •)) x_^2 τ_x^2)
                               (infer (eqt (lookup (x_^2 τ_x^2 (x_^1 (τ_x^2 → τ_^2) •)) x_^2) τ_x^2))))))
-  0.8
-  0.9)
+  0.86
+  1)
 
 To finish the construction of a random well-typed term, we simply pick
 appropriate random values for the non-terminals in the pattern:
 
 @(center-rule
   (text-scale
-   (typ • (λ (f (num → num)) (λ (a num) (f a))) ((num → num) → (num → num))))
-  0.95)
+   (typ • (λ (f (num → num)) (λ (a num) (f a))) ((num → num) → (num → num)))))
 
 We must be careful to obey the constraint that @et[x_1] and @et[x_2]
 are different, however, or else we would not get a well-typed

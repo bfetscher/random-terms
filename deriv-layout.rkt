@@ -22,43 +22,47 @@
 (define r (string->symbol "\u27E7"))
 
 (define-syntax-rule (typ env e t)
-  (hbl-append
-   (render-term STLC env)
-   space
-   (render-term STLC ⊢)
-   space
-   (render-term STLC e)
-   space
-   (render-term STLC :)
-   space
-   (render-term STLC t)))
+  (with-font-params
+   (hbl-append
+    (render-term STLC env)
+    space
+    (render-term STLC ⊢)
+    space
+    (render-term STLC e)
+    space
+    (render-term STLC :)
+    space
+    (render-term STLC t))))
 
 (define-syntax-rule (lkf x t)
-  (hbl-append
-   (render-term STLC lookup)
-   (render-term STLC ⟦)
-   (render-term STLC x)
-   (render-term STLC ⟧)
-   space
-   (render-term STLC =)
-   space
-   (render-term STLC t)))
+  (with-font-params
+   (hbl-append
+    (render-term STLC lookup)
+    (render-term STLC ⟦)
+    (render-term STLC x)
+    (render-term STLC ⟧)
+    space
+    (render-term STLC =)
+    space
+    (render-term STLC t))))
 
 (define-syntax-rule (eqt t1 t2)
-  (hbl-append
-   (render-term STLC t1)
-   space
-   (render-term STLC =)
-   space
-   (render-term STLC t2)))
+  (with-font-params
+   (hbl-append
+    (render-term STLC t1)
+    space
+    (render-term STLC =)
+    space
+    (render-term STLC t2))))
 
 (define-syntax-rule (neqt t1 t2)
-  (hbl-append
-   (render-term STLC t1)
-   space
-   (render-term STLC ≠)
-   space
-   (render-term STLC t2)))
+  (with-font-params
+   (hbl-append
+    (render-term STLC t1)
+    space
+    (render-term STLC ≠)
+    space
+    (render-term STLC t2))))
 
 (define-for-syntax infer-ignored '(• eqt neqt λ typ infer 
                                      ≠ lookup ⟦ ⟧ = : ⊢ →))
@@ -89,9 +93,9 @@
            (raise-syntax-error 'infer (format "new id(s): ~s, introduced" new-ids) #'r)))
        (if if-ids
            #`(syntax-parameterize ([infer-ids '#,(append a-ids if-ids)])
-                (infer/func #:h-dec m r . l))
+                                  (infer/func #:h-dec m r . l))
            #`(syntax-parameterize ([infer-ids '#,ids])
-                (infer/func #:h-dec m r . l))))]
+                                  (infer/func #:h-dec m r . l))))]
     [(infer #:h-dec m r . l)
      #'(infer #:h-dec m #:add-ids () r . l)]
     [(infer #:add-ids ais r . l)
@@ -117,18 +121,19 @@
               r)))
 
 (define (lookup-infer-pict)
-  (vc-append 10
-             (infer (eqt (lookup (x τ Γ) x) τ))
-             (infer (eqt (lookup • x) #f))
-             (infer (eqt (lookup (x_1 τ_x Γ) x_2) τ)
-                    (neqt x_1 x_2)
-                    (eqt (lookup Γ x_2) τ))))
+  (with-font-params
+   (vc-append 10
+              (infer (eqt (lookup (x τ Γ) x) τ))
+              (infer (eqt (lookup • x) #f))
+              (infer (eqt (lookup (x_1 τ_x Γ) x_2) τ)
+                     (neqt x_1 x_2)
+                     (eqt (lookup Γ x_2) τ)))))
 
 (define (lookup-both-pict)
   (define loc (blank))
   (define main
     (hc-append 20
-               lookup-pict
+               (lookup-pict)
                loc
                (lookup-infer-pict)))
   (pin-over main loc (lambda args (define-values (x y) (apply cc-find args)) (values x 0))
@@ -138,4 +143,4 @@
 (define-syntax-rule (stlc-term e)
   (render-term STLC e))
 
-(define-syntax-rule (et exp) (text-scale (stlc-term exp)))
+(define-syntax-rule (et exp) (with-font-params (stlc-term exp)))

@@ -5,7 +5,8 @@
          slideshow/pict
          redex/reduction-semantics
          redex/pict
-         redex/tut-subst)
+         redex/tut-subst
+         "../common.rkt")
 
 (provide (all-defined-out))
 
@@ -161,23 +162,28 @@
     (parameterize ([judgment-form-cases '(3 5)])
      (render-judgment-form tc)))))
 
-(define stlc-type-by-2s
+(define (stlc-type-by-2s)
+  (with-font-params
+   (with-rewriters
+    (hb-append 20
+               (parameterize ([judgment-form-cases '(0 2)])
+                 (render-judgment-form tc))
+               (parameterize ([judgment-form-cases '(1 3)])
+                 (render-judgment-form tc))))))
+
+(define (lookup-pict) 
   (with-rewriters
-   (hb-append 20
-    (parameterize ([judgment-form-cases '(0 2)])
-     (render-judgment-form tc))
-    (parameterize ([judgment-form-cases '(1 3)])
-     (render-judgment-form tc)))))
+   (with-font-params
+    (render-metafunction lookup))))
 
-(define lookup-pict (with-rewriters
-                     (render-metafunction lookup)))
-(define eval-pict (parameterize ([metafunction-style 'script]
-                                 [metafunction-pict-style
-                                  'left-right/beside-side-conditions])
-                    (with-rewriters
-                     (render-metafunction Eval))))
+(define (eval-pict) 
+  (parameterize ([metafunction-style 'script]
+                 [metafunction-pict-style
+                  'left-right/beside-side-conditions])
+    (with-rewriters
+     (render-metafunction Eval))))
 
-(define big-stlc-pict 
+(define (big-stlc-pict)
   (vc-append 10
              (hc-append 25
                         (vl-append 10
@@ -186,18 +192,18 @@
                                    (text "Reduction relation" "Menlo, bold")
                                    stlc-red-pict
                                    (text "Metafunctions" "Menlo, bold")
-                                   lookup-pict)
+                                   (lookup-pict))
                         (vl-append 10
                                    (text "Type judgment" "Menlo, bold")
                                    stlc-typing-pict))
              (text "Evaluation" "Menlo, bold")
              eval-pict))
 
-(define stlc-min-lang-types
+(define (stlc-min-lang-types)
   (with-rewriters
    (hc-append 30
-    (render-language STLC-min #:nts '(e τ Γ))
-    stlc-type-by-2s)))
+              (with-font-params (render-language STLC-min #:nts '(e τ Γ)))
+              (stlc-type-by-2s))))
 
 
 (define (well-typed? e)

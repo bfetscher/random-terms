@@ -147,6 +147,7 @@ Expanding out the final definition, it becomes the more complicated looking:
    }
 
 @section[#:tag "sec:solve"]{The Constraint Solver}
+2@clpt[2]
 
 @section[#:tag "sec:search"]{Search Heuristics}
 
