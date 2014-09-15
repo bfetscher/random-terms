@@ -64,7 +64,7 @@
     space
     (render-term STLC t2))))
 
-(define-for-syntax infer-ignored '(• eqt neqt λ typ infer 
+(define-for-syntax infer-ignored '(• et ⋮ eqt neqt λ typ infer 
                                      ≠ lookup ⟦ ⟧ = : ⊢ →))
 
 (define-syntax-parameter infer-ids #f)
