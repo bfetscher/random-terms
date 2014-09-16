@@ -60,7 +60,7 @@ The premises may consist of literal goals @(clpt (d p)) or disequational
 constraints @(clpt δ). We discuss the operational meaning behind
 disequational constraints @(clpt δ) in both @secref["sec:mf-semantics"] and 
 @secref["sec:solve"], but as their form suggests, they are essentially
-the negation of a equation, in which some variables are universally quantified.
+the negation of an equation, in which some variables are universally quantified.
 
 @figure["fig:clp-grammar"
         @list{Grammar for the derivation generation model.}
@@ -116,10 +116,10 @@ in @secref["sec:search"]) to search for random valid derivations.
 
 @section[#:tag "sec:mf-semantics"]{Compiling Metafunctions}
 
-The idea behind metafunction sompilation  is to generate a definition @(clpt D)
+The idea behind metafunction compilation  is to generate a definition @(clpt D)
 that contains one rule for each clause of the metafunction, and add
 constraints as necessary to ensure that the resulting rules are consistent with
-the original definition. As an illlustrative example, consider the following
+the original definition. As an illustrative example, consider the following
 metafunction definition, alongside some example applications:
 @(centered (f-ex-pict))
 The first clause matches any two-element list, and the second clause matches
@@ -158,8 +158,8 @@ pattern variable to be unified with the argument of @(g-p), to be
 we know that the argument will never be able to match the first clause.
 
 To see more clearly why we need the universal quantification here, consider
-that without it, we would have a constraint of the form @(neqt (p_1 p_2) p).
-However, we could then choose @(eqt (p_1 p_2) (1 2)) and @(eqt p (3 4)),
+that without it, we would have a constraint of the form @(fneqt (p_1 p_2) p).
+However, we could then choose @(feqt (p_1 p_2) (1 2)) and @(feqt p (3 4)),
 which satisfies the constraint but allows @(clpt p) to match the left-hand
 side of the first clause of @(g-p).
 

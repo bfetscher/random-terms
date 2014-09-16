@@ -33,7 +33,8 @@
          du-func-pict/contract
          param-elim-func-pict/contract
          eqt
-         neqt)
+         feqt
+         fneqt)
 
 
 (define lang-pict 
@@ -184,6 +185,9 @@
 (define-syntax-rule (feqt t1 t2)
   (eqt/lang FexL t1 t2))
 
+(define-syntax-rule (fneqt t1 t2)
+  (neqt/lang FexL t1 t2))
+
 (define-syntax-rule (∀neqt vars t1 t2)
   (with-font-params
    (hbl-append
@@ -200,8 +204,8 @@
     40
     (infer (eqt (g (p_1 p_2)) 2)
            (ghost (∀neqt (p_1 p_2) (p_1 p_2) p)))
-    (infer (cbl-superimpose (eqt (g p) 1)
-                            (ghost (eqt (g (p_1 p_2)) 2)))
+    (infer (cbl-superimpose (feqt (g p) 1)
+                            (ghost (feqt (g (p_1 p_2)) 2)))
            (∀neqt (p_1 p_2) (p_1 p_2) p)))))
 
 
