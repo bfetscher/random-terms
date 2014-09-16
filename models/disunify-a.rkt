@@ -62,6 +62,7 @@
    (clause-name "resimplify")])
 
 (define-metafunction U
+  solve : (π ...) Σ Ω -> C
   [(solve ((∀ (x ...) (p_1 ≠ p_2)) π ...) Σ (δ ...)) 
    (solve (π ...) Σ (δ ...))
    (where ⊥ (param-elim (solve ((p_1 = p_2)) () ()) (x ...)))
@@ -109,6 +110,7 @@
    (solve Π () ())])
 
 (define-metafunction U
+  param-elim : C (x ...) -> C
   [(param-elim (((x_0 = p_0) ... (x = p) (x_1 = p_1) ...) : ()) (x_2 ... x x_3 ...))
    (param-elim (((x_0 = p_0) ... (x_1 = p_1) ...) : ()) (x_2 ... x x_3 ...))
    (clause-name "param-elim-1")]

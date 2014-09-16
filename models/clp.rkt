@@ -27,6 +27,7 @@
         "reduce")))
 
 (define-metafunction CLP
+  solve-cstr : π Σ Ω -> C
   [(solve-cstr π (e ...) (δ ...))
    (solve ((do-subst π ((x = p) ...))) (e ...) (δ ...))
    (where ((x = p) ...) (e ...))])

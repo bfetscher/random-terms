@@ -47,6 +47,9 @@
 (define (compile-M-pict)
   (render-metafunction compile-M #:contract? #t))
 
+(define (compile-M-help-pict)
+  (render-metafunction compile-M-help #:contract? #t))
+
 (define (extract-apps-J-pict)
   (render-metafunction extract-apps-D #:contract? #t))
 
@@ -64,8 +67,9 @@
    (render-reduction-relation R #:style 'compact-vertical)))
 
 (define (solve-pict)
-  (with-all-rewriters
-   (render-metafunction solve #:contract? #t)))
+  (parameterize ([metafunction-pict-style 'up-down])
+    (with-all-rewriters
+     (render-metafunction solve #:contract? #t))))
 
 (define (solve-cstr-pict)
   (with-compound-rewriter
@@ -78,11 +82,12 @@
            (match inner2-lw
              [(lw (list _ x _ p _) _ _ _ _ _ _)
               (list "" pi "({" x " → " p "} ...)")])])]))
-   (render-metafunction solve-cstr)))
+   (render-metafunction solve-cstr #:contract? #t)))
 
 (define (param-elim-pict)
-  (with-all-rewriters
-   (render-metafunction param-elim #:contract? #t)))
+  (parameterize ([metafunction-pict-style 'up-down])
+    (with-all-rewriters
+     (render-metafunction param-elim #:contract? #t))))
 
 
 (define (big-pict)
@@ -93,7 +98,8 @@
     (vl-append 40
                (vl-append 10
                           (compile-pict)
-                          (compile-M-pict))
+                          (compile-M-pict)
+                          (compile-M-help-pict))
                (vl-append 10
                           (extract-apps-J-pict)
                           (extract-apps-r-pict)
