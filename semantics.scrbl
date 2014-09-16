@@ -61,6 +61,8 @@ constraints @(clpt δ). We discuss the operational meaning behind
 disequational constraints @(clpt δ) in both @secref["sec:mf-semantics"] and 
 @secref["sec:solve"], but as their form suggests, they are essentially
 the negation of an equation, in which some variables are universally quantified.
+The remaining variables in a disequation are (implicitly) existentially
+quantified, as are the variables in equations.
 
 @figure["fig:clp-grammar"
         @list{Grammar for the derivation generation model.}
@@ -171,7 +173,17 @@ previous clause.
 
 
 @section[#:tag "sec:solve"]{The Constraint Solver}
-2@clpt[2]
+
+The constraint solver maintains a set of equations and disequations between
+patterns, subject to the requirement that a substitution exists that satisfies
+the equations and does not violate the disequations. Whenever a new constraint
+is added to the set, consistency is checked again and the new set is simplified,
+if possible.
+
+The portion of the constraint solver that deals with equations simply performs
+familiar syntactic unification@~cite[baader-snyder], and the consistent set of 
+simplified equations is the usual result, a most general unifier for the equations 
+passed as arguments to the solver.
 
 @section[#:tag "sec:search"]{Search Heuristics}
 
