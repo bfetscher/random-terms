@@ -99,7 +99,11 @@
                           (extract-apps-r-pict)
                           (extract-apps-a-pict)
                           (extract-apps-p-pict))
-               (clp-red-pict)
-               (solve-cstr-pict)
-               (solve-pict)
-               (param-elim-pict)))))
+               (clp-red-pict)))))
+
+(define (big-pict-2)
+  (with-font-params
+   (vl-append 40 
+              (solve-cstr-pict)
+              (solve-pict)
+               (param-elim-pict))))
