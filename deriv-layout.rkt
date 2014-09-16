@@ -13,10 +13,14 @@
          lookup
          (all-defined-out)
          lookup-both-pict
-         stlc-term)
+         stlc-term
+         infer
+         eqt/lang
+         neqt/lang
+         space)
 
 (define space
-  (ghost (render-term STLC X)))
+  (ghost (render-term STLC x)))
 
 (define l (string->symbol "\u27E6"))
 (define r (string->symbol "\u27E7"))
@@ -46,23 +50,29 @@
     space
     (render-term STLC t))))
 
-(define-syntax-rule (eqt t1 t2)
+(define-syntax-rule (eqt/lang lang t1 t2)
   (with-font-params
    (hbl-append
-    (render-term STLC t1)
+    (render-term lang t1)
     space
-    (render-term STLC =)
+    (render-term lang =)
     space
-    (render-term STLC t2))))
+    (render-term lang t2))))
+
+(define-syntax-rule (eqt t1 t2)
+  (eqt/lang STLC t1 t2))
+
+(define-syntax-rule (neqt/lang lang t1 t2)
+  (with-font-params
+   (hbl-append
+    (render-term lang t1)
+    space
+    (render-term lang ≠)
+    space
+    (render-term lang t2))))
 
 (define-syntax-rule (neqt t1 t2)
-  (with-font-params
-   (hbl-append
-    (render-term STLC t1)
-    space
-    (render-term STLC ≠)
-    space
-    (render-term STLC t2))))
+  (neqt/lang STLC t1 t2))
 
 (define-for-syntax infer-ignored '(• et ⋮ eqt neqt λ typ infer 
                                      ≠ lookup ⟦ ⟧ = : ⊢ →))

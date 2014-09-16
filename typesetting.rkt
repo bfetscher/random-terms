@@ -6,6 +6,8 @@
          "models/pats.rkt"
          "models/disunify-a.rkt"
          "models/du-typesetting.rkt"
+         "common.rkt"
+         "deriv-layout.rkt"
          (rename-in "models/typesetting.rkt" 
                     [lang-pict lp])
          "metafunc-ctcs.rkt")
@@ -15,6 +17,8 @@
          f-pict
          J-L
          j-pict/p
+         g-p
+         g-jdg-pict
          f-ex-pict
          f-comp-pict
          c-ext-pict
@@ -27,7 +31,9 @@
          du-init-pict
          unify-func-pict/contract
          du-func-pict/contract
-         param-elim-func-pict/contract)
+         param-elim-func-pict/contract
+         eqt
+         neqt)
 
 
 (define lang-pict 
@@ -172,26 +178,54 @@
              (render-language c-ext)))
 
 
+(define (g-p)
+  (with-font-params (render-term FexL g)))
+
+(define-syntax-rule (feqt t1 t2)
+  (eqt/lang FexL t1 t2))
+
+(define-syntax-rule (∀neqt vars t1 t2)
+  (with-font-params
+   (hbl-append
+    (render-term FexL |(|)
+    (render-term FexL ∀)
+    (render-term FexL vars)
+    space
+    (neqt/lang FexL t1 t2)
+    (render-term FexL |)|))))
+
+(define (g-jdg-pict)
+  (with-font-params
+   (hbl-append 
+    40
+    (infer (eqt (g (p_1 p_2)) 2)
+           (ghost (∀neqt (p_1 p_2) (p_1 p_2) p)))
+    (infer (cbl-superimpose (eqt (g p) 1)
+                            (ghost (eqt (g (p_1 p_2)) 2)))
+           (∀neqt (p_1 p_2) (p_1 p_2) p)))))
+
+
 (define (f-ex-pict)
-  (define g-p (render-term FexL g))
-  (define (align p) 
-    (lbl-superimpose p (ghost (render-term FexL | (a b c))|))))
-  (hc-append 
-   40
-   (render-metafunction g)
-   (vl-append
-    #;(hbl-append (render-term FexL |(|)
-                g-p
-                (align (render-term FexL | (a))|))
-                (render-term FexL | → 1|))
-    (hbl-append (render-term FexL |(|)
-                g-p
-                (align (render-term FexL | (a b))|))
-                (render-term FexL | → 2|))
-    (hbl-append (render-term FexL |(|)
-                g-p
-                (render-term FexL | (a b c))|)
-                (render-term FexL | → 1|))))) 
+  (with-font-params
+   (let ()
+     (define (align p) 
+       (lbl-superimpose p (ghost (render-term FexL | (a b c))|))))
+     (hc-append 
+      40
+      (render-metafunction g)
+      (vl-append
+       #;(hbl-append (render-term FexL |(|)
+                     (g-p)
+                     (align (render-term FexL | (a))|))
+                     (render-term FexL | → 1|))
+       (hbl-append (render-term FexL |(|)
+                   (g-p)
+                   (align (render-term FexL | (a b))|))
+                   (render-term FexL | → 2|))
+       (hbl-append (render-term FexL |(|)
+                   (g-p)
+                   (render-term FexL | (a b c))|)
+                   (render-term FexL | → 1|)))))))
 
 (define j-pict/p
   (let

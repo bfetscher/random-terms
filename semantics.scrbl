@@ -114,10 +114,10 @@ Of course, in practice the generator does not generate the complete tree.
 We use a randomized search strategy with some simple heuristics (described
 in @secref["sec:search"]) to search for random valid derivations.
 
-@section[#:tag "sec:mf-semantics"]{Compiling Metafunctions to Judgment Forms}
+@section[#:tag "sec:mf-semantics"]{Compiling Metafunctions}
 
-The idea behind translating a metafunction to a judgment form is to generate
-a judgment that contains one rule for each clause of the metafunction, and add
+The idea behind metafunction sompilation  is to generate a definition @(clpt D)
+that contains one rule for each clause of the metafunction, and add
 constraints as necessary to ensure that the resulting rules are consistent with
 the original definition. As an illlustrative example, consider the following
 metafunction definition, alongside some example applications:
@@ -129,8 +129,10 @@ other form will reduce to @(clpt 1). To generate conclusions of the judgment
 corresponding to the second clause, we have to be careful not to generate
 anything that @italic{matches} the first.
 
-@;{This goes here:
-   Suppose p are patterns, t are terms (essentially patterns with no variables from this perspective), and s are substitutions (finite maps from variables to patterns). s(p) applies a substitution to a pattern.
+@;{
+Leaving this here for reference...
+Suppose p are patterns, t are terms (essentially patterns with no variables from this perspective), 
+and s are substitutions (finite maps from variables to patterns). s(p) applies a substitution to a pattern.
 
 1. Matching is easy to define:
 Matches[p,t] <=> \exists s, s(p) = t
@@ -138,13 +140,35 @@ Matches[p,t] <=> \exists s, s(p) = t
 2. If a match doesn’t exist:
 \not Matches[p,t] <=> \not \exists s, s)p) = t <=> \forall s, s(p) =/= t
 
-3: Finally, given two patterns, there is a notion of it being possible to cause the match to fail by instantiating the second pattern in some way, call it “excludable”:
+3: Finally, given two patterns, there is a notion of it being possible to cause the 
+match to fail by instantiating the second pattern in some way, call it “excludable”:
 Excludable[p_1, p_2] <=> \exists s, \not Matches[p_1, s(p_2)]
 
 Expanding out the final definition, it becomes the more complicated looking:
-\exists s_1, \forall s, s(p_1) =/= s_1(p_2)
-   
-   }
+\exists s_1, \forall s, s(p_1) =/= s_1(p_2)}
+
+For the metafunction @(g-p) shown above, then, the compiled form
+would be:
+@(centered (g-jdg-pict))
+The rule on the left captures the first clause of the metafunction,
+and the rule on the right captures the second. The added premise of
+the right-hand rule ensures that it is impossible for @(clpt p), the 
+pattern variable to be unified with the argument of @(g-p), to be
+@italic{any} two-element list. Thus when we choose the second rule,
+we know that the argument will never be able to match the first clause.
+
+To see more clearly why we need the universal quantification here, consider
+that without it, we would have a constraint of the form @(neqt (p_1 p_2) p).
+However, we could then choose @(eqt (p_1 p_2) (1 2)) and @(eqt p (3 4)),
+which satisfies the constraint but allows @(clpt p) to match the left-hand
+side of the first clause of @(g-p).
+
+In general, when compiling a metafunction clause, we add a disequational
+constraint for each previous clause in the metafunction definition.
+The disequality is between the left-hand side patterns of the previous
+clause and the current clause, and is quantified over all variables in the
+previous clause.
+
 
 @section[#:tag "sec:solve"]{The Constraint Solver}
 2@clpt[2]

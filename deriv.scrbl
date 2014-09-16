@@ -116,7 +116,7 @@ the left branch of the derivation.
                                      (neqt x_^2 x_^1)
                                      (infer (eqt (lookup (x_^1 (τ_2^3 → τ_^2) •) x_^1) (τ_2^3 → τ_^2)))))
                        (typ (x_^2 τ_x^2 (x_^1 (τ_2^3 → τ_^2) •)) e_2^3 τ_2^3))))
-  0.92
+  1
   1)
 
 
