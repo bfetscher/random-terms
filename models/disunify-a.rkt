@@ -63,11 +63,11 @@
 
 (define-metafunction U
   solve : (π ...) Σ Ω -> C
-  [(solve ((∀ (x ...) (p_1 ≠ p_2)) π ...) Σ (δ ...)) 
-   (solve (π ...) Σ (δ ...))
+  [(solve ((∀ (x ...) (p_1 ≠ p_2)) π ...) Σ Ω) 
+   (solve (π ...) Σ Ω)
    (where ⊥ (param-elim (solve ((p_1 = p_2)) () ()) (x ...)))
    (clause-name "empty constraint")]
-  [(solve ((∀ (x ...) (p_1 ≠ p_2)) π ...) Σ (δ ...)) 
+  [(solve ((∀ (x ...) (p_1 ≠ p_2)) π ...) Σ Ω) 
    ⊥
    (where (() : ()) (param-elim (solve ((p_1 = p_2)) () ()) (x ...)))
    (clause-name "failed constraint")]

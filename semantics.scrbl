@@ -9,7 +9,10 @@
           "citations.rkt"
           "typesetting.rkt"
           "models/clp.rkt"
-          (only-in "models/typesetting.rkt" clp-red-pict init-lang)
+          (only-in "models/typesetting.rkt" 
+                   clp-red-pict 
+                   init-lang
+                   solve-3-cases-pict)
           "pat-grammar.rkt"
           "common.rkt")
 
@@ -183,7 +186,40 @@ if possible.
 The portion of the constraint solver that deals with equations simply performs
 familiar syntactic unification@~cite[baader-snyder], and the consistent set of 
 simplified equations is the usual result, a most general unifier for the equations 
-passed as arguments to the solver.
+passed as arguments to the solver. For that reason, we concentrate on explaining
+only the parts of the solver that deal with disequational constraints.
+
+@figure["fig:solve-dq-cases"
+        @list{The contract of @(clpt solve) and its first three clauses, which add
+              new disequations to the simplified constraints.}
+        @(solve-3-cases-pict)]
+
+Our constraint solver is specified by the metafunction @(clpt solve), whose
+contract and first three clauses we show in @figure-ref["fig:solve-dq-cases"].
+It takes a list of constraints @(clpt (π ....)), a list of equations @(clpt Σ),
+and a list of disequations @(clpt Ω) as arguments, and produces the pair
+@(clpt (Σ : Ω)) as its result. The first argument acts as an accumulator, the
+elements of which are processed by @(clpt solve) in order, and contains
+a single constraint when calling @(clpt solve) from the generator. 
+@(clpt solve) depends on and enforces the invariant that @(clpt Σ) 
+and @(clpt Ω) are simplified.@note{We
+  discuss the meaning of simplified for @(clpt Ω) below.}
+
+The clauses shown in @figure-ref["fig:solve-dq-cases"] handle all of the
+cases that can occur when a disequation @(clpt (∀ (x ..) (p_1 ≠ p_2)))
+is the next constraint to be added. They all dispatch on the result
+of calling @(clpt solve) with the @italic{equation} @(clpt (p_1 = p_2)),
+and passing the result along with the quantified variables @(clpt (x ...))
+to the auxiliary metafunction @(clpt param-elim). The call to solve
+simply attempts to unify the two patterns and returns the resulting
+environment or fails. The first clause of @figure-ref["fig:solve-dq-cases"]
+deals with the case where this unification fails, in which case the two
+patterns can never be equal, so this constraint need not be added to the store
+and @(clpt solve) just recurs with the remaining constraints.
+
+@bold{Robby: Stop here. This section (3.2) is incomplete, but let me know
+      if you think it's going in a reasonable direction.}
+
 
 @section[#:tag "sec:search"]{Search Heuristics}
 

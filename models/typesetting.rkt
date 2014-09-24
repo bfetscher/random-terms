@@ -66,10 +66,21 @@
   (with-font-params
    (render-reduction-relation R #:style 'compact-vertical)))
 
-(define (solve-pict)
+(define (solve-pict [contract? #t])
   (parameterize ([metafunction-pict-style 'up-down])
     (with-all-rewriters
-     (render-metafunction solve #:contract? #t))))
+     (render-metafunction solve #:contract? contract?))))
+
+(define (solve-3-cases-pict)
+  (parameterize ([metafunction-cases '(0 1 2)])
+    (vc-append (solve-pict)
+               (render-term program ⋮))))
+
+(define (solve-case-4-pict)
+  (parameterize ([metafunction-cases '(3)])
+    (vc-append (render-term program ⋮)
+               (solve-pict #f)
+               (render-term program ⋮))))
 
 (define (solve-cstr-pict)
   (with-compound-rewriter
