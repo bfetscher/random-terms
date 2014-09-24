@@ -138,7 +138,7 @@
   (x any))
 
 (define-metafunction FexL
-  [(g (p_1 p_2)) 2]
+  [(g (lst p_1 p_2)) 2]
   [(g p) 1])
 
 (define f-comp-pict
@@ -202,11 +202,11 @@
   (with-font-params
    (hbl-append 
     40
-    (infer (eqt (g (p_1 p_2)) 2)
-           (ghost (∀neqt (p_1 p_2) (p_1 p_2) p)))
+    (infer (eqt (g (lst p_1 p_2)) 2)
+           (ghost (∀neqt (p_1 p_2) (lst p_1 p_2) p)))
     (infer (cbl-superimpose (feqt (g p) 1)
                             (ghost (feqt (g (p_1 p_2)) 2)))
-           (∀neqt (p_1 p_2) (p_1 p_2) p)))))
+           (∀neqt (p_1 p_2) (lst p_1 p_2) p)))))
 
 
 (define (f-ex-pict)
@@ -224,11 +224,11 @@
                      (render-term FexL | → 1|))
        (hbl-append (render-term FexL |(|)
                    (g-p)
-                   (align (render-term FexL | (a b))|))
+                   (align (render-term FexL | (lst a b))|))
                    (render-term FexL | → 2|))
        (hbl-append (render-term FexL |(|)
                    (g-p)
-                   (render-term FexL | (a b c))|)
+                   (render-term FexL | (lst a b c))|)
                    (render-term FexL | → 1|)))))))
 
 (define j-pict/p

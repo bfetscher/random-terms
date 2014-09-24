@@ -24,7 +24,7 @@ derivation. The output derivation satisfies the definitions and
 its conclusion matches the answer pattern.
 
 To simplify our presentation, we start by describing a core model
-of the generation process that with
+of the generation process with
 a simplified pattern language, omitting
 the addition of metafunctions, the details of the constraint solver,
 and the heuristics used to control the search.
@@ -160,16 +160,16 @@ pattern variable to be unified with the argument of @(g-p), to be
 we know that the argument will never be able to match the first clause.
 
 To see more clearly why we need the universal quantification here, consider
-that without it, we would have a constraint of the form @(fneqt (p_1 p_2) p).
-However, we could then choose @(feqt (p_1 p_2) (1 2)) and @(feqt p (3 4)),
+that without it, we would have a constraint of the form @(fneqt (lst p_1 p_2) p).
+However, we could then choose @(feqt (lst p_1 p_2) (lst 1 2)) and @(feqt p (lst 3 4)),
 which satisfies the constraint but allows @(clpt p) to match the left-hand
 side of the first clause of @(g-p).
 
 In general, when compiling a metafunction clause, we add a disequational
 constraint for each previous clause in the metafunction definition.
 The disequality is between the left-hand side patterns of the previous
-clause and the current clause, and is quantified over all variables in the
-previous clause.
+clause and the left-hand side of the current clause, and is quantified 
+over all variables in the previous clause's left-hand side.
 
 
 @section[#:tag "sec:solve"]{The Constraint Solver}
@@ -188,6 +188,17 @@ passed as arguments to the solver.
 @section[#:tag "sec:search"]{Search Heuristics}
 
 @section[#:tag "sec:pats"]{A Richer Pattern Language}
+
+
+
+
+
+
+
+
+
+
+
 
 @; leftover from previous draft...
 @; contains some useful stuff though
