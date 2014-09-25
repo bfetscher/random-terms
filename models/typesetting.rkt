@@ -72,9 +72,15 @@
      (render-metafunction solve #:contract? contract?))))
 
 (define (solve-3-cases-pict)
-  (parameterize ([metafunction-cases '(0 1 2)])
-    (vc-append (solve-pict)
-               (render-term program ⋮))))
+  (vc-append
+   (vl-append
+    (parameterize ([metafunction-cases '(0 1)]
+                   [metafunction-pict-style 'left-right])
+      (with-all-rewriters
+       (render-metafunction solve #:contract? #t)))
+    (parameterize ([metafunction-cases '(2)])
+      (solve-pict #f)))
+   (render-term program ⋮)))
 
 (define (solve-case-4-pict)
   (parameterize ([metafunction-cases '(3)])

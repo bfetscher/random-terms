@@ -12,7 +12,8 @@
           (only-in "models/typesetting.rkt" 
                    clp-red-pict 
                    init-lang
-                   solve-3-cases-pict)
+                   solve-3-cases-pict
+                   solve-case-4-pict)
           "pat-grammar.rkt"
           "common.rkt")
 
@@ -216,6 +217,48 @@ environment or fails. The first clause of @figure-ref["fig:solve-dq-cases"]
 deals with the case where this unification fails, in which case the two
 patterns can never be equal, so this constraint need not be added to the store
 and @(clpt solve) just recurs with the remaining constraints.
+
+If the unification succeeds, it returns an mgu for the patterns in question.
+This substitution is used to construct a simplified set of disequations 
+that excludes the mgu, since any substitution equating the two patterns must
+be an isntange of the mgu. 
+To add universal quantification, the resulting substitution is
+passed to @(clpt param-elim) which removes assignments to universally 
+quantified variables.
+Informally, we can justify this step by noting that cannot satisfy the
+diseuqation by instantiating any such variables, 
+so we are essentially restricting the substitution to
+the other (existentially quantified) variables, since we must be able to
+satisfy the disequation by picking values for them only.
+
+If, after @(clpt param-elim) is applied, an empty environment is the result
+(the second clause), then it is impossible to satisfy the disequation through
+assignments to existentially quantified variables, so @(clpt solve) fails.
+In the third case, @(clpt param-elim) returns some set of equations, which
+represent an idempotent substitution, i.e. are between variables and terms 
+which do not contain the variables on the left-hand side. The left-hand
+sides and the right-hand sides are combined into two lists which are used
+to construct a singled disequation. This is in essence taking the
+disjunction of the set of disequations the substitution represents, or
+requiring that one element of the substitution unifying the original
+patterns must be excluded.
+
+The final clause of @(clpt solve) that deals with disequations ensures 
+that all disequations remain in a simplified form:
+
+@(centered (solve-case-4-pict))
+
+Where simplified  means that all elements of the list in the left-hand
+pattern must be existentially quantified variables (the form
+returned by @(clpt param-elim)). Disequations of this form can always
+be satisfied by picking a value for one of the left-hand side variables
+that does not unify with the pattern in the same position 
+on the right-hand side.@note{We know such variables are unconstrained
+                             because the current substitution is always
+                             applied to the disequations.}
+If a disequation is ever in a form where it is not simplified, it is
+simply removed and added to the constraint accumulator where it will be
+processed again.
 
 @bold{Robby: Stop here. This section (3.2) is incomplete, but let me know
       if you think it's going in a reasonable direction.}
