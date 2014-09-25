@@ -82,8 +82,8 @@ with an initial goal of the form @(clpt (d p)), where
 @(clpt d) is the identifier of some definition
 in @(clpt P) and @(clpt p) is a pattern
 that must match the conclusion of all derivations in the tree.
-The reduction acts on states of the form @(clpt (P ⊢ (π ...) ∥ C)),
-where @(clpt (π ...)) represents a stack of goals, which can
+The reduction acts on states of the form @(clpt (P ⊢ (a ...) ∥ C)),
+where @(clpt (a ...)) represents a stack of goals, which can
 be either incomplete derivations of the form @(clpt (d p)), indicating a 
 goal that must be satisfied to complete the derivation, or constraints 
 that must be satisfied by adding them to the constraint store 
