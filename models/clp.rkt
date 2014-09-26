@@ -15,13 +15,12 @@
 (define R
   (reduction-relation 
    CLP
-   (--> (P ⊢ (π_g a ...) ∥ s)
+   (--> (P ⊢ (π_g a ...) ∥ ((e ...) : (δ ...)))
         (P ⊢ (a ...) ∥ C)
-        (where ((e ...) : (δ ...)) s)
         (where C (solve-cstr π_g (e ...) (δ ...)))
         "new constraint")
-   (--> (P ⊢ ((d p_g) a ...) ∥ s)
-        (P ⊢ ((p_f = p_g) a_f ... a ...) ∥ s)
+   (--> (P ⊢ ((d p_g) a ...) ∥ C)
+        (P ⊢ ((p_f = p_g) a_f ... a ...) ∥ C)
         (where (D_0 ... (r_0 ... ((d p_r) ← a_r ...) r_1 ...) D_1 ...) P)
         (where ((d p_f) ← a_f ...) (freshen ((d p_r) ← a_r ...)))
         "reduce")))
