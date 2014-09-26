@@ -25,10 +25,6 @@
   (π e δ)
   (e (p = p))
   (δ (∀ (x ...) (p ≠ p)))
-  (Γ (Π : Σ : Ω))
-  (Π (π ...))
-  (Σ (e ...))
-  (Ω (δ ...))
   (d id)
   (id variable-not-otherwise-mentioned))
 

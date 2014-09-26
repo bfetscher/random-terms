@@ -26,8 +26,15 @@
         (where C (solve-cstr (p_f = p_g) (e ...) (δ ...)))
         "reduce")))
 
+#|
+  (Γ (Π : Σ : Ω))
+  (Π (π ...))
+  (Σ (e ...))
+  (Ω (δ ...))
+|#
+
 (define-metafunction CLP
-  solve-cstr : π Σ Ω -> C
+  solve-cstr : π (e ...) (δ ...) -> C
   [(solve-cstr π (e ...) (δ ...))
    (solve ((do-subst π ((x = p) ...))) (e ...) (δ ...))
    (where ((x = p) ...) (e ...))])

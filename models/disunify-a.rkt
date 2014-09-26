@@ -18,18 +18,18 @@
    #f])
 
 (define-metafunction U
-  unify : Π Σ Ω -> (Σ : Ω) or ⊥
-  [(unify ((p = p) π ...) Σ Ω)
-   (unify (π ...) Σ  Ω)
+  unify : Π (e ...) (δ ...) -> ((e ...) : (δ ...)) or ⊥
+  [(unify ((p = p) π ...) (e ...) (δ ...))
+   (unify (π ...) (e ...)  (δ ...))
    (clause-name "identity")]
-  [(unify (((lst p_1 ..._1) = (lst p_2  ..._1)) π ...) Σ Ω)
-   (unify ((p_1 = p_2) ... π ...) Σ Ω)
+  [(unify (((lst p_1 ..._1) = (lst p_2  ..._1)) π ...) (e ...) (δ ...))
+   (unify ((p_1 = p_2) ... π ...) (e ...) (δ ...))
    (side-condition (term (length-eq (p_1...) (p_2  ...))))
    (clause-name "decompose")]
-  [(unify (((lst p_1 ..._!_1) = (lst p_2 ..._!_1)) π ...) Σ Ω)
+  [(unify (((lst p_1 ..._!_1) = (lst p_2 ..._!_1)) π ...) (e ...) (δ ...))
    ⊥
    (clause-name "clash")]
-  [(unify ((x = p) π ...) Σ Ω)
+  [(unify ((x = p) π ...) (e ...) (δ ...))
    ⊥
    (side-condition (term (occurs? x p)))
    (side-condition (term (different x p)))
@@ -37,54 +37,54 @@
   [(unify ((x = p) π ...) (π_s ...) (δ ...))
    (unify ((subst-c/dq π x p) ...) ((x = p) (subst-c/dq π_s x p) ...) ((subst-c/dq δ x p) ...))
    (clause-name "variable elim")]
-  [(unify ((p = x) π ...) Σ Ω)
-   (unify ((x = p) π ...) Σ Ω)
+  [(unify ((p = x) π ...) (e ...) (δ ...))
+   (unify ((x = p) π ...) (e ...) (δ ...))
    (clause-name "orient")]
-  [(unify () Σ Ω)
-   (Σ : Ω)
+  [(unify () (e ...) (δ ...))
+   ((e ...) : (δ ...))
    (clause-name "success")])
 
 (define-metafunction/extension unify U
-  [(DU ((∀ (x ...) (p_1 ≠ p_2)) π ...) Σ (δ ...)) 
+  [(DU ((∀ (x ...) (p_1 ≠ p_2)) π ...) (e ...) (δ ...)) 
    ⊥
    (where (() : ()) (param-elim (unify ((p_1 = p_2)) () ()) (x ...)))
    (clause-name "failed constraint")]
-  [(DU ((∀ (x ...) (p_1 ≠ p_2)) π ...) Σ (δ ...)) 
-   (DU (π ...) Σ (δ ...))
+  [(DU ((∀ (x ...) (p_1 ≠ p_2)) π ...) (e ...) (δ ...)) 
+   (DU (π ...) (e ...) (δ ...))
    (where ⊥ (param-elim (unify ((p_1= p_2)) () ()) (x ...)))
    (clause-name "empty constraint")]
-  [(DU ((∀ (x ...) (p_1 ≠ p_2)) π ...) Σ (δ ...))
-   (DU (π ...) Σ ((∀ (x ...) ((lst x_s ...) ≠ (lst p_s ...))) δ ...))
+  [(DU ((∀ (x ...) (p_1 ≠ p_2)) π ...) (e ...) (δ ...))
+   (DU (π ...) (e ...) ((∀ (x ...) ((lst x_s ...) ≠ (lst p_s ...))) δ ...))
    (where (((x_s = p_s) ...) : ()) (param-elim (unify ((p_1 = p_2)) () ()) (x ...)))
    (clause-name "simplify constraint")]
-  [(DU (π ...) Σ (π_1 ... (∀ (x_a ...) ((lst (lst p_1 ...) ... ) ≠ (lst p_2  ...))) π_2 ...))
-   (DU ((∀ (x_a ...) ((lst (lst p_1 ...) ...) ≠ (lst p_2  ...))) π ...) Σ (π_1 ... π_2 ...))
+  [(DU (π ...) (e ...) (π_1 ... (∀ (x_a ...) ((lst (lst p_1 ...) ... ) ≠ (lst p_2  ...))) π_2 ...))
+   (DU ((∀ (x_a ...) ((lst (lst p_1 ...) ...) ≠ (lst p_2  ...))) π ...) (e ...) (π_1 ... π_2 ...))
    (clause-name "resimplify")])
 
 (define-metafunction U
-  solve : (π ...) Σ Ω -> C
-  [(solve ((∀ (x ...) (p_1 ≠ p_2)) π ...) Σ Ω) 
-   (solve (π ...) Σ Ω)
+  solve : (π ...) (e ...) (δ ...) -> C
+  [(solve ((∀ (x ...) (p_1 ≠ p_2)) π ...) (e ...) (δ ...)) 
+   (solve (π ...) (e ...) (δ ...))
    (where ⊥ (param-elim (solve ((p_1 = p_2)) () ()) (x ...)))
    (clause-name "empty constraint")]
-  [(solve ((∀ (x ...) (p_1 ≠ p_2)) π ...) Σ Ω) 
+  [(solve ((∀ (x ...) (p_1 ≠ p_2)) π ...) (e ...) (δ ...)) 
    ⊥
    (where (() : ()) (param-elim (solve ((p_1 = p_2)) () ()) (x ...)))
    (clause-name "failed constraint")]
-  [(solve ((∀ (x ...) (p_1 ≠ p_2)) π ...) Σ (δ ...))
-   (solve (π ...) Σ ((∀ (x ...) ((lst x_s ...) ≠ (lst p_s ...))) δ ...))
+  [(solve ((∀ (x ...) (p_1 ≠ p_2)) π ...) (e ...) (δ ...))
+   (solve (π ...) (e ...) ((∀ (x ...) ((lst x_s ...) ≠ (lst p_s ...))) δ ...))
    (where (((x_s = p_s) ...) : ()) (param-elim (solve ((p_1 = p_2)) () ()) (x ...)))
    (clause-name "simplify constraint")]
-  [(solve (π ...) Σ (π_1 ... (∀ (x_a ...) ((lst (lst p_1 ...) ... ) ≠ (lst p_2  ...))) π_2 ...))
-   (solve ((∀ (x_a ...) ((lst (lst p_1 ...) ...) ≠ (lst p_2  ...))) π ...) Σ (π_1 ... π_2 ...))
+  [(solve (π ...) (e ...) (π_1 ... (∀ (x_a ...) ((lst (lst p_1 ...) ... ) ≠ (lst p_2  ...))) π_2 ...))
+   (solve ((∀ (x_a ...) ((lst (lst p_1 ...) ...) ≠ (lst p_2  ...))) π ...) (e ...) (π_1 ... π_2 ...))
    (clause-name "resimplify")]
-  [(solve ((p = p) π ...) Σ Ω)
-   (solve (π ...) Σ  Ω)
+  [(solve ((p = p) π ...) (e ...) (δ ...))
+   (solve (π ...) (e ...)  (δ ...))
    (clause-name "identity")]
-  [(solve (((lst p_1  ..._1) = (lst p_2 ..._1)) π ...) Σ Ω)
-   (solve ((p_1 = p_2) ... π ...) Σ Ω)
+  [(solve (((lst p_1  ..._1) = (lst p_2 ..._1)) π ...) (e ...) (δ ...))
+   (solve ((p_1 = p_2) ... π ...) (e ...) (δ ...))
    (clause-name "decompose")]
-  [(solve ((x = p) π ...) Σ Ω)
+  [(solve ((x = p) π ...) (e ...) (δ ...))
    ⊥
    (side-condition (term (occurs? x p)))
    (side-condition (term (different x p)))
@@ -92,22 +92,22 @@
   [(solve ((x = p) π ...) (π_s ...) (δ ...))
    (solve ((subst-c/dq π x p) ...) ((x = p) (subst-c/dq π_s x p) ...) ((subst-c/dq δ x p) ...))
    (clause-name "variable elim")]
-  [(solve ((p = x) π ...) Σ Ω)
-   (solve ((x = p) π ...) Σ Ω)
+  [(solve ((p = x) π ...) (e ...) (δ ...))
+   (solve ((x = p) π ...) (e ...) (δ ...))
    (clause-name "orient")]
-  #;[(solve (((lst p_2 ..._!_1) = (lst p_1 ..._!_1)) π ...) Σ Ω)
+  #;[(solve (((lst p_2 ..._!_1) = (lst p_1 ..._!_1)) π ...) (e ...) (δ ...))
    ⊥
    (clause-name "clash")]
-  [(solve ((p_1 = p_2) π ...) Σ Ω) ;; everything valid is covered?
+  [(solve ((p_1 = p_2) π ...) (e ...) (δ ...)) ;; everything valid is covered?
    ⊥
    (clause-name "clash")]
-  [(solve () Σ Ω)
-   (Σ : Ω)
+  [(solve () (e ...) (δ ...))
+   ((e ...) : (δ ...))
    (clause-name "success")])
 
 (define-metafunction U
-  [(disunify Π)
-   (solve Π () ())])
+  [(disunify (π ...))
+   (solve (π ...) () ())])
 
 (define-metafunction U
   param-elim : C (x ...) -> C
@@ -122,8 +122,8 @@
   [(param-elim ⊥ (x ...))
    ⊥
    (clause-name "param-elim-failed")]
-  [(param-elim (Σ : ()) (x ...))
-   (Σ : ())
+  [(param-elim ((e ...) : ()) (x ...))
+   ((e ...) : ())
    (clause-name "param-elim-finish")])
 
 (define-metafunction U
@@ -149,14 +149,6 @@
 (define-metafunction U
   [(∨ (p_l ≠ p_r) ...)
    ((lst p_l ...) ≠ (lst p_r ...))])
-
-(define-metafunction U
-  [(unify_d (Π : Σ_0) (x ...))
-   (orient-params (() : Σ_1) (x ...))
-   (where (Σ_1 : Ω) (unify Π Σ_0 ()))]
-  [(unify_d (Π : Σ) (x ...))
-   (orient-params ⊥ (x ...))
-   (where ⊥ (unify Π Σ ()))])
 
 (define-metafunction U
   [(orient-params ⊥ (x ...))
@@ -185,11 +177,6 @@
    ((subst x p p_1) ≠ (subst x p p_2))]
   [(subst-c/dq (∀ (x_a ...) (p_1 ≠ p_2)) x p)
    (∀ (x_a ...) ((subst x p p_1) ≠ (subst x p p_2)))])
-
-(define-metafunction U
-  env->dq : Σ -> (∨ (x ≠ p) ...)
-  [(env->dq ((x = p) ...))
-   (∨ (x ≠ p) ...)])
 
 (define-metafunction U
   [(different any_1 any_1) #f]
@@ -299,13 +286,13 @@
   (values new-v vars))
    
 (define-syntax-rule (utest a b)
-  (redex-let U ([(Π_1 : Σ_1 : Ω_1) a])
+  (redex-let U ([((π_1 (... ...)) : (e_1 (... ...)) : (δ_1 (... ...))) a])
              (test-equal
-              (term (solve Π_1 Σ_1 Ω_1))
+              (term (solve (π_1 (... ...)) (e_1 (... ...)) (δ_1 (... ...))))
               (if (equal? b '⊥) 
                   '⊥
-                  (redex-let U ([(Π_2 : Σ_2 : Ω_2) b])
-                             (term (Σ_2 : Ω_2)))))))
+                  (redex-let U ([((π_2 (... ...)) : (e_2 (... ...)) : (δ_2 (... ...))) b])
+                             (term ((e_2 (... ...)) : (δ_2 (... ...)))))))))
 
 
 (module+ 
