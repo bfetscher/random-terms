@@ -24,7 +24,7 @@
       (hc-append 
        40
        (render-language pats #:nts '(P D r a d))
-       (render-language pats #:nts '(π s C e δ))
+       (render-language pats #:nts '(π C e δ))
        (render-language base-pats)))))))
 
 (define (lang-pict)
