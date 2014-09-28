@@ -6,6 +6,7 @@
           scriblib/footnote
           (only-in slideshow/pict scale-to-fit scale)
           (only-in "models/stlc.rkt" stlc-type-pict-horiz)
+          (only-in pict vl-append)
           "citations.rkt"
           "typesetting.rkt"
           "models/clp.rkt"
@@ -13,7 +14,8 @@
                    clp-red-pict 
                    init-lang
                    solve-3-cases-pict
-                   solve-case-4-pict)
+                   solve-case-4-pict
+                   solve-cstr-pict)
           "pat-grammar.rkt"
           "common.rkt")
 
@@ -52,6 +54,15 @@ a randomized search space.
 Our model is based on the CLP semantics described in 
 @citet[clp-semantics].
 
+@figure["fig:clp-grammar"
+        @list{Grammar for the derivation generation model.}
+              @(init-lang)]
+
+@figure["fig:clp-red"
+        @list{Reduction rules describing generation of the complete
+              tree of derivations.}
+        @(clp-red-pict)]
+
 The grammar in @figure-ref["fig:clp-grammar"] describes the language on
 which the generator model operates.
 A program @(clpt P) consists of  definitions @(clpt D), which generalize both
@@ -67,15 +78,6 @@ disequational constraints @(clpt δ) in both @secref["sec:mf-semantics"] and
 the negation of an equation, in which some variables are universally quantified.
 The remaining variables in a disequation are (implicitly) existentially
 quantified, as are the variables in equations.
-
-@figure["fig:clp-grammar"
-        @list{Grammar for the derivation generation model.}
-              @(init-lang)]
-
-@figure["fig:clp-red"
-        @list{Reduction rules describing generation of the complete
-              tree of derivations.}
-        @(clp-red-pict)]
 
 The reduction relation shown in @figure-ref["fig:clp-red"] generates
 a complete tree of derivations for some program @(clpt P)
@@ -176,6 +178,14 @@ clause and the left-hand side of the current clause, and is quantified
 over all variables in the previous clause's left-hand side.
 
 
+@figure["fig:solve-dq-cases"
+        @list{The contract of @(clpt solve) and its first three clauses, which add
+              new disequations to the simplified constraints.}
+        @(vl-append
+          20
+          (solve-cstr-pict)
+          (solve-3-cases-pict))]
+
 @section[#:tag "sec:solve"]{The Constraint Solver}
 
 The constraint solver maintains a set of equations and disequations between
@@ -189,11 +199,6 @@ familiar syntactic unification@~cite[baader-snyder], and the consistent set of
 simplified equations is the usual result, a most general unifier for the equations 
 passed as arguments to the solver. For that reason, we concentrate on explaining
 only the parts of the solver that deal with disequational constraints.
-
-@figure["fig:solve-dq-cases"
-        @list{The contract of @(clpt solve) and its first three clauses, which add
-              new disequations to the simplified constraints.}
-        @(solve-3-cases-pict)]
 
 Our constraint solver is specified by the metafunction @(clpt solve), whose
 contract and first three clauses we show in @figure-ref["fig:solve-dq-cases"].
