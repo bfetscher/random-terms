@@ -19,7 +19,7 @@
           "pat-grammar.rkt"
           "common.rkt")
 
-@title{Derivation Generation in Detail}
+@title[#:tag "sec:semantics"]{Derivation Generation in Detail}
 
 
 This section describes a complete model of the derivation generator.
@@ -38,21 +38,19 @@ Metafunctions are added via a procedure generalizing the
 process used for lookup in @secref["sec:deriv"], 
 which we examine in @secref["sec:mf-semantics"].
 The core model is a reduction relation that generates the complete
-set of derivations; in practice we use heuristics to find random
+set of derivations; in our implementation we use heuristics to find random
 valid derivations, as described in @secref["sec:search"].
 During the generation process, when a new constraint
 (in our case, an equation or disequation) is encountered,
 the current set of consistent constraints is checked against it and
 updated using the constraint solver, discussed in @secref["sec:solve"].
 Finally, in @secref["sec:pats"], we address extending the generator
-beyond the model to support more of Redex's full pattern language.
-
+beyond the model to support more of Redex's pattern language.
 
 The derivation generator is in essence a constraint logic
 programming system using a specialized constraint solver and
 a randomized search space.
-Our model is based on the CLP semantics described in 
-@citet[clp-semantics].
+Our model is based on @citet[clp-semantics]'s CLP semantics.
 
 @figure["fig:clp-grammar"
         @list{Grammar for the derivation generation model.}
@@ -65,7 +63,7 @@ Our model is based on the CLP semantics described in
 
 The grammar in @figure-ref["fig:clp-grammar"] describes the language on
 which the generator model operates.
-A program @(clpt P) consists of  definitions @(clpt D), which generalize both
+A program @clpt[P] consists of  definitions @clpt[D], which generalize both
 judgment forms and metafunctions in Redex.
 A definition consists of a set of rules @(clpt ((d p) ← a ...)), here written
 horizontally with the conclusion on the left and premises on the right. 
@@ -77,7 +75,7 @@ disequational constraints @(clpt δ) in both @secref["sec:mf-semantics"] and
 @secref["sec:solve"], but as their form suggests, they are essentially
 the negation of an equation, in which some variables are universally quantified.
 The remaining variables in a disequation are (implicitly) existentially
-quantified, as are the variables in equations.
+quantified, just like the variables in equations.
 
 The reduction relation shown in @figure-ref["fig:clp-red"] generates
 a complete tree of derivations for some program @(clpt P)
@@ -87,13 +85,14 @@ in @(clpt P) and @(clpt p) is a pattern
 that must match the conclusion of all derivations in the tree.
 The reduction acts on states of the form @(clpt (P ⊢ (a ...) ∥ C)),
 where @(clpt (a ...)) represents a stack of goals, which can
-be either incomplete derivations of the form @(clpt (d p)), indicating a 
+either be incomplete derivations of the form @(clpt (d p)), indicating a 
 goal that must be satisfied to complete the derivation, or constraints 
 that must be satisfied by adding them to the constraint store 
-@(clpt C) (if they are consistent with the store). A consistent
+@(clpt C) (assuming they are consistent with the store). A consistent
 constraint store @(clpt s) is just a set of 
-simplified@note{We discuss what simplified means in @secref["sec:solve"].} 
-equations and disequations.
+simplified equations and disequations (the precise definition of ``simplified''
+is given in @secref["sec:solve"]).
+
 
 When a literal goal @(clpt (d p)) is the first element
 of the goal stack (as is the root case, when the initial goal is the

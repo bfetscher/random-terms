@@ -29,14 +29,15 @@
  
  Our motivation for building these random terms is to more
  effectively falsify conjectures as part of the tool-support
- for semantics models specified in Redex and we evaluate it
- against the best available methods for Redex, as well as
- the best available, custom well-typed term generator. Our
+ for semantics models specified in Redex. Accordingly, we evaluate 
+ the generator
+ against the other available methods for Redex, as well as
+ the best available custom well-typed term generator. Our
  results show that our new generator is much more effective
  than generation techniques that do not explicitly take
  types into account and is competitive with generation
  techniques that do, even though they are specialized to
- a particular type-system and our approach is generic.
+ particular type-systems and ours is not.
 }
 
 @include-section{intro.scrbl}

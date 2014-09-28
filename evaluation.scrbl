@@ -7,7 +7,7 @@
           "citations.rkt"
           "results/res-pict.rkt")
 
-@title{Evaluating the Generator}
+@title[#:tag "sec:evaluation"]{Evaluating the Generator}
 
 This chapter describes the evaluation of the new random
 generator. The generator was evaluated by comparing it to 

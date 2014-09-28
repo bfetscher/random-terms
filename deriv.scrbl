@@ -26,7 +26,7 @@ This section gives an overview of our method for generating well-typed
 terms by working through the generation of an example term.
 Our method receives as input a type derivation judgment form definition
 like the one in @figure-ref["fig:types"], a simply-typed
-lambda calculus with a single base type of natural numbers (@tt{num}).
+lambda calculus with a single base type of natural numbers.
 It then builds a random derivation and reads the term off of the derivation.
 
 We start with a goal pattern, which the conclusion of the generated
@@ -37,19 +37,20 @@ and then randomly select one of the type rules. This time, the
 generator selects the abstraction rule, which requires us to
 specialize the values of @et[e_^0] and
 @et[τ_^0] in order to agree with the form of the
-rule's conclusion. 
+rule's conclusion.
 To do that, we first generate a new set of
-variables based on the variables in the application rule and
-then unify the conclusion with our schema. We put a super-script 
-1 on these variables to indicate that they were introduced in the
-first step of the derivation building process.
+variables to replace the ones in the application rule and then
+unify our conclusion with the specialized application rule. We put a super-script 
+@et[1] on these variables to indicate that they were introduced in the
+first step of the derivation building process, giving us this partial derivation.
 @(center-rule
   (infer (typ • (λ (x_^1 τ_x^1) e_^1) (τ_x^1 → τ_^1))
          (typ (x_^1 τ_x^1 •) e_^1 τ_^1)))
 The abstraction rule has added a new premise we must now satisfy, so
 we follow the same process with the premise. If the generator selects
 the abstraction rule again and then the application rule, 
-we arrive at the following partial derivation:
+we arrive at the following partial derivation, where the superscripts
+on the variables indicate the step where they were generated:
 @(center-rule
   (infer #:h-dec min (typ • (λ (x_^1 τ_x^1) (λ (x_^2 τ_x^2) (e_1^3 e_2^3))) (τ_x^1 → (τ_x^2 → τ_^2)))
          (infer  #:h-dec min (typ (x_^1 τ_x^1 •) (λ (x_^2 τ_x^2) (e_1^3 e_2^3)) (τ_x^2 → τ_^2))
@@ -88,7 +89,7 @@ appears in the right-most rule and ensures that we only recur with the
 tail of the environment when the head does not contain the variable
 we're looking for. The general process is more complex than
 @et[lookup] suggests and we return to this issue
-in @secref["sec:metafunctions"].
+in @secref["sec:mf-semantics"].
 
 If we now choose that last rule, we have this partial derivation:
 
@@ -124,10 +125,9 @@ the left branch of the derivation.
 Because pattern variables can appear in two different premises (for
 example the application rule's @et[τ_2] appears in both premises),
 choices in one part of the tree affect the valid choices in other
-parts of the tree.  In our example, we couldn't satisfy the right
+parts of the tree.  In our example, we cannot satisfy the right
 branch of the derivation with the same choices we made on the left,
 since that would require @(eqt τ_2^3 (τ_2^3 → τ_^2)).
-[[NOTE: discussed in section XXX.]]
 
 This time, however, the generator picks the variable rule and then
 picks the first clause of the @et[lookup], resulting in the complete
@@ -155,8 +155,8 @@ Too wide to scrunch
                        (infer (typ (x_^2 τ_x^2 (x_^1 (τ_x^2 → τ_^2) •)) x_^2 τ_x^2)
                               (infer (eqt (lookup (x_^2 τ_x^2 (x_^1 (τ_x^2 → τ_^2) •)) x_^2) τ_x^2)))))))
 
-To finish the construction of a random well-typed term, we simply pick
-appropriate random values for the non-terminals in the pattern:
+To finish the construction of a random well-typed term, we choose
+random values for the remaining, unconstrained variables, e.g.:
 
 @(center-rule
   (text-scale

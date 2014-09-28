@@ -8,80 +8,44 @@
 
 @title{Introduction}
 
-Testing is universally considered an integral part of the
-software development process. It is less widely accepted
-as a useful tool for semantics engineering, where
-formal proofs are the tool of choice. Since its
-inception, PLT Redex@~cite[redex] has challenged that assumption
-as a lightweight workbench for semantics modeling
-that utilizes testing, and specifically random
-testing, as an integral part of its toolbox. 
-Redex has used a straightforward approach to random 
-generation which has been effective as a basis for random testing.
-In this work, we enrich Redex's random testing capabilities
-by providing automatic support for generating terms
-that satisfy relations and functions defined in Redex. We then 
-evaluate the potential of this approach to random
-testing by comparing it to several others.
+Redex employs property-based testing to help semantics engineers
+uncover bugs in their models. Semantics engineers write down
+properties that should hold of their models (e.g., type soundness)
+and Redex can randomly generate example expressions in an attempt
+to falsify those properties. Until recently, Redex used a naive
+generation strategy: it simply randomly picks productions from
+the grammar of the language to build a term and then checks to
+see if that falsifies the property of interest. For untyped models,
+or when the model author writes a ``fixing'' function
+that makes expressions more likely to type-check (e.g., by writing
+a post-processing function that binds free variables),
+this naive technique is 
+effective@~cite[run-your-research klein-masters racket-virtual-machine].
+With typed models, however, such randomly generated terms rarely
+type check and so the testing process spends most of its
+time rejecting ill-typed terms instead actually testing the model.
 
-Redex already provides significant support for random testing,
-inspired by the well-known Haskell testing library
-QuickCheck@~cite[QuickCheck]. After writing a model of a
-semantics in Redex, users can define a property they wish
-to test and Redex is then able to randomly generate terms
-satisfying a grammar which are used as test cases to try
-to falsify the property. This approach, and variations thereof,
-has been used to successfully find counterexamples in many 
-real-world semantics models.@~cite[run-your-research klein-masters racket-virtual-machine]
-However, it suffers from the deficiency that useful
-testable properties usually have a precondition that is
-stricter than the language grammar, so that
-the vast majority of randomly generated terms are not
-valid test cases.
+To make testing more effective, we built a solver that randomly
+generates solutions to problems involving a subset of first-order logic
+with equality and inequality constraints and we use that to
+transform a Redex specification of a type-system into a random
+generator of well-typed terms.
 
-To attempt to remedy this situation, we have extended
-Redex's ``push-button'' approach beyond language grammars 
-with the capability to generate random terms from richer
-relations on terms that are frequently defined as
-part of a semantic model. Type systems are a primary
-example. With the old method of random testing, Redex
-users would frequently define a property of @italic{well-typed}
-terms, and then generate terms from a grammar, using 
-the type system as a filter before testing the property.
-The new approach allows test cases to be automatically
-generated from the type system as the user has
-already written it down.
+We evaluate our generator on a benchmark suite of buggy Redex
+models and show that it is far more effective than the 
+naive approach and less effective than the fixing function approach,
+but still competitive. We also evaluate our generator against
+the best known, hand-tuned generator for random well-typed 
+terms@~cite[palka-workshop]. This generator handles only a language
+closely matched to the GHC Haskell compiler intermediate language, but is better
+than our generic generator, overall. We compared it head-to-head
+on two buggy versions of GHC and our generator is able to find one
+of the bugs, but not the other one. We carefully explore why and
+discuss the issues in @secref["sec:evaluation"].
 
-This approach to generating random terms is more complex
-and necessarily slower than using a grammar, so it
-is not immediately clear that it is more effective
-as a testing method. To evaluate its effectiveness,
-we first compared it to the old method on a
-benchmark of Redex models to which we have added
-bugs by hand. We find that
-the new generator does much better than this naive
-grammar-based method, finding bugs the old method does
-not and in much shorter times.
-
-Because of the relative scarcity
-of test cases generated from a grammar, most
-Redex testing efforts incldue hand-written extensions
-to the automatic random generation capabilities.
-We have also compared the new random generator against
-a handcrafted test generator of this type, a pre-existing
-model of the Racket Virtual Machine@~cite[racket-virtual-machine] 
-that already had many hours of development effort 
-behind it. The handcrafted generator
-performs better than the new method, finding bugs
-faster and exposing one bug the new generator wasn't
-able to find.
-
-This dissertation continues by giving a more
-in-depth tour of Redex and its test and random
-generation capabilities in Chapter 2. 
-Chapter 3 then explains how the new method of
-random term generation works, and Chapter 4
-details work to evaluate its effectiveness.
-Chapter 5 discusses related work and
-Chapter 6 concludes.
-
+@Secref["sec:deriv"] works through the generation process for a
+specific model in order to explain our method. 
+@Secref["sec:semantics"] gives a small, formal model of our generator. 
+@Secref["sec:evaluation"] explains the evaluation of our generator.
+@Secref["sec:related"] discusses related work and @secref["sec:conclusion"]
+concludes.

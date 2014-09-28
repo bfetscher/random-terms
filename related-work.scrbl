@@ -6,7 +6,7 @@
           slideshow/pict
           "citations.rkt")
 
-@title{Related Work}
+@title[#:tag "sec:related"]{Related Work}
 
 Quickcheck@~cite[QuickCheck] is a widely-used library
 for random testing in Haskell. It provides combinators supporting the
@@ -85,3 +85,7 @@ They are able to encode a lambda calculi with polymorphically-typed
 constants and discuss its possible extension to even more challenging
 languages such as System-F. This method has the potential to be used
 for random generation by decoding randomly chosen bit strings.
+
+@citet[equational-problems]
+@citet[colmerauer-inequations]
+@citet[pattern-unification]
