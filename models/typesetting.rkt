@@ -67,39 +67,29 @@
    (render-reduction-relation R #:style 'compact-vertical)))
 
 (define (solve-pict [contract? #t])
-  (parameterize ([metafunction-pict-style 'up-down])
+  (parameterize ([metafunction-pict-style 'left-right/vertical-side-conditions])
     (with-all-rewriters
      (render-metafunction solve #:contract? contract?))))
 
-(define (solve-3-cases-pict)
-  (vc-append
-   (vl-append
-    (parameterize ([metafunction-cases '(0 1)]
-                   [metafunction-pict-style 'left-right])
-      (with-all-rewriters
-       (render-metafunction solve #:contract? #t)))
-    (parameterize ([metafunction-cases '(2)])
-      (solve-pict #f)))
-   (render-term program ⋮)))
+(define (dis-solve-pict [contract? #t])
+  (parameterize ([metafunction-pict-style 'left-right/vertical-side-conditions])
+    (with-all-rewriters
+     (render-metafunction dis-solve #:contract? contract?))))
 
-(define (solve-case-4-pict)
-  (parameterize ([metafunction-cases '(3)])
-    (vc-append (render-term program ⋮)
-               (solve-pict #f)
-               (render-term program ⋮))))
+(define (unify-pict [contract? #t])
+  (parameterize ([metafunction-pict-style 'left-right/vertical-side-conditions])
+    (with-all-rewriters
+     (render-metafunction unify #:contract? contract?))))
 
-(define (solve-cstr-pict)
-  (with-compound-rewriter
-   'do-subst
-   (λ (lws)
-     (match lws
-       [(list _ _ pi inner-lw _)
-        (match inner-lw
-          [(lw (list _ inner2-lw ellips _) _ _ _ _ _ _)
-           (match inner2-lw
-             [(lw (list _ x _ p _) _ _ _ _ _ _)
-              (list "" pi "{(" x " ...) → (" p " ...)}")])])]))
-   (render-metafunction solve-cstr #:contract? #t)))
+(define (disunify-pict [contract? #t])
+  (parameterize ([metafunction-pict-style 'left-right/vertical-side-conditions])
+    (with-all-rewriters
+     (render-metafunction disunify #:contract? contract?))))
+
+(define (check-pict [contract? #t])
+  (parameterize ([metafunction-pict-style 'left-right/vertical-side-conditions])
+    (with-all-rewriters
+     (render-metafunction check #:contract? contract?))))
 
 (define (param-elim-pict)
   (parameterize ([metafunction-pict-style 'up-down])
@@ -126,7 +116,10 @@
 
 (define (big-pict-2)
   (with-font-params
-   (vl-append 40 
-              (solve-cstr-pict)
+   (vl-append 40
               (solve-pict)
-               (param-elim-pict))))
+              (dis-solve-pict)
+              (unify-pict)
+              (disunify-pict)
+              (check-pict)
+              (param-elim-pict))))

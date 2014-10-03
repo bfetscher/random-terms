@@ -144,6 +144,6 @@
 (define (pp t a b c)
   (redex-let program ([(P ⊢ any_1 ∥ any_2) t])
              ((dynamic-require 'redex 'default-pretty-printer)
-               (term (any_1 ∥ any_2)) a b c)))
+              (term (any_1 ∥ any_2)) a b c)))
 
 

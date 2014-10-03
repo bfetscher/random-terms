@@ -7,7 +7,6 @@
 
 (provide with-all-rewriters
          unify-func-pict
-         du-func-pict
          param-elim-func-pict
          unify-init-pict
          du-init-pict)
@@ -74,8 +73,6 @@
     ['not-in not-in-rewriter]
     ['subst-c/dq subst-rewriter]
     ['subst-dq subst-rewriter]
-    ['unify unify-rewriter]
-    ['DU metafuc-brace-rw]
     ['length-eq length-eq-rewriter])
    e))
 
@@ -83,17 +80,6 @@
   (parameterize ([metafunction-pict-style 'left-right/beside-side-conditions])
     (with-all-rewriters
           (render-metafunction unify))))
-
-(define (du-func-pict)
-  (vl-append
-   (parameterize ([metafunction-pict-style 'left-right]
-                  [metafunction-cases '(0 1)])
-     (with-all-rewriters
-      (render-metafunction DU)))
-   (parameterize ([metafunction-pict-style 'up-down]
-                  [metafunction-cases '(2 3)])
-     (with-all-rewriters
-      (render-metafunction DU)))))
 
 (define (param-elim-func-pict)
   (vl-append
