@@ -1,7 +1,7 @@
 #lang racket
 
 (require redex/reduction-semantics
-         rackunit
+         (except-in rackunit check)
          "program.rkt"
          "disunify-a.rkt"
          "clp.rkt")

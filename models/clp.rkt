@@ -17,31 +17,14 @@
    CLP
    (--> (P ⊢ (δ_g a ...) ∥ ((e ...) : (δ ...)))
         (P ⊢ (a ...) ∥ C)
-        (where C (solve-cstr δ_g (e ...) (δ ...)))
+        (where C (dis-solve δ_g (e ...) (δ ...)))
         "new constraint")
    (--> (P ⊢ ((d p_g) a ...) ∥ ((e ...) : (δ ...)))
         (P ⊢ (a_f ... a ...) ∥ C)
         (where (D_0 ... (r_0 ... ((d p_r) ← a_r ...) r_1 ...) D_1 ...) P)
         (where ((d p_f) ← a_f ...) (freshen ((d p_r) ← a_r ...)))
-        (where C (solve-cstr (p_f = p_g) (e ...) (δ ...)))
+        (where C (solve (p_f = p_g) (e ...) (δ ...)))
         "reduce")))
-
-#|
-  (Γ (Π : Σ : Ω))
-  (Π (π ...))
-  (Σ (e ...))
-  (Ω (δ ...))
-|#
-
-(define-metafunction CLP
-  solve-cstr : π (e ...) (δ ...) -> C
-  [(solve-cstr π (e ...) (δ ...))
-   (solve ((do-subst π ((x = p) ...))) (e ...) (δ ...))
-   (where ((x = p) ...) (e ...))])
-
-(define-metafunction CLP
-  [(do-subst π ((x = p) ...))
-   ,(apply-subst (term ((x = p) ...)) (term π))])
 
 (define-metafunction CLP
   [(freshen ((d p_c) ← a ...))

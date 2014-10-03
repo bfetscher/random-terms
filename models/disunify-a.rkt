@@ -21,9 +21,10 @@
   solve : e (e ...) (δ ....) -> ((e ...) : (δ ...)) or ⊥
   [(solve e_? (e ...) (δ ...))
    ((e_2 ...) : (δ_2 ...))
-   (where (e_2 ...) (unify e_? (e ...)))
-   (where ((x = p) ...) (e_2 ...))
-   (where (δ_2 ...) (check ((apply-subst δ (x ...) (p ...)) ...)))]
+   (where ((x = p) ...) (e ...))
+   (where (e_2 ...) (unify ((apply-subst e_? ((x = p) ...))) (e ...)))
+   (where ((x_2 = p_2) ...) (e_2 ...))
+   (where (δ_2 ...) (check ((apply-subst δ ((x_2 = p_2) ...)) ...)))]
   [(solve e_? (e ...) (δ ...))
    ⊥])
 
@@ -32,8 +33,8 @@
   [(dis-solve δ_? (e ...) (δ ...))
    ((e ...) : (δ_2 ...))
    (where ((x = p) ...) (e ...))
-   (where δ_0 (disunify (apply-subst δ_? (x ...) (p ...))))
-   (where (δ_2 ...) (δ_0 δ ...))]
+   (where any_0 (disunify (apply-subst δ_? ((x = p) ...))))
+   (where (δ_2 ...) (check (any_0 δ ...)))]
   [(dis-solve δ_? (e ...) (δ ...))
    ⊥])
 
