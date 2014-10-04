@@ -24,13 +24,11 @@
          c-ext-pict
          r-lang-pict
          unify-func-pict
-         du-func-pict
          param-elim-func-pict
          du-pict
          unify-init-pict
          du-init-pict
          unify-func-pict/contract
-         du-func-pict/contract
          param-elim-func-pict/contract
          eqt
          feqt
@@ -292,16 +290,8 @@
   (vl-append
    (metafunction-signature
    "U" "P" "S" "D" 
-   (or-alts "(S : D)" (text "⊥")))
-   (unify-func-pict)))
-
-(define (du-func-pict/contract)
-  (vl-append
-   (metafunction-signature
-   "DU" "P" "S" "D" 
-   (or-alts "(S : D)" (text "⊥")))
-   (du-func-pict)))
-
+   (or-alts "(S : D)" (text "⊥")))))
+   
 (define (param-elim-func-pict/contract)
   (vl-append
    (metafunction-signature
@@ -312,5 +302,4 @@
 
 (define (du-pict)
   (vl-append 20
-             (du-func-pict/contract)
              (param-elim-func-pict/contract)))

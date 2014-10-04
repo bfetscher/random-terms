@@ -31,8 +31,8 @@
 
 (define-syntax-rule
   (with-font-params e)
-  (parameterize ([default-font-size 13]
-                 [metafunction-font-size 13]
-                 [default-font-size 13])
+  (parameterize ([default-font-size 12]
+                 [metafunction-font-size 12]
+                 [default-font-size 12])
     e))
 

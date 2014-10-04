@@ -10,12 +10,7 @@
           "citations.rkt"
           "typesetting.rkt"
           "models/clp.rkt"
-          (only-in "models/typesetting.rkt" 
-                   clp-red-pict 
-                   init-lang
-                   solve-3-cases-pict
-                   solve-case-4-pict
-                   solve-cstr-pict)
+          (except-in "models/typesetting.rkt" lang-pict)
           "pat-grammar.rkt"
           "common.rkt")
 
@@ -177,13 +172,21 @@ clause and the left-hand side of the current clause, and is quantified
 over all variables in the previous clause's left-hand side.
 
 
-@figure["fig:solve-dq-cases"
-        @list{The contract of @(clpt solve) and its first three clauses, which add
-              new disequations to the simplified constraints.}
+@figure["fig:solve-unify"
+        @list{Metafunctions used to handle equational constraints.}
         @(vl-append
           20
-          (solve-cstr-pict)
-          (solve-3-cases-pict))]
+          (solve-pict)
+          (unify-pict))]
+
+@figure["fig:dis-solve-disunify"
+        @list{Metafunctions used to process disequational constaints.}
+        @(vl-append
+          20
+          (dis-solve-pict)
+          (disunify-pict)
+          (check-pict)
+          (param-elim-func-pict))]
 
 @section[#:tag "sec:solve"]{The Constraint Solver}
 
@@ -250,7 +253,7 @@ patterns must be excluded.
 The final clause of @(clpt solve) that deals with disequations ensures 
 that all disequations remain in a simplified form:
 
-@(centered (solve-case-4-pict))
+@(centered "deleted")
 
 Where simplified  means that all elements of the list in the left-hand
 pattern must be existentially quantified variables (the form
