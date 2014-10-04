@@ -178,10 +178,10 @@
   [(param-elim ((x_0 = p_0) ... (x = p) (x_1 = p_1) ...) (x_2 ... x x_3 ...))
    (param-elim ((x_0 = p_0) ... (x_1 = p_1) ...) (x_2 ... x x_3 ...))
    (clause-name "param-elim-1")]
-  [(param-elim ((x_0 = p_0) ... (x_l = x) π_2 ...) (x_2 ... x x_3 ...))
-   (param-elim ((x_0 = p_0) ... (x_1 = x_2) ... π_3 ...) (x_2 ... x x_3 ...))
+  [(param-elim ((x_0 = p_0) ... (x_1 = x) π_2 ...) (x_2 ... x x_3 ...))
+   (param-elim ((x_0 = p_0) ... π_3 ...) (x_2 ... x x_3 ...))
    (side-condition (term (not-in x (p_0 ...))))
-   (where ((x_1 = x_2) ... π_3 ...) (elim-x x (x_l = x) π_2 ...))
+   (where (π_3 ...) (elim-x x (x_1 = x) π_2 ...))
    (clause-name "param-elim-2")]
   [(param-elim ⊥ (x ...))
    ⊥
