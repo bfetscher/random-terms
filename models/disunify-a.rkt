@@ -181,7 +181,7 @@
   [(param-elim ((x_0 = p_0) ... (x_1 = x) π_2 ...) (x_2 ... x x_3 ...))
    (param-elim ((x_0 = p_0) ... π_3 ...) (x_2 ... x x_3 ...))
    (side-condition (term (not-in x (p_0 ...))))
-   (where (π_3 ...) (elim-x x (x_1 = x) π_2 ...))
+   (where (π_3 ...) (elim-x x ((x_1 = x) π_2 ...)))
    (clause-name "param-elim-2")]
   [(param-elim ⊥ (x ...))
    ⊥
@@ -191,7 +191,7 @@
    (clause-name "param-elim-finish")])
 
 (define-metafunction U
-  [(elim-x x π ...)
+  [(elim-x x (π ...))
    ,(elim-x-func (term x) (term (π ...)))])
 
 (define (elim-x-func x eqs)
@@ -205,7 +205,6 @@
                 [l (in-list lhss)]
                 #:when (not (eq? r l)))
       `(,r = ,l))
-    
     to-keep)
    #:key
    (match-lambda [`(,r = ,l) (set r l)])))
