@@ -13,6 +13,11 @@
 
 ;; TODO: fix layout
 
+(define-syntax-rule (with-rewriters/params body)
+  (with-font-params
+   (with-all-rewriters
+    body)))
+
 (define (init-lang)
   (with-font-params
    (with-atomic-rewriter 
@@ -42,59 +47,74 @@
       (render-language pats/mf))))))
 
 (define (compile-pict)
-  (render-metafunction compile #:contract? #t))
+  (with-rewriters/params
+   (render-metafunction compile #:contract? #t)))
 
 (define (compile-M-pict)
-  (render-metafunction compile-M #:contract? #t))
+  (with-rewriters/params
+   (render-metafunction compile-M #:contract? #t)))
 
 (define (compile-M-help-pict)
-  (render-metafunction compile-M-help #:contract? #t))
+  (with-rewriters/params
+   (render-metafunction compile-M-help #:contract? #t)))
 
 (define (extract-apps-J-pict)
-  (render-metafunction extract-apps-D #:contract? #t))
+  (with-rewriters/params
+   (render-metafunction extract-apps-D #:contract? #t)))
 
 (define (extract-apps-r-pict)
-  (render-metafunction extract-apps-r #:contract? #t))
+  (with-rewriters/params
+   (render-metafunction extract-apps-r #:contract? #t)))
 
 (define (extract-apps-a-pict)
-  (render-metafunction extract-apps-a #:contract? #t))
+  (with-rewriters/params
+   (render-metafunction extract-apps-a #:contract? #t)))
 
 (define (extract-apps-p-pict)
-  (render-metafunction extract-apps-p #:contract? #t))
+  (with-rewriters/params
+   (render-metafunction extract-apps-p #:contract? #t)))
 
 (define (clp-red-pict)
-  (with-font-params
+  (with-rewriters/params
    (render-reduction-relation R #:style 'compact-vertical)))
 
 (define (solve-pict [contract? #t])
   (parameterize ([metafunction-pict-style 'left-right/vertical-side-conditions])
-    (with-all-rewriters
+    (with-rewriters/params
      (render-metafunction solve #:contract? contract?))))
 
 (define (dis-solve-pict [contract? #t])
   (parameterize ([metafunction-pict-style 'left-right/vertical-side-conditions])
-    (with-all-rewriters
+    (with-rewriters/params
      (render-metafunction dis-solve #:contract? contract?))))
 
 (define (unify-pict [contract? #t])
   (parameterize ([metafunction-pict-style 'left-right])
-    (with-all-rewriters
+    (with-rewriters/params
      (render-metafunction unify #:contract? contract?))))
 
 (define (disunify-pict [contract? #t])
   (parameterize ([metafunction-pict-style 'left-right])
-    (with-all-rewriters
+    (with-rewriters/params
      (render-metafunction disunify #:contract? contract?))))
 
 (define (check-pict [contract? #t])
   (parameterize ([metafunction-pict-style 'left-right])
-    (with-all-rewriters
+    (with-rewriters/params
      (render-metafunction check #:contract? contract?))))
 
+
 (define (param-elim-pict)
-  (parameterize ([metafunction-pict-style 'up-down])
-    (with-all-rewriters
-     (render-metafunction param-elim #:contract? #t))))
+  (with-rewriters/params
+   (vl-append
+    (parameterize ([metafunction-pict-style 'up-down]
+                   [metafunction-cases '(0 1)])
+      (with-all-rewriters
+       (render-metafunction param-elim)))
+    (parameterize ([metafunction-pict-style 'left-right]
+                   [metafunction-cases '(2 3)])
+      (with-all-rewriters
+       (render-metafunction param-elim))))))
 
 
 (define (big-pict)

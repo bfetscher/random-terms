@@ -53,7 +53,8 @@
    (side-condition (term (different x p)))
    (clause-name "occurs")]
   [(unify ((x = p) e ...) (e_s ...))
-   (unify ((subst-c/dq e x p) ...) ((x = p) (subst-c/dq e_s x p) ...))
+   (unify ((subst-c/dq e x p) ...) 
+          ((x = p) (subst-c/dq e_s x p) ...))
    (clause-name "variable elim")]
   [(unify ((p = x) e ...) (e_s ...))
    (unify ((x = p) e ...) (e_s ...))

@@ -172,21 +172,14 @@ clause and the left-hand side of the current clause, and is quantified
 over all variables in the previous clause's left-hand side.
 
 
-@figure["fig:solve-unify"
-        @list{Metafunctions used to handle equational constraints.}
+
+
+@figure["fig:solve-dissolve"
+        @list{The interface of the constraint solver.}
         @(vl-append
           20
           (solve-pict)
-          (unify-pict))]
-
-@figure["fig:dis-solve-disunify"
-        @list{Metafunctions used to process disequational constaints.}
-        @(vl-append
-          20
-          (dis-solve-pict)
-          (disunify-pict)
-          (check-pict)
-          (param-elim-func-pict))]
+          (dis-solve-pict))]
 
 @section[#:tag "sec:solve"]{The Constraint Solver}
 
@@ -196,11 +189,41 @@ the equations and does not violate the disequations. Whenever a new constraint
 is added to the set, consistency is checked again and the new set is simplified,
 if possible.
 
-The portion of the constraint solver that deals with equations simply performs
+@Figure-ref["fig:solve-dissolve"] shows the two metafunctions, @clpt[solve]
+and @clpt[dis-solve], that constitute the interface of the constraint solver 
+as seen by the derivation generator. Both take a single new constraint (an
+equation in @clpt[solve]'s case, and a disequation in @clpt[dis-solve]'s) along
+with the current consistent constraints and attempt to add the new constraint.
+Both first apply the current substitution@note{The simplified form of
+   the equational constraints is an idempotent substitution.} to the
+new constraint. @clpt[solve] then updates the equational constraints with
+@clpt[unify] and applies the resulting substitution to the disequational
+constraints. @clpt[dis-solve], on the other hand, checks for consistency (and
+simplifies) with @clpt[disunify]. Both then pass the disequational constaints
+set to @clpt[check] for a final consistency check and simplification.
+
+@figure["fig:unify"
+        @list{@clpt[unify] adds a new equation to the equational constraints. (The first
+               argument is assumed to be up to date with the current substitution.)}
+        @(unify-pict)]
+
+The portion of the constraint solver that deals with equations, specified by
+@clpt[unify] as shown in @figure-ref["fig:unify"], simply performs
 familiar syntactic unification@~cite[baader-snyder], and the consistent set of 
-simplified equations is the usual result, a most general unifier for the equations 
-passed as arguments to the solver. For that reason, we concentrate on explaining
-only the parts of the solver that deal with disequational constraints.
+simplified equations is the usual result, a most general unifier (mgu) for the equations 
+passed as arguments to the solver. In our definition of @clpt[unify], the first
+argument acts as an accumulator for equations to be processed, and the second
+holds a set of simplified equations in the form of an idempotent substitutions.
+The details are well known and standard. For that reason, we concentrate on explaining
+the parts of the solver that deal with disequational constraints in detail.
+
+@figure["fig:disunify"
+        @list{Metafunctions used to process disequational constaints.}
+        @(vl-append
+          20
+          (disunify-pict)
+          (check-pict)
+          (param-elim-pict))]
 
 Our constraint solver is specified by the metafunction @(clpt solve), whose
 contract and first three clauses we show in @figure-ref["fig:solve-dq-cases"].

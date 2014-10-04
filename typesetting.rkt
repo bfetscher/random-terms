@@ -24,7 +24,6 @@
          c-ext-pict
          r-lang-pict
          unify-func-pict
-         param-elim-func-pict
          du-pict
          unify-init-pict
          du-init-pict
@@ -297,7 +296,7 @@
    (metafunction-signature
    "param-elim" (or-alts "(S : ())" (text "⊥")) "(x ...)" 
    (or-alts "(S : ())" (text "⊥")))
-   (param-elim-func-pict)))
+   (param-elim-pict)))
 
 
 (define (du-pict)
