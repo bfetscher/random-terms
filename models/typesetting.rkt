@@ -77,17 +77,17 @@
      (render-metafunction dis-solve #:contract? contract?))))
 
 (define (unify-pict [contract? #t])
-  (parameterize ([metafunction-pict-style 'left-right/vertical-side-conditions])
+  (parameterize ([metafunction-pict-style 'left-right])
     (with-all-rewriters
      (render-metafunction unify #:contract? contract?))))
 
 (define (disunify-pict [contract? #t])
-  (parameterize ([metafunction-pict-style 'left-right/vertical-side-conditions])
+  (parameterize ([metafunction-pict-style 'left-right])
     (with-all-rewriters
      (render-metafunction disunify #:contract? contract?))))
 
 (define (check-pict [contract? #t])
-  (parameterize ([metafunction-pict-style 'left-right/vertical-side-conditions])
+  (parameterize ([metafunction-pict-style 'left-right])
     (with-all-rewriters
      (render-metafunction check #:contract? contract?))))
 

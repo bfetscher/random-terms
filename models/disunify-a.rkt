@@ -22,9 +22,9 @@
   [(solve e_? (e ...) (δ ...))
    ((e_2 ...) : (δ_2 ...))
    (where ((x = p) ...) (e ...))
-   (where (e_2 ...) (unify ((apply-subst e_? ((x = p) ...))) (e ...)))
+   (where (e_2 ...) (unify ((apply-subst e_? (x ...) (p ...))) (e ...)))
    (where ((x_2 = p_2) ...) (e_2 ...))
-   (where (δ_2 ...) (check ((apply-subst δ ((x_2 = p_2) ...)) ...)))]
+   (where (δ_2 ...) (check ((apply-subst δ (x ...) (p ...)) ...)))]
   [(solve e_? (e ...) (δ ...))
    ⊥])
 
@@ -33,7 +33,7 @@
   [(dis-solve δ_? (e ...) (δ ...))
    ((e ...) : (δ_2 ...))
    (where ((x = p) ...) (e ...))
-   (where any_0 (disunify (apply-subst δ_? ((x = p) ...))))
+   (where any_0 (disunify (apply-subst δ_? (x ...) (p ...))))
    (where (δ_2 ...) (check (any_0 δ ...)))]
   [(dis-solve δ_? (e ...) (δ ...))
    ⊥])
@@ -93,13 +93,13 @@
 
 (define-metafunction U
   solve/test : (π ...) (e ...) (δ ...) -> C
-  [(solve/test (e_0 π ...) (e ...) (δ ...))
-   (solve/test (π ...) (e_2 ...) (δ_2 ...))
-   (where (e_2 ...) (unify ((apply-subst e_0 (e ...))) (e ...)))
-   (where (δ_2 ...) (check ((apply-subst δ (e_2 ...)) ...)))]
-  [(solve/test (δ_0 π ...) (e ...) (δ ...))
-   (solve/test (π ...) (e ...) (δ_2 ...))
-   (where (δ_2 ...) (check ((disunify (apply-subst δ_0 (e ...))) δ ...)))]
+  [(solve/test (e_0 π ...) ((x = p) ...) (δ ...))
+   (solve/test (π ...) ((x_2 = p_2) ...) (δ_2 ...))
+   (where ((x_2 = p_2) ...) (unify ((apply-subst e_0 (x ...) (p ...))) ((x = p) ...)))
+   (where (δ_2 ...) (check ((apply-subst δ (x_2 ...) (p_2 ...)) ...)))]
+  [(solve/test (δ_0 π ...) ((x = p) ...) (δ ...))
+   (solve/test (π ...) ((x = p) ...) (δ_2 ...))
+   (where (δ_2 ...) (check ((disunify (apply-subst δ_0 (x ...) (p ...))) δ ...)))]
   [(solve/test () (e ...) (δ ...))
    ((e ...) : (δ ...))]
   [(solve/test _ _ _)
@@ -275,7 +275,7 @@
   `(,P : () : ()))
 
 (define-metafunction U
-  [(apply-subst π ((x = p) ...))
+  [(apply-subst π (x ...) (p ...))
    ,(apply-subst-help (term ((x = p) ...)) (term π))])
 
 (define (apply-subst-help subst init-c)

@@ -64,6 +64,11 @@
     [(list _ name stuff ... _)
      `(,name "\u27ec" ,@(add-between stuff ", ") "\u27ed")]))
 
+(define (ast-rw lws)
+    (match lws
+      [(list _ _ e xs ps _)
+       (list "" e "{" xs  " → " ps "}")]))
+
 (define-syntax-rule (with-all-rewriters e)
   (with-compound-rewriters
    (['different different-rewriter]
@@ -73,7 +78,8 @@
     ['not-in not-in-rewriter]
     ['subst-c/dq subst-rewriter]
     ['subst-dq subst-rewriter]
-    ['length-eq length-eq-rewriter])
+    ['length-eq length-eq-rewriter]
+    ['apply-subst ast-rw])
    e))
 
 (define (unify-func-pict)
