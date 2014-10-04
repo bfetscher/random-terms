@@ -225,37 +225,27 @@ the parts of the solver that deal with disequational constraints in detail.
           (check-pict)
           (param-elim-pict))]
 
-Our constraint solver is specified by the metafunction @(clpt solve), whose
-contract and first three clauses we show in @figure-ref["fig:solve-dq-cases"].
-It takes a list of constraints @(clpt (π ....)), a list of equations @(clpt Σ),
-and a list of disequations @(clpt Ω) as arguments, and produces the pair
-@(clpt (Σ : Ω)) as its result. The first argument acts as an accumulator, the
-elements of which are processed by @(clpt solve) in order, and contains
-a single constraint when calling @(clpt solve) from the generator. 
-@(clpt solve) depends on and enforces the invariant that @(clpt Σ) 
-and @(clpt Ω) are simplified.@note{We
-  discuss the meaning of simplified for @(clpt Ω) below.}
-
-The clauses shown in @figure-ref["fig:solve-dq-cases"] handle all of the
-cases that can occur when a disequation @(clpt (∀ (x ..) (p_1 ≠ p_2)))
-is the next constraint to be added. They all dispatch on the result
-of calling @(clpt solve) with the @italic{equation} @(clpt (p_1 = p_2)),
-and passing the result along with the quantified variables @(clpt (x ...))
-to the auxiliary metafunction @(clpt param-elim). The call to solve
-simply attempts to unify the two patterns and returns the resulting
-environment or fails. The first clause of @figure-ref["fig:solve-dq-cases"]
-deals with the case where this unification fails, in which case the two
-patterns can never be equal, so this constraint need not be added to the store
-and @(clpt solve) just recurs with the remaining constraints.
+A new disequation is checked for consistency with @clpt[disunify], shown
+in @figure-ref["fig:disunify"], which returns a simplified form
+of the disequation (or @clpt[⊥] if it cannot be satisfied).
+All of @clpt[disunify]'s clauses dispatch on the result
+of calling @clpt[unify] with the @italic{equation} @(clpt (p_1 = p_2)),
+and (if that succeeds) passing the result along with the quantified 
+variables @(clpt (x ...)) to the auxiliary metafunction @(clpt param-elim). 
+The call to @clpt[unify] simply attempts to unify the two patterns and returns 
+the resulting environment or fails. 
+The first clause of @clpt[disunify] deals with the case where this unification 
+fails, in which case the two patterns can never be equal, so this is 
+always satisified and @clpt[disunify] just returns @clpt[⊤].
 
 If the unification succeeds, it returns an mgu for the patterns in question.
-This substitution is used to construct a simplified set of disequations 
+This substitution is used to construct a simplified set of disequation
 that excludes the mgu, since any substitution equating the two patterns must
-be an isntange of the mgu. 
+be an isntance of the mgu. 
 To add universal quantification, the resulting substitution is
 passed to @(clpt param-elim) which removes assignments to universally 
 quantified variables.
-Informally, we can justify this step by noting that cannot satisfy the
+Informally, we can justify this step by noting that we cannot satisfy the
 diseuqation by instantiating any such variables, 
 so we are essentially restricting the substitution to
 the other (existentially quantified) variables, since we must be able to
@@ -263,35 +253,16 @@ satisfy the disequation by picking values for them only.
 
 If, after @(clpt param-elim) is applied, an empty environment is the result
 (the second clause), then it is impossible to satisfy the disequation through
-assignments to existentially quantified variables, so @(clpt solve) fails.
+assignments to existentially quantified variables, 
+so @clpt[disunify] returns @clpt[⊥].
 In the third case, @(clpt param-elim) returns some set of equations, which
 represent an idempotent substitution, i.e. are between variables and terms 
 which do not contain the variables on the left-hand side. The left-hand
 sides and the right-hand sides are combined into two lists which are used
-to construct a singled disequation. This is in essence taking the
+to construct a single disequation. This is in essence taking the
 disjunction of the set of disequations the substitution represents, or
 requiring that one element of the substitution unifying the original
 patterns must be excluded.
-
-The final clause of @(clpt solve) that deals with disequations ensures 
-that all disequations remain in a simplified form:
-
-@(centered "deleted")
-
-Where simplified  means that all elements of the list in the left-hand
-pattern must be existentially quantified variables (the form
-returned by @(clpt param-elim)). Disequations of this form can always
-be satisfied by picking a value for one of the left-hand side variables
-that does not unify with the pattern in the same position 
-on the right-hand side.@note{We know such variables are unconstrained
-                             because the current substitution is always
-                             applied to the disequations.}
-If a disequation is ever in a form where it is not simplified, it is
-simply removed and added to the constraint accumulator where it will be
-processed again.
-
-@bold{Robby: Stop here. This section (3.2) is incomplete, but let me know
-      if you think it's going in a reasonable direction.}
 
 
 @section[#:tag "sec:search"]{Search Heuristics}

@@ -67,7 +67,7 @@
    (clause-name "clash")])
 
 (define-metafunction U
-  disunify : δ -> δ or ⊤ or ⊥
+  disunify : δ -> δ
   [(disunify (∀ (x ...) (p_1 ≠ p_2)))
    ⊤
    (where ⊥ (unify ((p_1 = p_2)) ()))]
@@ -79,15 +79,14 @@
    (where ((x_p = p) ...) (param-elim (unify ((p_1 = p_2)) ()) (x ...)))])
 
 (define-metafunction U
-  ;; TODO : we have any here because we now have ⊤ and ⊥ in the dqs ...
-  ;; but we don't want to add a new non-terminal....
-  check : (any ...) -> (δ ...) or ⊥ or ⊤
-  [(check (any_1 ... (∀ (x_a ...) ((lst (lst p_l ...) ...) ≠ (lst p_r ...))) any_2 ...))
-   (check (any_1 ... any_s any_2 ...))
-   (where any_s (disunify (∀ (x_a ...) ((lst (lst p_l ...) ...) ≠ (lst p_r ...)))))]
-  [(check (any_1 ... ⊤ any_2 ...))
-   (check (any_1 ... any_2 ...))]
-  [(check (any_1 ... ⊥ any_2 ...))
+  ;; added ⊤ and ⊥ to solve to simplify this function
+  check : (δ ...) -> (δ ...) or ⊥ or ⊤
+  [(check (δ_1 ... (∀ (x_a ...) ((lst (lst p_l ...) ...) ≠ (lst p_r ...))) δ_2 ...))
+   (check (δ_1 ... δ_s δ_2 ...))
+   (where δ_s (disunify (∀ (x_a ...) ((lst (lst p_l ...) ...) ≠ (lst p_r ...)))))]
+  [(check (δ_1 ... ⊤ δ_2 ...))
+   (check (δ_1 ... δ_2 ...))]
+  [(check (δ_1 ... ⊥ δ_2 ...))
    ⊥]
   [(check (δ ...))
    (δ ...)])
@@ -105,69 +104,6 @@
    ((e ...) : (δ ...))]
   [(solve/test _ _ _)
    ⊥])
-          
-  
-#;
-(define-metafunction/extension unify U
-  [(DU ((∀ (x ...) (p_1 ≠ p_2)) π ...) (e ...) (δ ...)) 
-   ⊥
-   (where (() : ()) (param-elim (unify ((p_1 = p_2)) () ()) (x ...)))
-   (clause-name "failed constraint")]
-  [(DU ((∀ (x ...) (p_1 ≠ p_2)) π ...) (e ...) (δ ...)) 
-   (DU (π ...) (e ...) (δ ...))
-   (where ⊥ (param-elim (unify ((p_1= p_2)) () ()) (x ...)))
-   (clause-name "empty constraint")]
-  [(DU ((∀ (x ...) (p_1 ≠ p_2)) π ...) (e ...) (δ ...))
-   (DU (π ...) (e ...) ((∀ (x ...) ((lst x_s ...) ≠ (lst p_s ...))) δ ...))
-   (where (((x_s = p_s) ...) : ()) (param-elim (unify ((p_1 = p_2)) () ()) (x ...)))
-   (clause-name "simplify constraint")]
-  [(DU (π ...) (e ...) (π_1 ... (∀ (x_a ...) ((lst (lst p_1 ...) ... ) ≠ (lst p_2  ...))) π_2 ...))
-   (DU ((∀ (x_a ...) ((lst (lst p_1 ...) ...) ≠ (lst p_2  ...))) π ...) (e ...) (π_1 ... π_2 ...))
-   (clause-name "resimplify")])
-#;
-(define-metafunction U
-  solve : (π ...) (e ...) (δ ...) -> C
-  [(solve ((∀ (x ...) (p_1 ≠ p_2)) π ...) (e ...) (δ ...)) 
-   (solve (π ...) (e ...) (δ ...))
-   (where ⊥ (param-elim (solve ((p_1 = p_2)) () ()) (x ...)))
-   (clause-name "empty constraint")]
-  [(solve ((∀ (x ...) (p_1 ≠ p_2)) π ...) (e ...) (δ ...)) 
-   ⊥
-   (where (() : ()) (param-elim (solve ((p_1 = p_2)) () ()) (x ...)))
-   (clause-name "failed constraint")]
-  [(solve ((∀ (x ...) (p_1 ≠ p_2)) π ...) (e ...) (δ ...))
-   (solve (π ...) (e ...) ((∀ (x ...) ((lst x_s ...) ≠ (lst p_s ...))) δ ...))
-   (where (((x_s = p_s) ...) : ()) (param-elim (solve ((p_1 = p_2)) () ()) (x ...)))
-   (clause-name "simplify constraint")]
-  [(solve (π ...) (e ...) (π_1 ... (∀ (x_a ...) ((lst (lst p_1 ...) ... ) ≠ (lst p_2  ...))) π_2 ...))
-   (solve ((∀ (x_a ...) ((lst (lst p_1 ...) ...) ≠ (lst p_2  ...))) π ...) (e ...) (π_1 ... π_2 ...))
-   (clause-name "resimplify")]
-  [(solve ((p = p) π ...) (e ...) (δ ...))
-   (solve (π ...) (e ...)  (δ ...))
-   (clause-name "identity")]
-  [(solve (((lst p_1  ..._1) = (lst p_2 ..._1)) π ...) (e ...) (δ ...))
-   (solve ((p_1 = p_2) ... π ...) (e ...) (δ ...))
-   (clause-name "decompose")]
-  [(solve ((x = p) π ...) (e ...) (δ ...))
-   ⊥
-   (side-condition (term (occurs? x p)))
-   (side-condition (term (different x p)))
-   (clause-name "occurs")]
-  [(solve ((x = p) π ...) (π_s ...) (δ ...))
-   (solve ((subst-c/dq π x p) ...) ((x = p) (subst-c/dq π_s x p) ...) ((subst-c/dq δ x p) ...))
-   (clause-name "variable elim")]
-  [(solve ((p = x) π ...) (e ...) (δ ...))
-   (solve ((x = p) π ...) (e ...) (δ ...))
-   (clause-name "orient")]
-  #;[(solve (((lst p_2 ..._!_1) = (lst p_1 ..._!_1)) π ...) (e ...) (δ ...))
-   ⊥
-   (clause-name "clash")]
-  [(solve ((p_1 = p_2) π ...) (e ...) (δ ...)) ;; everything valid is covered?
-   ⊥
-   (clause-name "clash")]
-  [(solve () (e ...) (δ ...))
-   ((e ...) : (δ ...))
-   (clause-name "success")])
 
 (define-metafunction U
   [(disunify/test (π ...))
