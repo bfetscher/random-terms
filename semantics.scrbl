@@ -14,6 +14,8 @@
           "pat-grammar.rkt"
           "common.rkt")
 
+@(pats-supp-lang-pict)
+
 @title[#:tag "sec:semantics"]{Derivation Generation in Detail}
 
 
@@ -272,12 +274,121 @@ patterns must be excluded.
 Finally, @clpt[check] is used to verify that the disequational constraints
 remain in a simplified form, where simplified means that at least one
 disequation in the disjunction has an (existentially quantified) variable
-on the right-hand side.
-
+on the right-hand side. In this form, the constraints remain consistent
+because we can always choose a value for the variable that does not unify 
+with the left-hand side. Otherwise, the constraint is passed to disunify
+once again. The rest of @clpt[check] just performs bookkeeping on the 
+the conjunction of disequations.
 
 @section[#:tag "sec:search"]{Search Heuristics}
 
 @section[#:tag "sec:pats"]{A Richer Pattern Language}
+
+
+@figure["fig:full-pats" 
+        @list{The subset of Redex's pattern language supported by the generator.
+           Racket symbols are indicated by @italic{s}, and 
+           @italic{c} represents any Racket constant.}
+        @(centered(pats-supp-lang-pict))]
+
+Our model uses a much simpler pattern language than the one actually available
+in Redex. Although the derivation generator is not yet able to handle
+Redex's full pattern language@note{ The generator is not able to handle parts of the
+   pattern language that deal with evaluation contexts, compatible closure, or 
+   ``repeat'' patterns (ellipses).}, it does support a richer language than 
+the model, as shown in @figure-ref["fig:full-pats"].
+We now discuss briefly the interesting differences and how we support them.
+
+Named patterns of the form @slpt[(:name s p)]
+correspond to variables @italic{x} in the simplified version of the pattern
+language from @figure-ref["fig:clp-grammar"], except that the variable is attached to a sub-pattern.
+From the matcher's perspective, this form is intended to match a 
+term with a pattern @slpt[p] and then bind the matched term to the name @slpt[s]. 
+In the generator named patterns are treated essentially as logic variables. When two patterns are
+unified, they are both pre-processed to extract the pattern @slpt[p] for each
+named pattern, which is rewritten into a logic variable with the
+identifier @slpt[s], unifying the new pattern with the current
+values for @slpt[s] (if it exists).
+
+The @slpt[b] and @slpt[v] non-terminals are built-in patterns that match subsets of
+Racket values. The productions of @slpt[b] are self-explanatory; @slpt[:integer], for example,
+matches any Racket integer, and @slpt[:any] matches any Racket s-expression.
+From the perspective of the unifier, @slpt[:integer] is a term that
+may be unified with any integer, the result of which is the integer itself.
+The value of the term in the current substitution is then updated.
+Equalities between built-in patterns have the obvious relationship; the result
+of an equality between @slpt[:real] and @slpt[:natural], for example, is @slpt[:natural], whereas
+an equality between @slpt[:real] and @slpt[:string] simply fails.
+As equalities of this type are processed, the values of terms in the current
+substitution are refined.
+
+The proudctions of @slpt[v] match Racket symbols in varying and commonly useful ways;
+@slpt[:variable-not-otherwise-mentioned], for example, matches any symbol that is not used
+as a literal elsewhere in the language. These are handled similarly to the patterns of
+the @slpt[b] non-terminal within the unifier.
+
+Patterns of the from @slpt[(mismatch-name s p)]  match the pattern 
+@slpt[p] with the constraint that two mismatches of the same name @slpt[s] may never
+match equal terms. These are straightforward: whenever a unification with a mismatch takes
+place, disequations are added between the pattern in question and other patterns
+that have been unified with the same mismatch pattern.
+
+Patterns of the form @slpt[(nt s)] are intended to successfully match a term 
+if the term matches one of the productions of the non-terminal @slpt[n]. (Redex
+patterns are always constructed in relation to some language.) It is less obvious how
+non-terminal patterns should be dealt with in the unifier. It would be nice to have
+an efficient method to decide if the terms defined by some pattern intersected with
+those defined by some non-terminal, but this reduces to the problem of computing
+the intersection of tree automata, which is known to have exponential complexity.@~cite[tata] 
+Instead a conservative check is used at the time of unification and the
+non-terminal information is saved.
+
+When a pattern is equated with a non-terminal, the non-terminal is unfolded
+by retrieving all of its productions which are normalized by replacing any 
+recursive positions of the non-terminal with the pattern @slpt[:any]. The pattern
+is similarly normalized, and it is verified that at least one of the normalized 
+production unifies with the pattern. 
+The results of this check can be cached. 
+
+Becuase this is not a complete check for pattern intersection, a later check
+remains necessary.
+When a pattern successfully unifies with a non-terminal, the pattern is annotated
+with the name of the non-terminal. The intention of this
+is that once a pattern becomes fully instantiated (once it becomes a term), it
+becomes simple to verify that it does indeed match one of the non-terminal's productions.
+All annotated non-terminals are verified when result patterns are instantiated as terms.
+
+The result of the derivation generation process is a pattern that corresponds to the
+original goal, an environment that corresponds to the substitution generated by the
+generation process, and a set of disequational constraints. 
+The final step is to perform the necessary random instantiations of pattern
+variables to produce a term as the result.
+Variables in the environment will resolve to patterns consisting of @slpt[:list]
+constructors, racket constants, non-terminals, and built-in patterns.
+The portion of the environment necessary to instantiate the goal pattern is
+processed to eliminate built-in patterns and non-terminals by using
+the context-free generation method, and @slpt[:list] terms are converted to Racket lists.
+Then the disequational constraints are checked for consistency with the new environment.
+Finally, the goal pattern is converted to a term by using the same process and resolving
+the necessary variables.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+@; here be dragons
+
+
+
 
 
 
@@ -833,109 +944,4 @@ that it can be easily understood and implemented as an extension to the unifier.
 
 @section{Handling More of the Pattern Language}
 
-Up to this point term generation and the constraint solver have been presented 
-using a very simplified version of Redex's internal pattern language.
-Here the extension of both to handle a more complete subset of the pattern
-language is discussed. The part of the pattern language actually supported by 
-the generator is shown in @figure-ref["fig:full-CLP"]. Racket symbols
-are indicated by the @italic{s} non-terminal, and the @italic{c} non-terminal
-represents any Racket constant (which is considered to be equal to itself only by the
-matcher and the unifier.) The generator is not able to handle parts of the
-pattern language that deal with evaluation contexts, compatible closure, or 
-``repeat'' patterns (ellipses). 
-
-
-@figure*["fig:full-pats" "The subset of the internal pattern language supported by the generator"]{
-  @centered[(pats-supp-lang-pict)]}
-
-The extensions to the pattern language are enumerated by the new@note{New with respect to
-                                                                      @figure-ref["fig:pat-terms"]}
-productions of the @italic{p} non-terminal in @figure-ref["fig:full-pats"]. 
-We now explain briefly each of the new productions along with the approach used
-to handle it in the generator.
-
-@bold{Named Patterns} 
-These corrsepond to variables @italic{x} in the simplified version of the pattern
-language from @figure-ref["fig:pat-terms"], except now the variable is attached to a sub-pattern.
-From the matcher's perspective, the @tt{(name @italic{s p})} production is intended to match a 
-term with a pattern @italic{p} and then bind the matched term to the name @italic{s}. 
-In the generator named patterns are treated essentially as logic variables. When two patterns are
-unified, they are both pre-processed to extract the pattern @italic{p} for each
-named pattern, which is rewritten into a logic variable with the
-identifier @italic{s}. This is done by finding the value for @italic{s} in the
-current substitution, and unifying @italic{p} with that value. The result is used
-to update the value of @italic{s} in the current substitution. (If @italic{s} is
-a new variable, then its value simply becomes @italic{p}).
-
-@bold{Built-in Patterns}
-The @italic{b} and @italic{v} non-terminals are built-in patterns that match subsets of
-Racket values. The productions of @italic{b} are self-explanatory; @tt{integer}, for example,
-matches any Racket integer, and @tt{any} matches any Racket s-expression.
-From the perspective of the unifier, @tt{integer} is a term that
-may be unified with any integer, the result of which is the integer itself.
-The value of the term in the current substitution is then updated.
-Equalities between built-in patterns have the obvious relationship; the result
-of an equality between @tt{real} and @tt{natural}, for example, is @tt{natural}, whereas
-an equality between @tt{real} and @tt{string} simply fails.
-As equalities of this type are processed, the values of terms in the current
-substitution are refined.
-
-The @italic{v} non-terminals match Racket symbols in varying and commonly useful ways;
-@tt{variable-not-otherwise-mentioned}, for example, matches any symbol that is not used
-as a literal elsewhere in the language. These are handled similarly to the patterns of
-the @italic{b} non-terminal within the unifier.
-
-@bold{Mismatch Patterns}
-These are patterns of the from @tt{(mismatch-name @italic{s} @italic{p})} which match the pattern 
-@italic{p} with the constraint that two mismatches of the same name @italic{s} may never
-match equal terms. These are straightforward: whenever a unification with a mismatch takes
-place, disequations are added between the pattern in question and other patterns
-that have been unified with the same mismatch pattern.
-
-@bold{Non-terminal Patterns}
-Patterns of the form @tt{(nt @italic{n})} are intended to successfully match a term 
-if the term matches one of the productions of the non-terminal @italic{n}. (Recall that
-patterns are always constructed in relation to some language.) It is less clear how
-non-terminal patterns should be dealt with in the unifier. It would be nice to have
-an efficient method to decide if the terms defined by some pattern intersected with
-those defined by some non-terminal, but this reduces to the problem of computing
-the intersection of tree automata, which is known to have exponential complexity.
-@~cite[tata] Instead a conservative check is used at the time of unification and the
-non-terminal information is saved.
-
-When a pattern is equated with a non-terminal, the non-terminal is unfolded once
-by retrieving all of its productions and replacing any recursive positions of the
-non-terminal with the pattern @tt{any}. 
-The pattern is normalized by replacing all variable positions with @tt{any}.
-Then it is verified that the normalized pattern unifies with at least 
-one of the abbreviated productions. The check is relatively
-inexpensive, and the results can be cached. This method is effective at catching cases
-where a pattern should obviously fail to unify with a non-terminal, but because
-it may succeed where a more complete method would fail, a later check is necessary.
-
-When a pattern successfully unifies with a non-terminal, the pattern is annotated
-with the name of the non-terminal in the current substitution. The intention of this
-is that once a pattern becomes fully instantiated (once it becomes a term), it
-becomes simple to verify that it does indeed match one of the non-terminal's productions.
-All annotated non-terminals are verified when result patterns are instantiated as terms.
-
-This approach to handling grammar information in a unifier is somewhat ad-hoc, 
-and it might be interesting to consider more fully how such structure could be used
-to aid unification.
-
-@subsection{Instantiating Patterns}
-
-The result of the derivation generation process is a pattern that corresponds to the
-original goal, an environment that corresponds to the substitution generated by the
-generation process, and a set of disequational constraints. 
-The final step is to perform the necessary random instantiations of pattern
-variables to produce a term as the result.
-Variables in the environment will resolve to patterns consisting of @tt{list}
-constructors, racket constants, non-terminals, and built-in patterns.
-The portion of the environment necessary to instantiate the goal pattern is
-processed to eliminate built-in patterns and non-terminals by using
-the context-free generation method, and @tt{list} terms are converted to racket lists.
-Then the disequational constraints are checked for consistency with the new environment.
-Finally, the goal pattern is converted to a term by using the same process and resolving
-the necessary variables.
 }

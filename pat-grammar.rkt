@@ -2,46 +2,18 @@
 
 (require redex/reduction-semantics
          redex/pict
-         slideshow/pict)
+         slideshow/pict
+         "common.rkt")
 
 (provide (all-defined-out))
 
-#;
-(define should-be-pats
-        (append '(`any
-                  `number
-                  `string
-                  `natural
-                  `integer
-                  `real
-                  `boolean
-                  `variable
-                  `(variable-except ,var ...)
-                  `(variable-prefix ,var)
-                  `variable-not-otherwise-mentioned
-                  `hole
-                  `(nt ,var)
-                  `(name ,var ,pat)
-                  `(mismatch-name ,var ,pat)
-                  `(in-hole ,pat ,pat) ;; context, then contractum
-                  `(hide-hole ,pat)
-                  `(side-condition ,pat ,condition ,srcloc-expr)
-                  `(cross ,var)
-                  `(list ,lpat ...)
-                  
-                   ;; pattern for literals (numbers, strings, prefabs, etc etc etc)
-                  (? (compose not pair?)))
-                (if (or allow-else? skip-non-recursive?)
-                    (list '_)
-                    (list))))
-
 (define-language pats-supported
-  (p ::= b
-         v
-         (nt s)
+  (p ::= (nt s)
          (:name s p)
          (mismatch-name s p)
-         (list p ...)
+         (:list p ...)
+         b
+         v
          c)
   (b ::= :any
          :number
@@ -75,19 +47,31 @@
     [(with-atomic-rewriters () e)
      e]))
 
+(define-syntax-rule (with-slp-rws body)
+  (with-font-params
+   (with-atomic-rewriters
+    ([':name "name"]
+     [':any "any"]
+     [':number "number"]
+     [':string "string"]
+     [':natural "natural"]
+     [':integer "integer"]
+     [':real "real"]
+     [':list "list"]
+     [':boolean "boolean"]
+     [':variable "variable"]
+     [':variable-not-otherwise-mentioned
+      "variable-not-otherwise-mentioned"])
+    body)))
+  
+
 (define (pats-supp-lang-pict)
-  (with-atomic-rewriters
-   ([':name "name"]
-    [':any "any"]
-    [':number "number"]
-    [':string "string"]
-    [':natural "natural"]
-    [':integer "integer"]
-    [':real "real"]
-    [':boolean "boolean"]
-    [':variable "variable"]
-    [':variable-not-otherwise-mentioned
-     "variable-not-otherwise-mentioned"])
+  (with-slp-rws
    (ht-append 20
     (render-language pats-supported #:nts '(p v))
     (render-language pats-supported #:nts '(b s c)))))
+
+(define-syntax-rule (slpt t)
+  (with-slp-rws
+   (render-term pats-supported t)))
+
