@@ -48,7 +48,7 @@ a randomized search space.
 Our model is based on @citet[clp-semantics]'s CLP semantics.
 
 @figure["fig:clp-grammar"
-        @list{Grammar for the derivation generation model.}
+        @list{The syntax of the derivation generator model.}
               @(init-lang)]
 
 @figure["fig:clp-red"
@@ -230,24 +230,28 @@ A new disequation is checked for consistency with @clpt[disunify], shown
 in @figure-ref["fig:disunify"], which returns a simplified form
 of the disequation (or @clpt[⊥] if it cannot be satisfied).
 All of @clpt[disunify]'s clauses dispatch on the result
-of calling @clpt[unify] with the @italic{equation} @(clpt (p_1 = p_2)),
-and (if that succeeds) passing the result along with the quantified 
+of calling @clpt[unify] with the @italic{equation} @(clpt ((lst p_1 ...) = (lst p_2 ...))),
+where the @clpt[p_1]'s consist of the left-hand sides of all the
+disequations in the constraint's disjunction, and the @clpt[p_2]'s are
+the right-hand sides.
+If that succeeds, the result is passed along with the quantified 
 variables @(clpt (x ...)) to the auxiliary metafunction @(clpt param-elim). 
-The call to @clpt[unify] simply attempts to unify the two patterns and returns 
-the resulting environment or fails. 
+This unification essentially performs the transformation from @clpt[(∨ (p_1 ≠ p_2) ...)]
+to @clpt[¬]@clpt[(∧ (p_1 = p_2) ...)], using the equivalence between unifying two lists
+and unifying all of their corresponding subpatterns.
 The first clause of @clpt[disunify] deals with the case where this unification 
 fails, in which case the two patterns can never be equal, so this is 
 always satisified and @clpt[disunify] just returns @clpt[⊤].
 
 If the unification succeeds, it returns an mgu for the patterns in question.
-This substitution is used to construct a simplified set of disequation
+This substitution is used to construct a simplified set of disequations
 that excludes the mgu, since any substitution equating the two patterns must
-be an isntance of the mgu. 
+be an instance of the mgu. 
 To add universal quantification, the resulting substitution is
 passed to @(clpt param-elim) which removes assignments to universally 
 quantified variables.
 Informally, we can justify this step by noting that we cannot satisfy the
-diseuqation by instantiating any such variables, 
+disequation by instantiating any such variables, 
 so we are essentially restricting the substitution to
 the other (existentially quantified) variables, since we must be able to
 satisfy the disequation by picking values for them only.
@@ -264,6 +268,11 @@ to construct a single disequation. This is in essence taking the
 disjunction of the set of disequations the substitution represents, or
 requiring that one element of the substitution unifying the original
 patterns must be excluded.
+
+Finally, @clpt[check] is used to verify that the disequational constraints
+remain in a simplified form, where simplified means that at least one
+disequation in the disjunction has an (existentially quantified) variable
+on the right-hand side.
 
 
 @section[#:tag "sec:search"]{Search Heuristics}
