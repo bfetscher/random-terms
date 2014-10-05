@@ -24,8 +24,8 @@
                        terms)))))))
   
 (define (answers ps)
-  (map (λ (p) (redex-let program ([(P ⊢ () ∥ ((e ...) : (δ ...))) p]) (term ((e ...) : (δ ...)))))
-       (filter (λ (p) (redex-match program (P ⊢ () ∥ ((e ...) : (δ ...))) p))
+  (map (λ (p) (redex-let program ([(P ⊢ () ∥ (∧ (∧ e ...) (∧ δ ...))) p]) (term (e ...))))
+       (filter (λ (p) (redex-match program (P ⊢ () ∥ (∧ (∧ e ...) (∧ δ ...))) p))
                ps)))
                           
 
@@ -45,15 +45,16 @@
 (check-equal? P1 P1C)
 
 (define (make-goal g)
-  `(,P1C ⊢ (,g) ∥ (() : ())))
+  `(,P1C ⊢ (,g) ∥ (∧ (∧) (∧))))
 
 #;(check-equal? (answers (reduce/depth (make-goal '(sum (lst (lst 1 0) 0 x))) 3))
               '((((x = (lst 1 0))) : ())))
 
 (define (answer-contains? ps binds)
   (define answs (answers ps))
-  (for/and ([b (in-list binds)])
-    (member b (caar answs))))
+  (for/or ([a (in-list answs)])
+    (for/and ([b (in-list binds)])
+      (member b a))))
 
 (check-not-false (answer-contains? 
                   (reduce/depth (make-goal '(sum (lst (lst 1 0) (lst 1 0) x))) 8)
@@ -110,7 +111,7 @@
 (check-not-false (redex-match program P P2C))
 
 (define (e-goal e)
-  `(,P2C ⊢ ((typeof (lst (lst) ,e t))) ∥ (() : ())))
+  `(,P2C ⊢ ((typeof (lst (lst) ,e t))) ∥ (∧ (∧) (∧))))
 
 (check-not-false (answer-contains?
                   (reduce/depth (e-goal 0) 10)

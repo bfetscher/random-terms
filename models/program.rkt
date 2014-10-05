@@ -25,7 +25,7 @@
   [(compile-M-help (((f p_in) = p_out)))
    (((f (lst p_in p_out)) ←))]
   [(compile-M-help (((f_0 p_1) = p_2) ... ((f p_in) = p_out)))
-   (r ... ((f (lst p_in p_out)) ← (∀ (vars p_1) (p_1 ≠ p_in)) ...))
+   (r ... ((f (lst p_in p_out)) ← (∀ (vars p_1) (∨ (p_1 ≠ p_in))) ...))
    (where (r ...) (compile-M-help (((f_0 p_1) = p_2) ...)))])
 
 (define-metafunction program
@@ -72,7 +72,7 @@
       ((f x) = 1))))
    (term
     (((f (lst (lst x_1_2 x_2_2) 2)) ←)
-     ((f (lst x_1 1)) ← (∀ (x_1_2 x_2_2) ((lst x_1_2 x_2_2) ≠ x_1)))))))
+     ((f (lst x_1 1)) ← (∀ (x_1_2 x_2_2) (∨ ((lst x_1_2 x_2_2) ≠ x_1))))))))
 
 (define-metafunction program
   extract-apps-D : (r ...) -> (r ...)
@@ -95,8 +95,8 @@
   ;; p_1 and p_2 come from the lhs of a metafunction and
   ;; thus must be actual pats, not term-pats...
   ;; need a nice way to work this in
-  [(extract-apps-a (∀ (x ...) (p_1 ≠ p_2)))
-   ((∀ (x ...) (p_1 ≠ p_2)) ())])
+  [(extract-apps-a (∀ (x ...) (∨ (p_1 ≠ p_2))))
+   ((∀ (x ...) (∨ (p_1 ≠ p_2))) ())])
 
 (define-metafunction program
   extract-apps-p : p -> (p (a ...))
@@ -135,7 +135,7 @@
          ((J (lst x_1 (f x_1))) ← (J (lst 1 1)))))))
      (term
       ((((f (lst (lst x_1_2 x_2_2) 2)) ←)
-        ((f (lst x_1 1)) ← (∀ (x_1_2 x_2_2) ((lst x_1_2 x_2_2) ≠ x_1))))
+        ((f (lst x_1 1)) ← (∀ (x_1_2 x_2_2) (∨ ((lst x_1_2 x_2_2) ≠ x_1)))))
        (((J (lst 1 1)) ←)
         ((J (lst x_1 x_100)) ← (J (lst 1 1)) (f (lst x_1 x_100))))))))
   (parameterize ([fresh-inc 100])
@@ -148,7 +148,7 @@
          ((q (lst x_1 (g x_1))) ← (q (lst 1 1)))))))
      (term
       ((((g (lst (lst x_1_2 x_2_2) 2)) ←)
-        ((g (lst x_1 1)) ← (∀ (x_1_2 x_2_2) ((lst x_1_2 x_2_2) ≠ x_1))))
+        ((g (lst x_1 1)) ← (∀ (x_1_2 x_2_2) (∨ ((lst x_1_2 x_2_2) ≠ x_1)))))
        (((q (lst 1 1)) ←)
         ((q (lst x_1 x_100)) ← (q (lst 1 1)) (g (lst x_1 x_100)))))))))
   

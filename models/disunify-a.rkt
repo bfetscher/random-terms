@@ -18,112 +18,95 @@
    #f])
 
 (define-metafunction U
-  solve : e (e ...) (δ ....) -> ((e ...) : (δ ...)) or ⊥
-  [(solve e_? (e ...) (δ ...))
-   ((e_2 ...) : (δ_2 ...))
-   (where ((x = p) ...) (e ...))
-   (where (e_2 ...) (unify ((apply-subst e_? (x ...) (p ...))) (e ...)))
-   (where ((x_2 = p_2) ...) (e_2 ...))
-   (where (δ_2 ...) (check ((apply-subst δ (x ...) (p ...)) ...)))]
-  [(solve e_? (e ...) (δ ...))
+  solve : e (∧ e ...) (∧ δ ....) -> (∧ (∧ e ...) (∧ δ ...)) or ⊥
+  [(solve e_? (∧ e ...) (∧ δ ...))
+   (∧ (∧ e_2 ...) (∧ δ_2 ...))
+   (where (∧ (x = p) ...) (∧ e ...))
+   (where (∧ e_2 ...) (unify ((apply-subst e_? (x ...) (p ...))) (∧ e ...)))
+   (where (∧ (x_2 = p_2) ...) (∧ e_2 ...))
+   (where (∧ δ_2 ...) (check (∧ (apply-subst δ (x ...) (p ...)) ...)))]
+  [(solve e_? (∧ e ...) (∧ δ ...))
    ⊥])
 
 (define-metafunction U
-  dis-solve : δ (e ...) (δ ...) -> ((e ...) : (δ ...)) or ⊥
-  [(dis-solve δ_? (e ...) (δ ...))
-   ((e ...) : (δ_2 ...))
-   (where ((x = p) ...) (e ...))
-   (where any_0 (disunify (apply-subst δ_? (x ...) (p ...))))
-   (where (δ_2 ...) (check (any_0 δ ...)))]
-  [(dis-solve δ_? (e ...) (δ ...))
+  dis-solve : δ (∧ e ...) (∧ δ ...) -> (∧ (∧ e ...) (∧ δ ...)) or ⊥
+  [(dis-solve δ_? (∧ e ...) (∧ δ ...))
+   (∧ (∧ e ...) (∧ δ_2 ...))
+   (where (∧ (x = p) ...) (∧ e ...))
+   (where δ_0 (disunify (apply-subst δ_? (x ...) (p ...))))
+   (where (∧ δ_2 ...) (check (∧ δ_0 δ ...)))]
+  [(dis-solve δ_? (∧ e ...) (∧ δ ...))
    ⊥])
 
 (define-metafunction U
-  unify : (e ...) ((x = p) ...) -> ((x = p) ...) or ⊥
-  [(unify ((p = p) e ...) (e_s ...))
-   (unify (e ...) (e_s ...))
+  unify : (e ...) (∧ (x = p) ...) -> (∧ (x = p) ...) or ⊥
+  [(unify ((p = p) e ...) (∧ e_s ...))
+   (unify (e ...) (∧ e_s ...))
    (clause-name "identity")]
-  [(unify (((lst p_1 ..._1) = (lst p_2  ..._1)) e ...) (e_s ...))
-   (unify ((p_1 = p_2) ... e ...) (e_s ...))
+  [(unify (((lst p_1 ..._1) = (lst p_2  ..._1)) e ...) (∧ e_s ...))
+   (unify ((p_1 = p_2) ... e ...) (∧ e_s ...))
    (side-condition (term (length-eq (p_1...) (p_2  ...))))
    (clause-name "decompose")]
-  [(unify ((x = p) e ...) (e ...))
+  [(unify ((x = p) e ...) (∧ e_s ...))
    ⊥
    (side-condition (term (occurs? x p)))
    (side-condition (term (different x p)))
    (clause-name "occurs")]
-  [(unify ((x = p) e ...) (e_s ...))
+  [(unify ((x = p) e ...) (∧ e_s ...))
    (unify ((subst-c/dq e x p) ...) 
-          ((x = p) (subst-c/dq e_s x p) ...))
+          (∧ (x = p) (subst-c/dq e_s x p) ...))
    (clause-name "variable elim")]
-  [(unify ((p = x) e ...) (e_s ...))
-   (unify ((x = p) e ...) (e_s ...))
+  [(unify ((p = x) e ...) (∧ e_s ...))
+   (unify ((x = p) e ...) (∧ e_s ...))
    (clause-name "orient")]
-  [(unify () (e ...))
-   (e ...)
+  [(unify () (∧ e ...))
+   (∧ e ...)
    (clause-name "success")]
-  [(unify (e ...) (e_s ...))
+  [(unify (e ...) (∧ e_s ...))
    ⊥
    (clause-name "clash")])
 
 (define-metafunction U
   disunify : δ -> δ
-  [(disunify (∀ (x ...) (p_1 ≠ p_2)))
+  [(disunify (∀ (x ...) (∨ (p_1 ≠ p_2) ...)))
    ⊤
-   (where ⊥ (unify ((p_1 = p_2)) ()))]
-  [(disunify (∀ (x ...) (p_1 ≠ p_2)))
+   (where ⊥ (unify (((lst p_1 ...) = (lst p_2 ...))) (∧)))]
+  [(disunify (∀ (x ...) (∨ (p_1 ≠ p_2) ...)))
    ⊥
-   (where () (param-elim (unify ((p_1 = p_2)) ()) (x ...)))]
-  [(disunify (∀ (x ...) (p_1 ≠ p_2)))
-   (∀ (x ...) ((lst x_p ...) ≠ (lst p ...)))
-   (where ((x_p = p) ...) (param-elim (unify ((p_1 = p_2)) ()) (x ...)))])
+   (where (∧) (param-elim (unify (((lst p_1 ...) = (lst p_2 ...))) (∧)) (x ...)))]
+  [(disunify (∀ (x ...) (∨ (p_1 ≠ p_2) ...)))
+   (∀ (x ...) (∨ (x_p ≠ p) ...))
+   (where (∧ (x_p = p) ...) (param-elim (unify (((lst p_1 ...) = (lst p_2 ...))) (∧)) (x ...)))])
 
 (define-metafunction U
   ;; added ⊤ and ⊥ to solve to simplify this function
-  check : (δ ...) -> (δ ...) or ⊥ or ⊤
-  [(check (δ_1 ... (∀ (x_a ...) ((lst (lst p_l ...) ...) ≠ (lst p_r ...))) δ_2 ...))
-   (check (δ_1 ... δ_s δ_2 ...))
-   (where δ_s (disunify (∀ (x_a ...) ((lst (lst p_l ...) ...) ≠ (lst p_r ...)))))]
-  [(check (δ_1 ... ⊤ δ_2 ...))
-   (check (δ_1 ... δ_2 ...))]
-  [(check (δ_1 ... ⊥ δ_2 ...))
+  check : (∧ δ ...) -> (∧ δ ...) or ⊥ or ⊤
+  [(check (∧ δ_1 ... (∀ (x_a ...) (∨ ((lst p_l ...) ≠ p_r) ...)) δ_2 ...))
+   (check (∧ δ_1 ... δ_s δ_2 ...))
+   (where δ_s (disunify (∀ (x_a ...) (∨ ((lst p_l ...) ≠ p_r) ...))))]
+  [(check (∧ δ_1 ... ⊤ δ_2 ...))
+   (check (∧ δ_1 ... δ_2 ...))]
+  [(check (∧ δ_1 ... ⊥ δ_2 ...))
    ⊥]
-  [(check (δ ...))
-   (δ ...)])
+  [(check (∧ δ ...))
+   (∧ δ ...)])
+
 
 (define-metafunction U
-  solve/test : (π ...) (e ...) (δ ...) -> C
-  [(solve/test (e_0 π ...) ((x = p) ...) (δ ...))
-   (solve/test (π ...) ((x_2 = p_2) ...) (δ_2 ...))
-   (where ((x_2 = p_2) ...) (unify ((apply-subst e_0 (x ...) (p ...))) ((x = p) ...)))
-   (where (δ_2 ...) (check ((apply-subst δ (x_2 ...) (p_2 ...)) ...)))]
-  [(solve/test (δ_0 π ...) ((x = p) ...) (δ ...))
-   (solve/test (π ...) ((x = p) ...) (δ_2 ...))
-   (where (δ_2 ...) (check ((disunify (apply-subst δ_0 (x ...) (p ...))) δ ...)))]
-  [(solve/test () (e ...) (δ ...))
-   ((e ...) : (δ ...))]
-  [(solve/test _ _ _)
-   ⊥])
-
-(define-metafunction U
-  [(disunify/test (π ...))
-   (solve/test (π ...) () ())])
-
-(define-metafunction U
-  param-elim : (e ...) (x ...) -> (e ...) or ⊥
-  [(param-elim ((x_0 = p_0) ... (x = p) (x_1 = p_1) ...) (x_2 ... x x_3 ...))
-   (param-elim ((x_0 = p_0) ... (x_1 = p_1) ...) (x_2 ... x x_3 ...))
+  param-elim : (∧ e ...) (x ...) -> (∧ e ...) or ⊥
+  [(param-elim (∧ (x_0 = p_0) ... (x = p) (x_1 = p_1) ...) (x_2 ... x x_3 ...))
+   (param-elim (∧ (x_0 = p_0) ... (x_1 = p_1) ...) (x_2 ... x x_3 ...))
    (clause-name "param-elim-1")]
-  [(param-elim ((x_0 = p_0) ... (x_1 = x) π_2 ...) (x_2 ... x x_3 ...))
-   (param-elim ((x_0 = p_0) ... π_3 ...) (x_2 ... x x_3 ...))
+  [(param-elim (∧ (x_0 = p_0) ... (x_1 = x) π_2 ...) (x_2 ... x x_3 ...))
+   (param-elim (∧ (x_0 = p_0) ... π_3 ...) (x_2 ... x x_3 ...))
    (side-condition (term (not-in x (p_0 ...))))
    (where (π_3 ...) (elim-x x ((x_1 = x) π_2 ...)))
    (clause-name "param-elim-2")]
   [(param-elim ⊥ (x ...))
    ⊥
    (clause-name "param-elim-failed")]
-  [(param-elim (e ...) (x ...))
-   (e ...)
+  [(param-elim (∧ e ...) (x ...))
+   (∧ e ...)
    (clause-name "param-elim-finish")])
 
 (define-metafunction U
@@ -145,7 +128,33 @@
    #:key
    (match-lambda [`(,r = ,l) (set r l)])))
 
+
 (define-metafunction U
+  solve/test : (π ...) (∧ e ...) (∧ δ ...) -> any
+  [(solve/test (e_0 π ...) (∧ (x = p) ...) (∧ δ ...))
+   (solve/test (π ...) (∧ (x_2 = p_2) ...) (∧ δ_2 ...))
+   (where (∧ (x_2 = p_2) ...) (unify ((apply-subst e_0 (x ...) (p ...))) (∧ (x = p) ...)))
+   (where (∧ δ_2 ...) (check (∧ (apply-subst δ (x_2 ...) (p_2 ...)) ...)))]
+  [(solve/test (δ_0 π ...) (∧ (x = p) ...) (∧ δ ...))
+   (solve/test (π ...) (∧ (x = p) ...) (∧ δ_2 ...))
+   (where (∧ δ_2 ...) (check (∧ (disunify (apply-subst δ_0 (x ...) (p ...))) δ ...)))]
+  [(solve/test () (∧ e ...) (∧ δ ...))
+   ((e ...) : (δ ...))]
+  [(solve/test _ _ _)
+   ⊥])
+
+(define-metafunction U
+  [(disunify/test (any ...))
+   (solve/test ((orify any) ...) (∧) (∧))])
+
+(define-metafunction U
+  [(orify (∀ (x ...) (p_1 ≠ p_2)))
+   (∀ (x ...) (∨ (p_1 ≠ p_2)))]
+  [(orify any)
+   any])
+
+#;
+  (define-metafunction U
   [(∨ (p_l ≠ p_r) ...)
    ((lst p_l ...) ≠ (lst p_r ...))])
 
@@ -177,8 +186,8 @@
   ;; this is not capture avoiding, but because of the way
   ;; constraints are created (metafunction compilation), the
   ;; substitution never contains quantified variables in this model
-  [(subst-c/dq (∀ (x_a ...) (p_1 ≠ p_2)) x p)
-   (∀ (x_a ...) ((subst x p p_1) ≠ (subst x p p_2)))])
+  [(subst-c/dq (∀ (x_a ...) (∨ (p_1 ≠ p_2) ...)) x p)
+   (∀ (x_a ...) (∨ ((subst x p p_1) ≠ (subst x p p_2)) ...))])
 
 (define-metafunction U
   [(different any_1 any_1) #f]
@@ -294,7 +303,7 @@
 (define-syntax-rule (utest a b)
   (redex-let U ([((π_1 (... ...)) : (e_1 (... ...)) : (δ_1 (... ...))) a])
              (test-equal
-              (term (solve/test (π_1 (... ...)) (e_1 (... ...)) (δ_1 (... ...))))
+              (term (solve/test (π_1 (... ...)) (∧ e_1 (... ...)) (∧ δ_1 (... ...))))
               (if (equal? b '⊥) 
                   '⊥
                   (redex-let U ([((π_2 (... ...)) : (e_2 (... ...)) : (δ_2 (... ...))) b])

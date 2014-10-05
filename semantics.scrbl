@@ -199,13 +199,21 @@ Both first apply the current substitution@note{The simplified form of
 new constraint. @clpt[solve] then updates the equational constraints with
 @clpt[unify] and applies the resulting substitution to the disequational
 constraints. @clpt[dis-solve], on the other hand, checks for consistency (and
-simplifies) with @clpt[disunify]. Both then pass the disequational constaints
-set to @clpt[check] for a final consistency check and simplification.
+simplifies) with @clpt[disunify]. Both then pass the disequational constraints
+to @clpt[check] for a final consistency check and simplification.
 
 @figure["fig:unify"
         @list{@clpt[unify] adds a new equation to the equational constraints. (The first
                argument is assumed to be up to date with the current substitution.)}
         @(unify-pict)]
+
+@figure["fig:disunify"
+        @list{Metafunctions used to process disequational constaints.}
+        @(vl-append
+          20
+          (disunify-pict)
+          (check-pict)
+          (param-elim-pict))]
 
 The portion of the constraint solver that deals with equations, specified by
 @clpt[unify] as shown in @figure-ref["fig:unify"], simply performs
@@ -217,13 +225,6 @@ holds a set of simplified equations in the form of an idempotent substitutions.
 The details are well known and standard. For that reason, we concentrate on explaining
 the parts of the solver that deal with disequational constraints in detail.
 
-@figure["fig:disunify"
-        @list{Metafunctions used to process disequational constaints.}
-        @(vl-append
-          20
-          (disunify-pict)
-          (check-pict)
-          (param-elim-pict))]
 
 A new disequation is checked for consistency with @clpt[disunify], shown
 in @figure-ref["fig:disunify"], which returns a simplified form
