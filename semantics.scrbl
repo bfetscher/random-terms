@@ -14,8 +14,6 @@
           "pat-grammar.rkt"
           "common.rkt")
 
-@(pats-supp-lang-pict)
-
 @title[#:tag "sec:semantics"]{Derivation Generation in Detail}
 
 
