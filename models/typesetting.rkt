@@ -30,7 +30,7 @@
         (define programs 
           (render-language pats #:nts '(P D r a d)))
         (define formulas
-          (render-language pats #:nts '(π C e δ)))
+          (render-language pats #:nts '(C e δ)))
         (define patterns
           (render-language base-pats))
         

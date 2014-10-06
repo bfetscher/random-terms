@@ -97,10 +97,10 @@
   [(param-elim (∧ (x_0 = p_0) ... (x = p) (x_1 = p_1) ...) (x_2 ... x x_3 ...))
    (param-elim (∧ (x_0 = p_0) ... (x_1 = p_1) ...) (x_2 ... x x_3 ...))
    (clause-name "param-elim-1")]
-  [(param-elim (∧ (x_0 = p_0) ... (x_1 = x) π_2 ...) (x_2 ... x x_3 ...))
-   (param-elim (∧ (x_0 = p_0) ... π_3 ...) (x_2 ... x x_3 ...))
+  [(param-elim (∧ (x_0 = p_0) ... (x_1 = x) (x_2 = p_2) ...) (x_4 ... x x_5 ...))
+   (param-elim (∧ (x_0 = p_0) ... (x_3 = p_3)  ...) (x_4 ... x x_5 ...))
    (side-condition (term (not-in x (p_0 ...))))
-   (where (π_3 ...) (elim-x x ((x_1 = x) π_2 ...)))
+   (where ((x_3 = p_3) ...) (elim-x x ((x_1 = x) (x_2 = p_2) ...)))
    (clause-name "param-elim-2")]
   [(param-elim ⊥ (x ...))
    ⊥
@@ -110,8 +110,8 @@
    (clause-name "param-elim-finish")])
 
 (define-metafunction U
-  [(elim-x x (π ...))
-   ,(elim-x-func (term x) (term (π ...)))])
+  [(elim-x x (e ...))
+   ,(elim-x-func (term x) (term (e ...)))])
 
 (define (elim-x-func x eqs)
   (define-values (to-elim to-keep)
@@ -130,13 +130,13 @@
 
 
 (define-metafunction U
-  solve/test : (π ...) (∧ e ...) (∧ δ ...) -> any
-  [(solve/test (e_0 π ...) (∧ (x = p) ...) (∧ δ ...))
-   (solve/test (π ...) (∧ (x_2 = p_2) ...) (∧ δ_2 ...))
+  solve/test : (any ...) (∧ e ...) (∧ δ ...) -> any
+  [(solve/test (e_0 any ...) (∧ (x = p) ...) (∧ δ ...))
+   (solve/test (any ...) (∧ (x_2 = p_2) ...) (∧ δ_2 ...))
    (where (∧ (x_2 = p_2) ...) (unify ((apply-subst e_0 (x ...) (p ...))) (∧ (x = p) ...)))
    (where (∧ δ_2 ...) (check (∧ (apply-subst δ (x_2 ...) (p_2 ...)) ...)))]
-  [(solve/test (δ_0 π ...) (∧ (x = p) ...) (∧ δ ...))
-   (solve/test (π ...) (∧ (x = p) ...) (∧ δ_2 ...))
+  [(solve/test (δ_0 any ...) (∧ (x = p) ...) (∧ δ ...))
+   (solve/test (any ...) (∧ (x = p) ...) (∧ δ_2 ...))
    (where (∧ δ_2 ...) (check (∧ (disunify (apply-subst δ_0 (x ...) (p ...))) δ ...)))]
   [(solve/test () (∧ e ...) (∧ δ ...))
    ((e ...) : (δ ...))]
@@ -161,16 +161,16 @@
 (define-metafunction U
   [(orient-params ⊥ (x ...))
    ⊥]
-  [(orient-params (() : (π_1 ... (p = x) π_2 ...)) (x x_1 ...))
-   (orient-params (() : (π_1 ... (x = p) π_2 ...)) (x x_1 ...))
+  [(orient-params (() : (any_1 ... (p = x) any_2 ...)) (x x_1 ...))
+   (orient-params (() : (any_1 ... (x = p) any_2 ...)) (x x_1 ...))
    (side-condition (not (equal? (term p) (term x))))]
-  [(orient-params (() : (π ...)) (x x_1 ...))
-   (orient-params (() : (π ...)) (x_1 ...))]
-  [(orient-params (() : (π ...)) ())
-   (() : (π ...))])
+  [(orient-params (() : (any ...)) (x x_1 ...))
+   (orient-params (() : (any ...)) (x_1 ...))]
+  [(orient-params (() : (any ...)) ())
+   (() : (any ...))])
 
 (define-metafunction U
-  subst-cs : x p (π ...) -> (π ...)
+  subst-cs : x p (any ...) -> (any ...)
   [(subst-cs x p_x ((p_1 = p_2) ...))
    (((subst x p_x p_1) = (subst x p_x p_2)) ...)])
 
@@ -220,8 +220,8 @@
   `(,P : () : ()))
 
 (define-metafunction U
-  [(apply-subst π (x ...) (p ...))
-   ,(apply-subst-help (term ((x = p) ...)) (term π))])
+  [(apply-subst any (x ...) (p ...))
+   ,(apply-subst-help (term ((x = p) ...)) (term any))])
 
 (define (apply-subst-help subst init-c)
   (for/fold ([e init-c])
@@ -301,12 +301,12 @@
   (values new-v vars))
    
 (define-syntax-rule (utest a b)
-  (redex-let U ([((π_1 (... ...)) : (e_1 (... ...)) : (δ_1 (... ...))) a])
+  (redex-let U ([((any_1 (... ...)) : (e_1 (... ...)) : (δ_1 (... ...))) a])
              (test-equal
-              (term (solve/test (π_1 (... ...)) (∧ e_1 (... ...)) (∧ δ_1 (... ...))))
+              (term (solve/test (any_1 (... ...)) (∧ e_1 (... ...)) (∧ δ_1 (... ...))))
               (if (equal? b '⊥) 
                   '⊥
-                  (redex-let U ([((π_2 (... ...)) : (e_2 (... ...)) : (δ_2 (... ...))) b])
+                  (redex-let U ([((any_2 (... ...)) : (e_2 (... ...)) : (δ_2 (... ...))) b])
                              (term ((e_2 (... ...)) : (δ_2 (... ...)))))))))
 
 
