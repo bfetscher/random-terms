@@ -8,7 +8,7 @@
 
 @title{Introduction}
 
-Redex employs property-based testing to help semantics engineers
+Redex@~cite[redex] employs property-based testing to help semantics engineers
 uncover bugs in their models. Semantics engineers write down
 properties that should hold of their models (e.g., type soundness)
 and Redex can randomly generate example expressions in an attempt
@@ -40,7 +40,8 @@ terms@~cite[palka-workshop]. This generator handles only a language
 closely matched to the GHC Haskell compiler intermediate language, but is better
 than our generic generator, overall. We compared it head-to-head
 on two buggy versions of GHC and our generator is able to find one
-of the bugs, but not the other one. We carefully explore why and
+of the bugs, but not the other one. @;{TODO - update this}
+We carefully explore why and
 discuss the issues in @secref["sec:evaluation"].
 
 @Secref["sec:deriv"] works through the generation process for a

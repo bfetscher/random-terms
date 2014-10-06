@@ -8,6 +8,7 @@
           "results/res-pict.rkt")
 
 @title[#:tag "sec:evaluation"]{Evaluating the Generator}
+@;{
 
 This chapter describes the evaluation of the new random
 generator. The generator was evaluated by comparing it to 
@@ -334,3 +335,5 @@ of the Racket Virtual Machine that has been used for random testing
 of the Racket runtime system. In this case, the new generation approach
 is compared with a specialized approach that processes terms generated
 from the grammar to make them more likely to be well-formed.}
+
+  }

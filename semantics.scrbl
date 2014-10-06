@@ -23,7 +23,7 @@ of metafunctions and judgment forms into the set of possible derivations
 that they can generate. Our implementation has a similar structure to the
 model, except that it uses randomness and heuristics to select just one
 of the possible derivations that the rewriting relation can produce.
-Our model is based on @citet[clp-semantics]'s contraint logic programming
+Our model is based on @citet[clp-semantics]'s constraint logic programming
 semantics.
 
 @figure["fig:clp-grammar"
@@ -72,7 +72,7 @@ In general, the rewriting relation
 takes a single step, based on the first entry in the goal stack.
 This means that some reduction sequences are ultimately
 doomed, but may still reduce for a while. In our implementation,
-discovery of such doomed reduction sequences cause backtracking. Reduction
+discovery of such doomed reduction sequences causes backtracking. Reduction
 sequences that lead to valid derivations
 always end with a state of the form @clpt[(P ⊢ () ∥ C)], and the derivation 
 itself can be read off of the reduction sequence that reaches that state.
@@ -87,8 +87,8 @@ step can occur. The reduction step first freshens the variables in
 the rule, asks the solver to combine the equation @clpt[(p_f = p_g)] 
 with the current constraint store, and reduces to a new state with
 the new constraint store and a new goal state. The new goal state has
-all of the previously pending goals as well as the new one introduced
-by the use of this rule.
+all of the previously pending goals as well as the new ones introduced
+by the premises of this rule.
 
 The second rule covers the case where a disequational constraint @clpt[δ] 
 is the first element in the goal
@@ -103,10 +103,10 @@ in more detail.
 Metafunctions are added via a procedure generalizing the 
 process used for @clpt[lookup] in @secref["sec:deriv"], 
 which we explain in @secref["sec:mf-semantics"]. 
-Section @secref["sec:solve"] describes how our solver solves
+@Secref["sec:solve"] describes how our solver solves
 equations and disequations.
-Section @secref["sec:search"] discusses the heuristics our implementation
-uses and section @secref["sec:pats"] describes how our implementation
+@Secref["sec:search"] discusses the heuristics our implementation
+uses and @secref["sec:pats"] describes how our implementation
 scales up to support features in Redex that are not covered in this model.
 
 
@@ -217,9 +217,10 @@ Both first apply the current substitution@note{The simplified form of
    the equational constraints is an idempotent substitution.} to the
 new constraint. @clpt[solve] then updates the equational constraints with
 @clpt[unify] and applies the resulting substitution to the disequational
-constraints. @clpt[dis-solve], on the other hand, checks for consistency (and
-simplifies) with @clpt[disunify]. Both then pass the disequational constraints
-to @clpt[check] for a final consistency check and simplification.
+constraints. The updated disequational constraints are passed to
+@clpt[check] which simplifies them if necessary, verifying their consistency.
+@clpt[dis-solve], on the other hand, checks a new disequation for consistency 
+(and simplifies) with @clpt[disunify]. 
 
 @figure["fig:unify"
         @list{@clpt[unify] adds a new equation to the equational constraints. (The first
@@ -249,15 +250,13 @@ A new disequation is checked for consistency with @clpt[disunify], shown
 in @figure-ref["fig:disunify"], which returns a simplified form
 of the disequation (or @clpt[⊥] if it cannot be satisfied).
 All of @clpt[disunify]'s clauses dispatch on the result
-of calling @clpt[unify] with the @italic{equation} @(clpt ((lst p_1 ...) = (lst p_2 ...))),
-where the @clpt[p_1]'s consist of the left-hand sides of all the
-disequations in the constraint's disjunction, and the @clpt[p_2]'s are
-the right-hand sides.
+of unifying the @italic{equations}
+@clpt[((p_1 = p_2) ...)], corresponding to the disequations
+in the constraint's disjunction.
 If that succeeds, the result is passed along with the quantified 
 variables @(clpt (x ...)) to the auxiliary metafunction @(clpt param-elim). 
 This unification essentially performs the transformation from @clpt[(∨ (p_1 ≠ p_2) ...)]
-to @clpt[¬]@clpt[(∧ (p_1 = p_2) ...)], using the equivalence between unifying two lists
-and unifying all of their corresponding subpatterns.
+to @clpt[¬]@clpt[(∧ (p_1 = p_2) ...)].
 The first clause of @clpt[disunify] deals with the case where this unification 
 fails, in which case the two patterns can never be equal, so this is 
 always satisified and @clpt[disunify] just returns @clpt[⊤].
@@ -279,14 +278,11 @@ If, after @(clpt param-elim) is applied, an empty environment is the result
 (the second clause), then it is impossible to satisfy the disequation through
 assignments to existentially quantified variables, 
 so @clpt[disunify] returns @clpt[⊥].
-In the third case, @(clpt param-elim) returns some set of equations, which
-represent an idempotent substitution, i.e. are between variables and terms 
-which do not contain the variables on the left-hand side. The left-hand
-sides and the right-hand sides are combined into two lists which are used
-to construct a single disequation. This is in essence taking the
-disjunction of the set of disequations the substitution represents, or
-requiring that one element of the substitution unifying the original
-patterns must be excluded.
+In the third case, @(clpt param-elim) returns some conjunction of equations, 
+which represent an idempotent substitution, i.e. are between variables and 
+terms which do not contain the variables on the left-hand side. 
+These equations are equations are then combined into a disequational
+constraint, reversing the transformation of passing them into @clpt[unify].
 
 Finally, @clpt[check] is used to verify that the disequational constraints
 remain in a simplified form, where simplified means that at least one
@@ -294,8 +290,7 @@ disequation in the disjunction has an (existentially quantified) variable
 on the right-hand side. In this form, the constraints remain consistent
 because we can always choose a value for the variable that does not unify 
 with the left-hand side. Otherwise, the constraint is passed to disunify
-once again. The rest of @clpt[check] just performs bookkeeping on the 
-the conjunction of disequations.
+once again, and the set of disequations is updated accordingly.
 
 @section[#:tag "sec:search"]{Search Heuristics}
 
@@ -321,11 +316,11 @@ correspond to variables @italic{x} in the simplified version of the pattern
 language from @figure-ref["fig:clp-grammar"], except that the variable is attached to a sub-pattern.
 From the matcher's perspective, this form is intended to match a 
 term with a pattern @slpt[p] and then bind the matched term to the name @slpt[s]. 
-In the generator named patterns are treated essentially as logic variables. When two patterns are
+In the generator, named patterns are treated essentially as logic variables. When two patterns are
 unified, they are both pre-processed to extract the pattern @slpt[p] for each
 named pattern, which is rewritten into a logic variable with the
 identifier @slpt[s], unifying the new pattern with the current
-values for @slpt[s] (if it exists).
+value for @slpt[s] (if it exists).
 
 The @slpt[b] and @slpt[v] non-terminals are built-in patterns that match subsets of
 Racket values. The productions of @slpt[b] are self-explanatory; @slpt[:integer], for example,
@@ -351,7 +346,7 @@ place, disequations are added between the pattern in question and other patterns
 that have been unified with the same mismatch pattern.
 
 Patterns of the form @slpt[(nt s)] are intended to successfully match a term 
-if the term matches one of the productions of the non-terminal @slpt[n]. (Redex
+if the term matches one of the productions of the non-terminal @slpt[s]. (Redex
 patterns are always constructed in relation to some language.) It is less obvious how
 non-terminal patterns should be dealt with in the unifier. It would be nice to have
 an efficient method to decide if the terms defined by some pattern intersected with
@@ -384,7 +379,7 @@ Variables in the environment will resolve to patterns consisting of @slpt[:list]
 constructors, racket constants, non-terminals, and built-in patterns.
 The portion of the environment necessary to instantiate the goal pattern is
 processed to eliminate built-in patterns and non-terminals by using
-the context-free generation method, and @slpt[:list] terms are converted to Racket lists.
+a context-free generation method, and @slpt[:list] terms are converted to Racket lists.
 Then the disequational constraints are checked for consistency with the new environment.
 Finally, the goal pattern is converted to a term by using the same process and resolving
 the necessary variables.
