@@ -22,8 +22,7 @@
   (a (d p) δ)
   (C (∧ (∧ e ...) (∧ δ ...)))
   (e (p = p))
-  (δ (∀ (x ...) (∨ (p ≠ p) ...))
-     ⊤ ⊥)
+  (δ (∀ (x ...) (∨ (p ≠ p) ...)))
   (d id)
   (id variable-not-otherwise-mentioned))
 

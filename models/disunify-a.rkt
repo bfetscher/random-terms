@@ -19,23 +19,22 @@
 
 (define-metafunction U
   solve : e C -> C or ⊥
-  [(solve e_? (∧ (∧ e ...) (∧ δ ...)))
-   (∧ (∧ e_2 ...) (∧ δ_2 ...))
-   (where (∧ (x = p) ...) (∧ e ...))
-   (where (∧ e_2 ...) (unify ((apply-subst e_? (x ...) (p ...))) (∧ e ...)))
-   (where (∧ (x_2 = p_2) ...) (∧ e_2 ...))
-   (where (∧ δ_2 ...) (check (∧ (apply-subst δ (x ...) (p ...)) ...)))]
-  [(solve e_? C)
+  [(solve e_new (∧ (∧ (x = p) ...) (∧ δ ...)))
+   (∧ (∧ (x_2 = p_2) ...) (∧ δ_2 ...))
+   (where (∧ (x_2 = p_2) ...) (unify ((apply-subst e_new (x ...) (p ...))) (∧ (x = p) ...)))
+   (where (∧ δ_2 ...) (check (∧ (apply-subst δ (x_2 ...) (p_2 ...)) ...)))]
+  [(solve e_new C)
    ⊥])
 
 (define-metafunction U
   dis-solve : δ C -> C or ⊥
-  [(dis-solve δ_? (∧ (∧ e ...) (∧ δ ...)))
-   (∧ (∧ e ...) (∧ δ_2 ...))
-   (where (∧ (x = p) ...) (∧ e ...))
-   (where δ_0 (disunify (apply-subst δ_? (x ...) (p ...))))
-   (where (∧ δ_2 ...) (check (∧ δ_0 δ ...)))]
-  [(dis-solve δ_? C)
+  [(dis-solve δ_new (∧ (∧ (x = p) ...) (∧ δ ...)))
+   (∧ (∧ (x = p) ...) (∧ δ_0 δ ...))
+   (where δ_0 (disunify (apply-subst δ_new (x ...) (p ...))))]
+  [(dis-solve δ_new (∧ (∧ (x = p) ...) (∧ δ ...)))
+   (∧ (∧ (x = p) ...) (∧ δ ...))
+   (where ⊤ (disunify (apply-subst δ_new (x ...) (p ...))))]
+  [(dis-solve δ_new C)
    ⊥])
 
 (define-metafunction U
@@ -67,27 +66,28 @@
    (clause-name "clash")])
 
 (define-metafunction U
-  disunify : δ -> δ
+  disunify : δ -> δ or ⊤ or ⊥
   [(disunify (∀ (x ...) (∨ (p_1 ≠ p_2) ...)))
    ⊤
-   (where ⊥ (unify (((lst p_1 ...) = (lst p_2 ...))) (∧)))]
+   (where ⊥ (unify ((p_1 = p_2) ...) (∧)))]
   [(disunify (∀ (x ...) (∨ (p_1 ≠ p_2) ...)))
    ⊥
-   (where (∧) (param-elim (unify (((lst p_1 ...) = (lst p_2 ...))) (∧)) (x ...)))]
+   (where (∧) (param-elim (unify ((p_1 = p_2) ...) (∧)) (x ...)))]
   [(disunify (∀ (x ...) (∨ (p_1 ≠ p_2) ...)))
    (∀ (x ...) (∨ (x_p ≠ p) ...))
-   (where (∧ (x_p = p) ...) (param-elim (unify (((lst p_1 ...) = (lst p_2 ...))) (∧)) (x ...)))])
+   (where (∧ (x_p = p) ...) (param-elim (unify ((p_1 = p_2) ...) (∧)) (x ...)))])
 
 (define-metafunction U
-  ;; added ⊤ and ⊥ to solve to simplify this function
-  check : (∧ δ ...) -> (∧ δ ...) or ⊥ or ⊤
+  check : (∧ δ ...) -> (∧ δ ...) or ⊥
   [(check (∧ δ_1 ... (∀ (x_a ...) (∨ ((lst p_l ...) ≠ p_r) ...)) δ_2 ...))
    (check (∧ δ_1 ... δ_s δ_2 ...))
    (where δ_s (disunify (∀ (x_a ...) (∨ ((lst p_l ...) ≠ p_r) ...))))]
-  [(check (∧ δ_1 ... ⊤ δ_2 ...))
-   (check (∧ δ_1 ... δ_2 ...))]
-  [(check (∧ δ_1 ... ⊥ δ_2 ...))
-   ⊥]
+  [(check (∧ δ_1 ... (∀ (x_a ...) (∨ ((lst p_l ...) ≠ p_r) ...)) δ_2 ...))
+   (check (∧ δ_1 ... (∀ (x_a ...) (∨ ((lst p_l ...) ≠ p_r) ...)) δ_2 ...))
+   (where ⊤ (disunify (∀ (x_a ...) (∨ ((lst p_l ...) ≠ p_r) ...))))]
+  [(check (∧ δ_1 ... (∀ (x_a ...) (∨ ((lst p_l ...) ≠ p_r) ...)) δ_2 ...))
+   ⊥
+   (where ⊥ (disunify (∀ (x_a ...) (∨ ((lst p_l ...) ≠ p_r) ...))))]
   [(check (∧ δ ...))
    (∧ δ ...)])
 
