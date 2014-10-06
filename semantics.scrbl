@@ -17,35 +17,14 @@
 @title[#:tag "sec:semantics"]{Derivation Generation in Detail}
 
 
-This section describes a complete model of the derivation generator.
-Following the process introduced in the previous section, the model uses
-a set of definitions generalizing Redex's judgment forms and metafunctions
-along with an answer pattern as inputs and produces a random output
-derivation. The output derivation satisfies the definitions and
-its conclusion matches the answer pattern.
-
-To simplify our presentation, we start by describing a core model
-of the generation process with
-a simplified pattern language, omitting
-the addition of metafunctions, the details of the constraint solver,
-and the heuristics used to control the search.
-Metafunctions are added via a procedure generalizing the 
-process used for lookup in @secref["sec:deriv"], 
-which we examine in @secref["sec:mf-semantics"].
-The core model is a reduction relation that generates the complete
-set of derivations; in our implementation we use heuristics to find random
-valid derivations, as described in @secref["sec:search"].
-During the generation process, when a new constraint
-(in our case, an equation or disequation) is encountered,
-the current set of consistent constraints is checked against it and
-updated using the constraint solver, discussed in @secref["sec:solve"].
-Finally, in @secref["sec:pats"], we address extending the generator
-beyond the model to support more of Redex's pattern language.
-
-The derivation generator is in essence a constraint logic
-programming system using a specialized constraint solver and
-a randomized search space.
-Our model is based on @citet[clp-semantics]'s CLP semantics.
+This section describes a formal model of the derivation generator.
+The centerpiece of the model is a relation that rewrites programs consisting
+of metafunctions and judgment forms into the set of possible derivations 
+that they can generate. Our implementation has a similar structure to the
+model, except that it uses randomness and heuristics to select just one
+of the possible derivations that the rewriting relation can produce.
+Our model is based on @citet[clp-semantics]'s contraint logic programming
+semantics.
 
 @figure["fig:clp-grammar"
         @list{The syntax of the derivation generator model.}
@@ -56,65 +35,103 @@ Our model is based on @citet[clp-semantics]'s CLP semantics.
               tree of derivations.}
         @(clp-red-pict)]
 
-The grammar in @figure-ref["fig:clp-grammar"] describes the language on
-which the generator model operates.
-A program @clpt[P] consists of  definitions @clpt[D], which generalize both
-judgment forms and metafunctions in Redex.
-A definition consists of a set of rules @(clpt ((d p) ← a ...)), here written
-horizontally with the conclusion on the left and premises on the right. 
-The conclusion always has the form @(clpt (d p)), where @(clpt d) is the 
-identifier of the definition and @(clpt p) is a pattern.
-The premises may consist of literal goals @(clpt (d p)) or disequational
-constraints @(clpt δ). We discuss the operational meaning behind
-disequational constraints @(clpt δ) in both @secref["sec:mf-semantics"] and 
-@secref["sec:solve"], but as their form suggests, they are essentially
+The grammar in @figure-ref["fig:clp-grammar"] describes the language of the model.
+A program @clpt[P] consists of  definitions @clpt[D]
+and each definition consists of a set of rules @clpt[((d p) ← a ...)], here written
+horizontally with the conclusion on the left and premises on the right. (Note that
+ellipses are used in a precise manner to indicate repetition of the immediately
+previous expression, following Scheme tradition. They do not indicate elided text.)
+
+The conclusion of each rule has the form @clpt[(d p)], where @clpt[d] is an 
+identifier naming the definition and @clpt[p] is a pattern.
+The premises may consist of literal goals @clpt[(d p)] or disequational
+constraints @clpt[δ]. We dive into the operational meaning behind
+disequational constraints later in this section, but as their form suggests, they are
 the negation of an equation, in which some variables are universally quantified.
 The remaining variables in a disequation are (implicitly) existentially
-quantified, just like the variables in equations.
+quantified, as are the variables in equations.
 
 The reduction relation shown in @figure-ref["fig:clp-red"] generates
-a complete tree of derivations for some program @(clpt P)
-with an initial goal of the form @(clpt (d p)), where
-@(clpt d) is the identifier of some definition
-in @(clpt P) and @(clpt p) is a pattern
-that must match the conclusion of all derivations in the tree.
-The reduction acts on states of the form @(clpt (P ⊢ (a ...) ∥ C)),
-where @(clpt (a ...)) represents a stack of goals, which can
-either be incomplete derivations of the form @(clpt (d p)), indicating a 
-goal that must be satisfied to complete the derivation, or constraints 
-that must be satisfied by adding them to the constraint store 
-@(clpt C) (assuming they are consistent with the store). A consistent
-constraint store @(clpt s) is just a set of 
-simplified equations and disequations (the precise definition of ``simplified''
-is given in @secref["sec:solve"]).
+the complete tree of derivations for the program @clpt[P]
+with an initial goal of the form @clpt[(d p)], where
+@clpt[d] is the identifier of some definition
+in @clpt[P] and @clpt[p] is a pattern
+that matches the conclusion of all of the generated derivations.
+The relation acts on states of the form @clpt[(P ⊢ (a ...) ∥ C)],
+where @clpt[(a ...)] represents a stack of goals, which can
+either be incomplete derivations of the form @clpt[(d p)], indicating a
+goal that must be satisfied to complete the derivation, or disequational constraints 
+that must be satisfied. A consistent
+constraint store @clpt[C] is a set of 
+simplified equations and disequations, where the precise definition of ``simplified''
+is given in @secref["sec:solve"].
 
+In general, the rewriting relation
+takes a single step, based on the first entry in the goal stack.
+This means that some reduction sequences are ultimately
+doomed, but may still reduce for a while. In our implementation,
+discovery of such doomed reduction sequences cause backtracking. Reduction
+sequences that lead to valid derivations
+always end with a state of the form @clpt[(P ⊢ () ∥ C)], and the derivation 
+itself can be read off of the reduction sequence that reaches that state.
 
-When a literal goal @(clpt (d p)) is the first element
+There are two rules in the relation.
+When a literal goal @clpt[(d p)] is the first element
 of the goal stack (as is the root case, when the initial goal is the
-sole element), then the @(clpt reduce) rule applies. For every
-rule of the form @(clpt ((d p_r) ← a_r ...)) in the program such
-that the defintion's id @(clpt d) agrees with the goal's, a reduction
-step can occur that adds the constraint goal @(clpt (p = p_r)) 
-along with the premises @(clpt (a_r ...)) to the current
-goal stack. (All variables in the rule are freshened before this takes place).
-This corresponds to attempting to satisfy the literal goal using a rule
-of the appropriate definition, and adding the premises of that rule as new goals.
+sole element), then the @rule-name{reduce} rule applies. For every
+rule of the form @clpt[((d p_r) ← a_r ...)] in the program such
+that the definition's id @clpt[d] agrees with the goal's, a reduction
+step can occur. The reduction step first freshens the variables in
+the rule, asks the solver to combine the equation @clpt[(p_f = p_g)] 
+with the current constraint store, and reduces to a new state with
+the new constraint store and a new goal state. The new goal state has
+all of the previously pending goals as well as the new one introduced
+by the use of this rule.
 
-When a constraint @(clpt π) is the first element in the goal
-stack, then the constraint solver (the @(clpt solve-cstr) metafunction) is called
-with that constraint and the current store. The result will either be a new
-store or @(clpt ⊥), if the constraint is inconsistent with the store.
-The latter corresponds to an invalid branch of the derivation tree.
+The second rule covers the case where a disequational constraint @clpt[δ] 
+is the first element in the goal
+stack. In that case, the disequation constraint solver is called with the
+current constraint store and the disequation. If it returns a new constraint
+store, then the disequation is consistent and the new constraint store is
+used. Otherwise, reduction terminates without producing a derivation.
 
-The complete reduction graph generated from some initial goal state is
-the derivation tree for that state. Terminal states (those that cannot
-be further reduced) represent valid derivations if the goal stack is empty 
-and they have a valid (not @(clpt ⊥)) constraint store. Other terminal states 
-represent invalid derivations.
+The remainder of this section fills in the details in this model and
+discusses the correspondence between the model and the implementation
+in more detail.
+Metafunctions are added via a procedure generalizing the 
+process used for @clpt[lookup] in @secref["sec:deriv"], 
+which we explain in @secref["sec:mf-semantics"]. 
+Section @secref["sec:solve"] describes how our solver solves
+equations and disequations.
+Section @secref["sec:search"] discusses the heuristics our implementation
+uses and section @secref["sec:pats"] describes how our implementation
+scales up to support features in Redex that are not covered in this model.
 
-Of course, in practice the generator does not generate the complete tree.
-We use a randomized search strategy with some simple heuristics (described
-in @secref["sec:search"]) to search for random valid derivations.
+
+@;{
+TODO: 
+- get rid of π
+- C, no bottom, change reduction relation to use C_1 and C_2 
+- remove top and bottom from δ -- requires changes to 'check' (etc)
+- in solve, don't use question mark as a subscript, how about "new"?
+- call to check in solve should use new substitution, not old one
+- run test suite in 'make'
+- 'lst' constructor in call to disunify not necessary
+- get rid of appendix before sending on
+- change 'solve' (and maybe elsewhere?) to avoid simple pattern-matching
+  side-conditions.
+
+- delete 4, replace with meta comment saying what will be there later
+- review changes to 3.0. 
+
+Send out draft to everyone as pdf attachment. Name the pdf file with the
+date.
+
+In email, remind people that abstract deadline and real deadline are
+approaching. Ask for comments on current draft. Promise more drafts with
+more stuff.
+
+}
 
 @section[#:tag "sec:mf-semantics"]{Compiling Metafunctions}
 

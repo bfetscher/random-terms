@@ -50,3 +50,6 @@
 
 (define-syntax-rule (clpt exp) 
   (with-font-params (render-term CLP exp)))
+
+(define-syntax-rule (rule-name exp)
+  (with-font-params (text exp (label-style) (label-font-size))))

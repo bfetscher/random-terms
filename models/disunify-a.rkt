@@ -18,7 +18,7 @@
    #f])
 
 (define-metafunction U
-  solve : e (∧ e ...) (∧ δ ....) -> (∧ (∧ e ...) (∧ δ ...)) or ⊥
+  solve : e (∧ e ...) (∧ δ ....) -> C or ⊥
   [(solve e_? (∧ e ...) (∧ δ ...))
    (∧ (∧ e_2 ...) (∧ δ_2 ...))
    (where (∧ (x = p) ...) (∧ e ...))
@@ -29,7 +29,7 @@
    ⊥])
 
 (define-metafunction U
-  dis-solve : δ (∧ e ...) (∧ δ ...) -> (∧ (∧ e ...) (∧ δ ...)) or ⊥
+  dis-solve : δ (∧ e ...) (∧ δ ...) -> C or ⊥
   [(dis-solve δ_? (∧ e ...) (∧ δ ...))
    (∧ (∧ e ...) (∧ δ_2 ...))
    (where (∧ (x = p) ...) (∧ e ...))

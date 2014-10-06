@@ -40,18 +40,18 @@
  particular type-systems and ours is not.
 }
 
-@include-section{intro.scrbl}
+@include-section["intro.scrbl"]
 
-@include-section{deriv.scrbl}
+@include-section["deriv.scrbl"]
 
-@include-section{semantics.scrbl}
+@include-section["semantics.scrbl"]
 
-@include-section{evaluation.scrbl}
+@include-section["evaluation.scrbl"]
 
-@include-section{related-work.scrbl}
+@include-section["related-work.scrbl"]
 
-@include-section{conclusion.scrbl}
+@include-section["conclusion.scrbl"]
 
 @(generate-bibliography)
 
-@include-section{appendix.scrbl}
+@include-section["appendix.scrbl"]

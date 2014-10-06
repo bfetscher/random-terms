@@ -26,11 +26,29 @@
      'variable-not-otherwise-mentioned "Variable"
      (with-atomic-rewriter
       'id "Identifier"
-      (hc-append 
-       40
-       (render-language pats #:nts '(P D r a d))
-       (render-language pats #:nts '(π C e δ))
-       (render-language base-pats)))))))
+      (let ()
+        (define programs 
+          (render-language pats #:nts '(P D r a d)))
+        (define formulas
+          (render-language pats #:nts '(π C e δ)))
+        (define patterns
+          (render-language base-pats))
+        
+        (define bkg 
+          (blank 0 (max (pict-height programs)
+                        (pict-height formulas)
+                        (pict-height patterns))))
+        (define (add-label p label)
+          (vc-append 
+           10
+           (lb-superimpose bkg p)
+           ;; wrong font!
+           (text label)))
+        (hc-append 40 
+                   (add-label programs "Programs")
+                   (add-label formulas "Formulas")
+                   (add-label patterns "Patterns"))))))))
+                   
 
 (define (lang-pict)
   (with-atomic-rewriter
