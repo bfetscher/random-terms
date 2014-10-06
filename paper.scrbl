@@ -53,5 +53,3 @@
 @include-section["conclusion.scrbl"]
 
 @(generate-bibliography)
-
-@include-section["appendix.scrbl"]
