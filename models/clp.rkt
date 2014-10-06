@@ -15,15 +15,15 @@
 (define R
   (reduction-relation 
    CLP
-   (--> (P ⊢ ((d p_g) a ...) ∥ (∧ (∧ e ...) (∧ δ ...)))
-        (P ⊢ (a_f ... a ...) ∥ C)
+   (--> (P ⊢ ((d p_g) a ...) ∥ C_1)
+        (P ⊢ (a_f ... a ...) ∥ C_2)
         (where (D_0 ... (r_0 ... ((d p_r) ← a_r ...) r_1 ...) D_1 ...) P)
         (where ((d p_f) ← a_f ...) (freshen ((d p_r) ← a_r ...)))
-        (where C (solve (p_f = p_g) (∧ e ...) (∧ δ ...)))
+        (where C_2 (solve (p_f = p_g) C_1))
         "reduce")
-   (--> (P ⊢ (δ_g a ...) ∥ (∧ (∧ e ...) (∧ δ ...)))
-        (P ⊢ (a ...) ∥ C)
-        (where C (dis-solve δ_g (∧ e ...) (∧ δ ...)))
+   (--> (P ⊢ (δ_g a ...) ∥ C_1)
+        (P ⊢ (a ...) ∥ C_2)
+        (where C_2 (dis-solve δ_g C_1))
         "new constraint")))
 
 (define-metafunction CLP

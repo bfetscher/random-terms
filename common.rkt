@@ -33,6 +33,7 @@
   (with-font-params e)
   (parameterize ([default-font-size 12]
                  [metafunction-font-size 12]
-                 [default-font-size 12])
+                 [default-font-size 12]
+                 [label-font-size 12])
     e))
 

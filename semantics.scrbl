@@ -41,6 +41,8 @@ and each definition consists of a set of rules @clpt[((d p) ← a ...)], here wr
 horizontally with the conclusion on the left and premises on the right. (Note that
 ellipses are used in a precise manner to indicate repetition of the immediately
 previous expression, following Scheme tradition. They do not indicate elided text.)
+Definitions can express both judgment forms and metafunctions, which are compiled
+to definitions via process we discuss in @secref["sec:mf-semantics"].
 
 The conclusion of each rule has the form @clpt[(d p)], where @clpt[d] is an 
 identifier naming the definition and @clpt[p] is a pattern.

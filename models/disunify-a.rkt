@@ -18,24 +18,24 @@
    #f])
 
 (define-metafunction U
-  solve : e (∧ e ...) (∧ δ ....) -> C or ⊥
-  [(solve e_? (∧ e ...) (∧ δ ...))
+  solve : e C -> C or ⊥
+  [(solve e_? (∧ (∧ e ...) (∧ δ ...)))
    (∧ (∧ e_2 ...) (∧ δ_2 ...))
    (where (∧ (x = p) ...) (∧ e ...))
    (where (∧ e_2 ...) (unify ((apply-subst e_? (x ...) (p ...))) (∧ e ...)))
    (where (∧ (x_2 = p_2) ...) (∧ e_2 ...))
    (where (∧ δ_2 ...) (check (∧ (apply-subst δ (x ...) (p ...)) ...)))]
-  [(solve e_? (∧ e ...) (∧ δ ...))
+  [(solve e_? C)
    ⊥])
 
 (define-metafunction U
-  dis-solve : δ (∧ e ...) (∧ δ ...) -> C or ⊥
-  [(dis-solve δ_? (∧ e ...) (∧ δ ...))
+  dis-solve : δ C -> C or ⊥
+  [(dis-solve δ_? (∧ (∧ e ...) (∧ δ ...)))
    (∧ (∧ e ...) (∧ δ_2 ...))
    (where (∧ (x = p) ...) (∧ e ...))
    (where δ_0 (disunify (apply-subst δ_? (x ...) (p ...))))
    (where (∧ δ_2 ...) (check (∧ δ_0 δ ...)))]
-  [(dis-solve δ_? (∧ e ...) (∧ δ ...))
+  [(dis-solve δ_? C)
    ⊥])
 
 (define-metafunction U
