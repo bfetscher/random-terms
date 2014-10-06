@@ -1,7 +1,7 @@
 
 .SILENT : notes derivation
 
-all: notes paper
+all: notes test paper
 
 paper:
 	raco make paper.scrbl
@@ -16,3 +16,7 @@ notes:
 
 clean:
 	find . \( -name '*.pdf' -o -name '*.log' -o -name '*.out' -o -name '*.aux' \) -exec rm -f {} \;
+
+test:
+	raco test models/disunify-a.rkt
+	racket models/test.rkt

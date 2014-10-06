@@ -83,7 +83,7 @@
    (check (∧ δ_1 ... δ_s δ_2 ...))
    (where δ_s (disunify (∀ (x_a ...) (∨ ((lst p_l ...) ≠ p_r) ...))))]
   [(check (∧ δ_1 ... (∀ (x_a ...) (∨ ((lst p_l ...) ≠ p_r) ...)) δ_2 ...))
-   (check (∧ δ_1 ... (∀ (x_a ...) (∨ ((lst p_l ...) ≠ p_r) ...)) δ_2 ...))
+   (check (∧ δ_1 ... δ_2 ...))
    (where ⊤ (disunify (∀ (x_a ...) (∨ ((lst p_l ...) ≠ p_r) ...))))]
   [(check (∧ δ_1 ... (∀ (x_a ...) (∨ ((lst p_l ...) ≠ p_r) ...)) δ_2 ...))
    ⊥
@@ -133,11 +133,10 @@
   solve/test : (any ...) (∧ e ...) (∧ δ ...) -> any
   [(solve/test (e_0 any ...) (∧ (x = p) ...) (∧ δ ...))
    (solve/test (any ...) (∧ (x_2 = p_2) ...) (∧ δ_2 ...))
-   (where (∧ (x_2 = p_2) ...) (unify ((apply-subst e_0 (x ...) (p ...))) (∧ (x = p) ...)))
-   (where (∧ δ_2 ...) (check (∧ (apply-subst δ (x_2 ...) (p_2 ...)) ...)))]
+   (where (∧ (∧ (x_2 = p_2) ...) (∧ δ_2 ...)) (solve e_0 (∧ (∧ (x = p) ...) (∧ δ ...))))]
   [(solve/test (δ_0 any ...) (∧ (x = p) ...) (∧ δ ...))
    (solve/test (any ...) (∧ (x = p) ...) (∧ δ_2 ...))
-   (where (∧ δ_2 ...) (check (∧ (disunify (apply-subst δ_0 (x ...) (p ...))) δ ...)))]
+   (where (∧ (∧ (x = p) ...) (∧ δ_2 ...)) (dis-solve δ_0 (∧ (∧ (x = p) ...) (∧ δ ...))))]
   [(solve/test () (∧ e ...) (∧ δ ...))
    ((e ...) : (δ ...))]
   [(solve/test _ _ _)
