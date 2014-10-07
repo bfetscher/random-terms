@@ -128,7 +128,7 @@
     (parameterize ([metafunction-pict-style 'up-down]
                    [metafunction-cases '(0 1)])
       (with-all-rewriters
-       (render-metafunction param-elim)))
+       (render-metafunction param-elim #:contract? #t)))
     (parameterize ([metafunction-pict-style 'left-right]
                    [metafunction-cases '(2 3)])
       (with-all-rewriters

@@ -8,6 +8,11 @@
           "results/res-pict.rkt")
 
 @title[#:tag "sec:evaluation"]{Evaluating the Generator}
+
+@bold{@italic{Awaiting results from our comparison with Michal
+              and our final results from the Redex benchmark to
+              complete this section.}}
+
 @;{
 
 This chapter describes the evaluation of the new random

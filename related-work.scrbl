@@ -22,12 +22,7 @@ ways. Our approach, on the other hand, is to provide a straightforward
 way to implement a test generator, ideally by simply writing down the
 type system, the inherent tradeoff being that an automatically derived
 generator is almost certain to be much slower and likely to have a
-less effective@note{Less effective in the sense of less likely to find bugs. The term
-       distribution of @citet[palka-diss] is essentially optimized
-       in this way, as much as is possible.} 
-distribution of terms. The interesting question is how large this tradeoff
-is. We hope to provide an answer to this question by investigating a comparison
-with this work similar to the one we conducted for the Racket Virtual Machine model.
+less effective distribution of terms.
 
 Random program generation for testing purposes is not a new idea
 and goes back at least to @citet[Hanford], who details the

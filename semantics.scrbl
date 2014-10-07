@@ -20,7 +20,7 @@
 This section describes a formal model of the derivation generator.
 The centerpiece of the model is a relation that rewrites programs consisting
 of metafunctions and judgment forms into the set of possible derivations 
-that they can generate. Our implementation has a similar structure to the
+that they can generate. Our implementation has a structure similar to the
 model, except that it uses randomness and heuristics to select just one
 of the possible derivations that the rewriting relation can produce.
 Our model is based on @citet[clp-semantics]'s constraint logic programming
@@ -36,13 +36,13 @@ semantics.
         @(clp-red-pict)]
 
 The grammar in @figure-ref["fig:clp-grammar"] describes the language of the model.
-A program @clpt[P] consists of  definitions @clpt[D]
-and each definition consists of a set of rules @clpt[((d p) ← a ...)], here written
+A program @clpt[P] consists of  definitions @clpt[D] and each definition consists 
+of a set of inference rules @clpt[((d p) ← a ...)], here written
 horizontally with the conclusion on the left and premises on the right. (Note that
 ellipses are used in a precise manner to indicate repetition of the immediately
 previous expression, following Scheme tradition. They do not indicate elided text.)
 Definitions can express both judgment forms and metafunctions, which are compiled
-to definitions via process we discuss in @secref["sec:mf-semantics"].
+to definitions via a process we discuss in @secref["sec:mf-semantics"].
 
 The conclusion of each rule has the form @clpt[(d p)], where @clpt[d] is an 
 identifier naming the definition and @clpt[p] is a pattern.
@@ -86,13 +86,15 @@ that the definition's id @clpt[d] agrees with the goal's, a reduction
 step can occur. The reduction step first freshens the variables in
 the rule, asks the solver to combine the equation @clpt[(p_f = p_g)] 
 with the current constraint store, and reduces to a new state with
-the new constraint store and a new goal state. The new goal state has
+the new constraint store and a new goal state. 
+(The solver may fail, in which case this is an invalid derivation.)
+The new goal state has
 all of the previously pending goals as well as the new ones introduced
-by the premises of this rule.
+by the premises of the rule.
 
 The second rule covers the case where a disequational constraint @clpt[δ] 
 is the first element in the goal
-stack. In that case, the disequation constraint solver is called with the
+stack. In that case, the disequational solver is called with the
 current constraint store and the disequation. If it returns a new constraint
 store, then the disequation is consistent and the new constraint store is
 used. Otherwise, reduction terminates without producing a derivation.
@@ -293,6 +295,8 @@ with the left-hand side. Otherwise, the constraint is passed to disunify
 once again, and the set of disequations is updated accordingly.
 
 @section[#:tag "sec:search"]{Search Heuristics}
+
+@bold{@italic{Haven't written this section yet.}}
 
 @section[#:tag "sec:pats"]{A Richer Pattern Language}
 
