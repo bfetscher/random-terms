@@ -155,7 +155,8 @@ anything that @italic{matches} the first.
 @;{
 Leaving this here for reference...
 Suppose p are patterns, t are terms (essentially patterns with no variables from this perspective), 
-and s are substitutions (finite maps from variables to patterns). s(p) applies a substitution to a pattern.
+and s are substitutions (finite maps from variables to patterns). s(p) applies a substitution
+to a pattern.
 
 1. Matching is easy to define:
 Matches[p,t] <=> \exists s, s(p) = t
@@ -558,7 +559,8 @@ The rules presented here are based on the operational semantics for constraint l
 programming@~cite[clp-semantics], used for their clarity and extensibility with respect 
 to the constraint domain, as it will
 be necessary to add some new constraints to deal with metafunctions. The rules shown correspond
-exactly to those in @citet[clp-semantics], meaning the derivation generator is actually a random constraint
+exactly to those in @citet[clp-semantics], meaning the derivation generator is actually a random
+constraint
 logic programming system.
 
 @figure*["fig:derivation" "Derivation generation"]{
@@ -575,7 +577,8 @@ set of constraints, or @italic{⊥}, which represents inconsistent constraints a
 derivation. (For simplicity the constraint store is kept opaque for the moment.)
 
 The rules process the current goal and modify the constraint store until the goal is empty, at which
-point the derivation process is finished. When a constraint is the first element in the goal, it is checked
+point the derivation process is finished. When a constraint is the first element in the goal, it is
+checked
 for consistency with the procedure @tt{add-constraint}, which returns an updated current constraint 
 store on success or @italic{⊥} on failure (rules @tt{new constraint} and @tt{invalid constraint}).
 
@@ -649,61 +652,79 @@ are preprocessed in the same way as judgment forms, transforming terms into patt
 lifting out metafunction applications. Then, for a clause with left-hand side @italic{p@subscript{l}}
 and right-hand side @italic{p@subscript{r}}, a rule with the conclusion 
 @italic{(f p@subscript{l} p@subscript{r})} is added, where @italic{f} is the metafunction name.
-For a metafunction application of @italic{(f p@subscript{input})} with result @italic{p@subscript{output}},
+For a metafunction application of @italic{(f p@subscript{input})} with result 
+@italic{p@subscript{output}},
 a premise of the form @italic{(f p@subscript{input} p@subscript{output})} is added, and 
 @italic{p@subscript{output}} is inserted at the location of the application:
 @centered[f-comp-pict]
 The lifting of applications to premises occurs in both metafunction and judgment-form compilation,
 and transforms recursive metafunctions into recursive judgments. For example, if
 the term @italic{t@subscript{r}} in the illustration above contained a call to @italic{f}, that
-call would become a premise of the resulting judgment, and its position in the pattern @italic{p@subscript{r}}
+call would become a premise of the resulting judgment, and its position in the pattern
+@italic{p@subscript{r}}
 would be replaced by the variable in the output position of the premise.
 
 This translation accomplishes the goal of producing judgments as inputs for the generation
 scheme, but it doesn't preserve the semantics of metafunctions. Treating a metafunction 
 definition as a relation ignores the ordering of the metafunction clauses. For a metafunction
 @italic{f} with  left-hand-side patterns @italic{p@subscript{1}...p@subscript{n}}, if the generator
-attempts to satisfy a goal of the form @italic{(f p@subscript{g})} with clause @italic{k}, a constraint
+attempts to satisfy a goal of the form @italic{(f p@subscript{g})} with clause @italic{k}, a
+constraint
 of the form @italic{p@subscript{k} = p@subscript{g}} will be added. But it is possible that
-@italic{p@subscript{g}} is eventually instantiated as some term that would have matched some previous pattern
+@italic{p@subscript{g}} is eventually instantiated as some term that would have matched some previous
+pattern
 @italic{p@subscript{j}, 1 ≤ j < k}. In this case, an application of @italic{f} to the term in question
-@italic{should} have used clause @italic{j}, but the generator has instead generated an application that
+@italic{should} have used clause @italic{j}, but the generator has instead generated an application
+that
 used clause @italic{k}. To avoid this situation, constraints that exclude the possibility of matching
 clauses @italic{1} through @italic{k - 1} must be added; to generate an application that uses clause
 @italic{k} the necessary condition becomes 
-@italic{p@subscript{k} = p@subscript{g} ∧ p@subscript{1} ≠ p@subscript{g} ∧ ... ∧ p@subscript{k-1} ≠ p@subscript{g}}.
+@italic{p@subscript{k} = 
+         p@subscript{g} ∧ p@subscript{1} ≠ p@subscript{g} ∧ ... ∧ p@subscript{k-1} ≠ p@subscript{g}}.
 
 This seems sufficient at first, but further thought shows this constraint is not quite correct. 
 Consider the following definition of the metafunction @italic{g}:
 @(newline)
 @centered[f-ex-pict]
-Where in this context we can consider @italic{p} to be pattern variable that will match any pattern, equivalent
-to @code{any} in Redex.
-Suppose when generating an application @italic{(g p@subscript{in})} of this metafunction the second clause is chosen. 
-This will generate the constraint @italic{p@subscript{in} = p ∧ p@subscript{in} ≠ (p@subscript{1} p@subscript{2})}.
-(The fact that variables aside from @italic{p@subscript{in}} will be freshened is elided.) Now suppose that later on
-in the generation process, the constraint @italic{p@subscript{in} = (p@subscript{3} p@subscript{4})} is added, so
+Where in this context we can consider @italic{p} to be pattern variable that will match any pattern, 
+equivalent to @code{any} in Redex.
+Suppose when generating an application @italic{(g p@subscript{in})} of this metafunction the second
+clause is chosen. 
+This will generate the constraint @italic{p@subscript{in} = p ∧ p@subscript{in} ≠ (p@subscript{1}
+                                           p@subscript{2})}.
+(The fact that variables aside from @italic{p@subscript{in}} will be freshened is elided.) Now suppose
+that later on
+in the generation process, the constraint @italic{p@subscript{in} = (p@subscript{3} p@subscript{4})}
+is added, so
 the relevant part of the constraint store will be equivalent (after a bit of simplification) to:
-@centered{@italic{p@subscript{in} = (p@subscript{3} p@subscript{4}) ∧ p@subscript{1} ≠ p@subscript{3} ∧ p@subscript{2} ≠ p@subscript{4}}}
+@centered{@italic{p@subscript{in} = 
+                   (p@subscript{3} p@subscript{4}) ∧ 
+                   p@subscript{1} ≠ p@subscript{3} ∧ p@subscript{2} ≠ p@subscript{4}}}
 The problem at this point is that it is possible to satisfy these constraints simply by choosing 
 @italic{p@subscript{3}} to be anything other than
-@italic{p@subscript{1}}, or @italic{p@subscript{4}} anything other than @italic{p@subscript{2}}, but @italic{p@subscript{in}} will still
+@italic{p@subscript{1}}, or @italic{p@subscript{4}} anything other than @italic{p@subscript{2}},
+but @italic{p@subscript{in}} will still
 be a two element list and thus would match the first clause of the metafunction. 
 
 The constraint excluding the first clause must
 be strong enough to disallow @italic{any} two element list, which can be satisfied by requiring that:
-@centered{@italic{∀ p@subscript{1} ∀ p@subscript{2} p@subscript{in} ≠ (p@subscript{1} p@subscript{2})}}
+@centered{@italic{∀ p@subscript{1} ∀ p@subscript{2} 
+                     p@subscript{in} ≠ (p@subscript{1} p@subscript{2})}}
 This suggests the general recipe for transforming metafunctions into judgments suitable for use in
 the derivation generator. Each clause is transformed into a rule as described above, with the addition
-of premises that are primitive constraints excluding the previous rules. For example, if clause @italic{k} is
-being processed, the constraints will be of the form @italic{∀ x ... p@subscript{k} ≠ p@subscript{i}}, for
+of premises that are primitive constraints excluding the previous rules. For example, if clause
+@italic{k} is
+being processed, the constraints will be of the form
+@italic{∀ x ... p@subscript{k} ≠ p@subscript{i}}, for
 @italic{i = 1...k-1}, where @italic{p@subscript{k}} is the left hand side of clause @italic{k}.
 There will be one constraint for each previous clause where the disallowed pattern
-@italic{p@subscript{i}} is the left hand side pattern of clause @italic{i}, and all of the variables in
+@italic{p@subscript{i}} is the left hand side pattern of clause @italic{i}, and all of the variables
+in
 @italic{p@subscript{i}} must be universally quantified, i.e. for constraint @italic{i}, 
 @italic{@tt{Variables}(p@subscript{i})=@tt{@"{"}x ...@tt{@"}"}}.
 
-The derivation generation framework of @figure-ref["fig:derivation"] can easily be modified to handle the addition of the new
+The derivation generation framework of @figure-ref["fig:derivation"] can easily be modified to
+handle the addition of the new
 constraints, the @italic{c} non-terminal is simply extended with a single new production to be:
 @centered[c-ext-pict]
 Disequational constraints in a judgment resulting from a metafunction transformation are added to
@@ -734,7 +755,8 @@ A problem @italic{P} is a list of constraints @italic{c}, which can be equations
 to be universally quantified). Given a problem, the solver constructs (and maintains, as the problem 
 is extended) a substitution @italic{S} that validates the equations and a set of
 simplified disequations @italic{D}, such that @italic{S} also validates @italic{D}, and if @italic{D}
-is valid, so are all the original disequations in @italic{P}. The substitution@note{To be more precise, 
+is valid, so are all the original disequations in
+@italic{P}. The substitution@note{To be more precise, 
                                                   @italic{S} is actually the 
                                                   equational representation of some substitution
                                                   @italic{γ}, where @italic{γ} is defined by its
@@ -810,8 +832,10 @@ binding @italic{(x@subscript{σ} = θt@subscript{σ})} and @italic{(x@subscript{
 where @italic{x@subscript{σ} = x@subscript{θ}}, then 
 @italic{(x@subscript{θ} = t@subscript{θ})} is removed.
 
-Two substitutions @italic{σ} and @italic{θ} are @italic{equal}, @italic{σ = θ}, if for any variable @italic{x},
-@italic{σx = θx}. A substitution @italic{σ} is @italic{more general} than a substitution @italic{θ}, written
+Two substitutions @italic{σ} and @italic{θ} are @italic{equal}, @italic{σ = θ}, if for any variable
+@italic{x},
+@italic{σx = θx}. A substitution @italic{σ} is @italic{more general} than a substitution @italic{θ},
+written
 @italic{σ ≤ θ}, if there exists some substitution @italic{γ} such that @italic{θ = γσ}. 
 
 A substitution @italic{σ} is called the @italic{most general unifier} of two terms @italic{s}
@@ -833,17 +857,20 @@ result for now):
                           ⊥ if the equations in @italic{P} have no unifier. Otherwise, it terminates
                           with @italic{(S@subscript{mgu} : D)} where @italic{S@subscript{mgu}} is
                           a most general unifier for @italic{P}.}
-Proofs of this proposition can be found in many references on unification, for example @citet[baader-snyder].
+Proofs of this proposition can be found in many references on unification, for example
+@citet[baader-snyder].
 
 The version of U shown in @figure-ref["fig:unify-func"] corresponds fairly closely with the
-implementation in Redex, except that the current substitution is represented as a hash table and the function 
+implementation in Redex, except that the current substitution is represented as a hash table
+and the function 
 recurs on the structure of input terms instead of using the current problem as a stack (as in 
 the decomposition rule). As shown here, U has exponential complexity in both time and space. 
 The space complexity arises because the substitution may have many identical terms, so by using 
 a hash table it may be represented as a DAG (instead of a tree) with
 sharing between identical terms and linear space. However the worst-case running time is still
 exponential. Interestingly, this is still the most common implementation of unification because
-in practice the exponential running time never occurs, and in fact it is usually faster than algorithms
+in practice the exponential running time never occurs, and in fact it is usually
+faster than algorithms
 with polynomial or near-linear worst-case complexity.@~cite[unification-comparison]
 
 @subsection{Solving Disequational Constraints}
