@@ -112,32 +112,6 @@ equations and disequations.
 and @secref["sec:pats"] describes how our implementation
 scales up to support features in Redex that are not covered in this model.
 
-
-@;{
-TODO: 
-- get rid of π
-- C, no bottom, change reduction relation to use C_1 and C_2 
-- remove top and bottom from δ -- requires changes to 'check' (etc)
-- in solve, don't use question mark as a subscript, how about "new"?
-- call to check in solve should use new substitution, not old one
-- run test suite in 'make'
-- 'lst' constructor in call to disunify not necessary
-- get rid of appendix before sending on
-- change 'solve' (and maybe elsewhere?) to avoid simple pattern-matching
-  side-conditions.
-
-- delete 4, replace with meta comment saying what will be there later
-- review changes to 3.0. 
-
-Send out draft to everyone as pdf attachment. Name the pdf file with the
-date.
-
-In email, remind people that abstract deadline and real deadline are
-approaching. Ask for comments on current draft. Promise more drafts with
-more stuff.
-
-}
-
 @section[#:tag "sec:mf-semantics"]{Compiling Metafunctions}
 
 The primary difference between a metafunction, as written in Redex,
