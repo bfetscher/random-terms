@@ -31,7 +31,8 @@
          param-elim-func-pict/contract
          eqt
          feqt
-         fneqt)
+         fneqt
+         incorrect-g-jdg-pict)
 
 
 (define lang-pict 
@@ -204,6 +205,16 @@
     (infer (cbl-superimpose (feqt (g p) 1)
                             (ghost (feqt (g (p_1 p_2)) 2)))
            (∀neqt (p_1 p_2) (lst p_1 p_2) p)))))
+
+(define (incorrect-g-jdg-pict)
+  (with-font-params
+   (hbl-append 
+    40
+    (infer (eqt (g (lst p_1 p_2)) 2)
+           (ghost (∀neqt (p_1 p_2) (lst p_1 p_2) p)))
+    (infer (cbl-superimpose (feqt (g p) 1)
+                            (ghost (feqt (g (p_1 p_2)) 2)))
+           (neqt/lang FexL (lst p_1 p_2) p)))))
 
 
 (define (f-ex-pict)

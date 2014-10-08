@@ -12,7 +12,8 @@
           "models/clp.rkt"
           (except-in "models/typesetting.rkt" lang-pict)
           "pat-grammar.rkt"
-          "common.rkt")
+          "common.rkt"
+          (only-in pict hbl-append))
 
 @title[#:tag "sec:semantics"]{Derivation Generation in Detail}
 
@@ -105,10 +106,10 @@ in more detail.
 Metafunctions are added via a procedure generalizing the 
 process used for @clpt[lookup] in @secref["sec:deriv"], 
 which we explain in @secref["sec:mf-semantics"]. 
-@Secref["sec:solve"] describes how our solver solves
+@Secref["sec:solve"] describes how our solver handles
 equations and disequations.
-@Secref["sec:search"] discusses the heuristics our implementation
-uses and @secref["sec:pats"] describes how our implementation
+@Secref["sec:search"] discusses the heuristics in our implementation
+and @secref["sec:pats"] describes how our implementation
 scales up to support features in Redex that are not covered in this model.
 
 
@@ -139,18 +140,24 @@ more stuff.
 
 @section[#:tag "sec:mf-semantics"]{Compiling Metafunctions}
 
-The idea behind metafunction compilation  is to generate a definition @(clpt D)
-that contains one rule for each clause of the metafunction, and add
-constraints as necessary to ensure that the resulting rules are consistent with
-the original definition. As an illustrative example, consider the following
+The primary difference between a metafunction, as written in Redex,
+and a set of @clpt[((d p) ← a ...)] clauses from @figure-ref["fig:clp-grammar"]
+is ordering. Specifically, when the second clause in a metafunction fires,
+the then the pattern in the first clause must not match, but there is no
+such constraint in the model. Accordingly,
+the compilation process that translates metafunctions into the model must
+insert disequation constraints that capture the ordering of the cases
+in metafunctions.
+
+As an example, consider the following
 metafunction definition, alongside some example applications:
-@(centered (f-ex-pict))
+@centered{@(f-ex-pict)}
 The first clause matches any two-element list, and the second clause matches
 any pattern at all. Since the clauses apply in order, an application where the
-argument is a two-element list will reduce to @(clpt 2) and an argument of any
-other form will reduce to @(clpt 1). To generate conclusions of the judgment
+argument is a two-element list will reduce to @clpt[2] and an argument of any
+other form will reduce to @clpt[1]. To generate conclusions of the judgment
 corresponding to the second clause, we have to be careful not to generate
-anything that @italic{matches} the first.
+anything that matches the first.
 
 @;{
 Leaving this here for reference...
@@ -171,30 +178,28 @@ Excludable[p_1, p_2] <=> \exists s, \not Matches[p_1, s(p_2)]
 Expanding out the final definition, it becomes the more complicated looking:
 \exists s_1, \forall s, s(p_1) =/= s_1(p_2)}
 
-For the metafunction @(g-p) shown above, then, the compiled form
-would be:
-@(centered (g-jdg-pict))
-The rule on the left captures the first clause of the metafunction,
-and the rule on the right captures the second. The added premise of
-the right-hand rule ensures that it is impossible for @(clpt p), the 
-pattern variable to be unified with the argument of @(g-p), to be
-@italic{any} two-element list. Thus when we choose the second rule,
-we know that the argument will never be able to match the first clause.
+Applying the same idea as @clpt[lookup] in @secref["sec:deriv"], 
+we reach this incorrect translation:
+@centered{@(incorrect-g-jdg-pict)}
+This is wrong because it would let us derive
+@(hbl-append 2 @clpt[(g (list 1 2))] @clpt[=] @clpt[1]), 
+using @clpt[3] for @clpt[p_1] and
+@clpt[4] for @clpt[p_2] in the premise of the right-hand rule.
+The problem is that we need to disallow all possible instantiations
+of @clpt[p_1] and @clpt[p_2], but the variables 
+can be filled in with just specific values to satisfy the premise.
 
-To see more clearly why we need the universal quantification here, consider
-that without it, we would have a constraint of the form @(fneqt (lst p_1 p_2) p).
-However, we could then choose @(feqt (lst p_1 p_2) (lst 1 2)) and @(feqt p (lst 3 4)),
-which satisfies the constraint but allows @(clpt p) to match the left-hand
-side of the first clause of @(g-p).
+The correct translation, then, universally quantifies the variables
+@clpt[p_1] and @clpt[p_2]:
+@centered{@(g-jdg-pict)}
+Thus, when we choose the second rule,
+we know that the argument will never be able to match the first clause.
 
 In general, when compiling a metafunction clause, we add a disequational
 constraint for each previous clause in the metafunction definition.
-The disequality is between the left-hand side patterns of the previous
-clause and the left-hand side of the current clause, and is quantified 
+Each disequality is between the left-hand side patterns of one of the previous
+clauses and the left-hand side of the current clause, and it is quantified 
 over all variables in the previous clause's left-hand side.
-
-
-
 
 @figure["fig:solve-dissolve"
         @list{The interface of the constraint solver.}
