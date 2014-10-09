@@ -22,5 +22,6 @@ that discourage newcomers.
 
 @(element (style "noindent" '()) '())
 @bold{Acknowledgments.} Thanks to Casey Klein for help getting this
-project started and for an initial prototype implementation and to 
-Asumu Takikawa for his help with the delimited continuations model.
+project started and for an initial prototype implementation, to 
+Asumu Takikawa for his help with the delimited continuations model,
+and to Larry Henschen for his help with earlier versions of this work.
