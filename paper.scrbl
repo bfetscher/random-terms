@@ -17,7 +17,7 @@
              @institute{Chalmers University of Technology}]
 
 @title{Making Random Judgments:
-       Automatically Generating Well-typed Terms from the Definition of a Type-System}
+       Automatically Generating Well-Typed Terms from the Definition of a Type-System}
 
 @abstract{
  This paper presents a generic method for randomly
