@@ -1,1 +1,0 @@
-All tests conducted with racket commit f87981f96057c26cb311e786a91229bf4a874e5b.

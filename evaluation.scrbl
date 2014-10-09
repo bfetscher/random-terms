@@ -5,13 +5,26 @@
           scriblib/footnote
           slideshow/pict
           "citations.rkt"
-          "results/res-pict.rkt")
+          "results/plot-points.rkt"
+          "results/plot-lines.rkt")
 
 @title[#:tag "sec:evaluation"]{Evaluating the Generator}
 
 @bold{@italic{Awaiting results from our comparison with Michal
               and our final results from the Redex benchmark to
               complete this section.}}
+
+@figure["fig:points"
+        @list{Performance results by individual bug on the Redex 
+              Benchmark, following the naming scheme
+              @italic{<model-name>}-@italic{<bug-number>}.rkt}
+        @(add-trial-warning (plot-points 1ht))]
+
+@figure["fig:lines"
+        @list{Random testing performance of the derivation
+              generator vs. ad-hoc random generation on
+              the Redex Benchmark.}
+        @(add-trial-warning (line-plot/directory 1ht))]
 
 @;{
 
