@@ -807,3 +807,11 @@
    #:location (journal-location jfp
                                 #:volume 22
                                 #:pages '(529 573))))
+
+(define burke-masters
+  (make-bib
+   #:author "Burke Fetscher"
+   #:title "Property-based Automated Test Generation"
+   #:date 2014
+   #:location (techrpt-location #:institution "Northwestern University EECS"
+                                #:number "??")))

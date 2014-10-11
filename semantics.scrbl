@@ -31,19 +31,15 @@ semantics.
         @list{The syntax of the derivation generator model.}
               @(init-lang)]
 
-@figure["fig:clp-red"
-        @list{Reduction rules describing generation of the complete
-              tree of derivations.}
-        @(clp-red-pict)]
-
 The grammar in @figure-ref["fig:clp-grammar"] describes the language of the model.
 A program @clpt[P] consists of  definitions @clpt[D] and each definition consists 
 of a set of inference rules @clpt[((d p) ← a ...)], here written
 horizontally with the conclusion on the left and premises on the right. (Note that
 ellipses are used in a precise manner to indicate repetition of the immediately
 previous expression, following Scheme tradition. They do not indicate elided text.)
-Definitions can express both judgment forms and metafunctions, which are compiled
-to definitions via a process we discuss in @secref["sec:mf-semantics"].
+Definitions can express both judgment forms and metafunctions. They are a strict
+generalization of judgment forms, and metafunctions are compiled
+into them via a process we discuss in @secref["sec:mf-semantics"].
 
 The conclusion of each rule has the form @clpt[(d p)], where @clpt[d] is an 
 identifier naming the definition and @clpt[p] is a pattern.
@@ -64,22 +60,29 @@ The relation acts on states of the form @clpt[(P ⊢ (a ...) ∥ C)],
 where @clpt[(a ...)] represents a stack of goals, which can
 either be incomplete derivations of the form @clpt[(d p)], indicating a
 goal that must be satisfied to complete the derivation, or disequational constraints 
-that must be satisfied. A consistent
-constraint store @clpt[C] is a set of 
-simplified equations and disequations, where the precise definition of ``simplified''
-is given in @secref["sec:solve"].
+that must be satisfied. A constraint store @clpt[C] is a set of 
+simplified equations and disequations that are guaranteed to be satisfiable.
+The notion of equality we use here is purely syntactic; two ground terms are equal
+to each other only if they have the same shape.
 
-In general, the rewriting relation
-takes a single step, based on the first entry in the goal stack.
-This means that some reduction sequences are ultimately
-doomed, but may still reduce for a while. In our implementation,
+Each step of the rewriting relation
+looks at the first entry in the goal stack and rewrites to another
+state based on its contents.
+In general, some reduction sequences are ultimately
+doomed, but may still reduce for a while before the constraint
+store becomes inconsistent. In our implementation,
 discovery of such doomed reduction sequences causes backtracking. Reduction
 sequences that lead to valid derivations
 always end with a state of the form @clpt[(P ⊢ () ∥ C)], and the derivation 
 itself can be read off of the reduction sequence that reaches that state.
 
+@figure["fig:clp-red"
+        @list{Reduction rules describing generation of the complete
+              tree of derivations.}
+        @(clp-red-pict)]
+
 There are two rules in the relation.
-When a literal goal @clpt[(d p)] is the first element
+When a goal of the form @clpt[(d p)] is the first element
 of the goal stack (as is the root case, when the initial goal is the
 sole element), then the @rule-name{reduce} rule applies. For every
 rule of the form @clpt[((d p_r) ← a_r ...)] in the program such
@@ -87,9 +90,9 @@ that the definition's id @clpt[d] agrees with the goal's, a reduction
 step can occur. The reduction step first freshens the variables in
 the rule, asks the solver to combine the equation @clpt[(p_f = p_g)] 
 with the current constraint store, and reduces to a new state with
-the new constraint store and a new goal state. 
-(The solver may fail, in which case this is an invalid derivation.)
-The new goal state has
+the new constraint store and a new goal state. If the solver fails,
+then the reduction rule doesn't apply (because @clpt[solve] returns @clpt[⊥]
+instead of a @clpt[C_2]). The new goal stack has
 all of the previously pending goals as well as the new ones introduced
 by the premises of the rule.
 
@@ -98,7 +101,7 @@ is the first element in the goal
 stack. In that case, the disequational solver is called with the
 current constraint store and the disequation. If it returns a new constraint
 store, then the disequation is consistent and the new constraint store is
-used. Otherwise, reduction terminates without producing a derivation.
+used.
 
 The remainder of this section fills in the details in this model and
 discusses the correspondence between the model and the implementation
@@ -123,8 +126,8 @@ the compilation process that translates metafunctions into the model must
 insert disequation constraints that capture the ordering of the cases
 in metafunctions.
 
-As an example, consider the following
-metafunction definition, alongside some example applications:
+As an example, consider the
+metafunction definition of @clpt[g] on the left and some example applications on the right:
 @centered{@(f-ex-pict)}
 The first clause matches any two-element list, and the second clause matches
 any pattern at all. Since the clauses apply in order, an application where the
@@ -156,7 +159,7 @@ Applying the same idea as @clpt[lookup] in @secref["sec:deriv"],
 we reach this incorrect translation:
 @centered{@(incorrect-g-jdg-pict)}
 This is wrong because it would let us derive
-@(hbl-append 2 @clpt[(g (list 1 2))] @clpt[=] @clpt[1]), 
+@(hbl-append 2 @g-of-12 @clpt[=] @clpt[1]), 
 using @clpt[3] for @clpt[p_1] and
 @clpt[4] for @clpt[p_2] in the premise of the right-hand rule.
 The problem is that we need to disallow all possible instantiations
@@ -175,104 +178,124 @@ Each disequality is between the left-hand side patterns of one of the previous
 clauses and the left-hand side of the current clause, and it is quantified 
 over all variables in the previous clause's left-hand side.
 
-@figure["fig:solve-dissolve"
-        @list{The interface of the constraint solver.}
+@figure["fig:solve"
+        @list{The Solver for Equations}
         @(vl-append
           20
           (solve-pict)
-          (dis-solve-pict))]
+          (unify-pict))]
 
 @section[#:tag "sec:solve"]{The Constraint Solver}
 
-The constraint solver maintains a set of equations and disequations between
-patterns, subject to the requirement that a substitution exists that satisfies
-the equations and does not violate the disequations. Whenever a new constraint
-is added to the set, consistency is checked again and the new set is simplified,
-if possible.
+The constraint solver maintains a set of equations and
+disequations that captures invariants of the current
+derivation that it is building. These contraints are called
+the constraint store and are kept in the canonical form 
+@clpt[C], as shown in @figure-ref["fig:clp-grammar"], with
+the additional constraint that the equational portion of the
+store is idempotent (when applied as a substitution) and
+that @clpt[C] is always satisfiable. Whenever a new
+constraint is added to the set, consistency is checked again
+and the new set is simplified to maintain the canonical
+form.
 
-@Figure-ref["fig:solve-dissolve"] shows the two metafunctions, @clpt[solve]
-and @clpt[dis-solve], that constitute the interface of the constraint solver 
-as seen by the derivation generator. Both take a single new constraint (an
-equation in @clpt[solve]'s case, and a disequation in @clpt[dis-solve]'s) along
-with the current consistent constraints and attempt to add the new constraint.
-Both first apply the current substitution@note{The simplified form of
-   the equational constraints is an idempotent substitution.} to the
-new constraint. @clpt[solve] then updates the equational constraints with
-@clpt[unify] and applies the resulting substitution to the disequational
-constraints. The updated disequational constraints are passed to
-@clpt[check] which simplifies them if necessary, verifying their consistency.
-@clpt[dis-solve], on the other hand, checks a new disequation for consistency 
-(and simplifies) with @clpt[disunify]. 
+@Figure-ref["fig:solve"] shows @clpt[solve], the entry point to the solver
+for new equational constraints. It accepts an equation and a constraint
+store and either returns a new constraint store that is equivalent to
+the conjunction of the constraint store and the equation or @clpt[⊥], indicating
+that adding @racket[e] is inconsistent with the constraint store. It
+applies the equational portion of the constraint store as a substitution and
+then performans syntactic unification@~cite[baader-snyder] to build a new equational 
+portion of the constraint. It then calls @clpt[check], which simplifies the disequational constraints
+and checks their consistency. Finally, if all that succeeds, @clpt[check] 
+returns a constraint store that combines the results of
+@clpt[unify] and @clpt[check]. If either @clpt[unify] or @clpt[check] fails, then
+@clpt[solve] returns @clpt[⊥].
 
-@figure["fig:unify"
-        @list{@clpt[unify] adds a new equation to the equational constraints. (The first
-               argument is assumed to be up to date with the current substitution.)}
-        @(unify-pict)]
+@figure["fig:dissolve"
+        "The Solver for Disequations"
+        @(vl-append
+          20
+          (dissolve-pict)
+          (disunify-pict))]
 
-@figure["fig:disunify"
+@Figure-ref["fig:dissolve"] shows @clpt[dissolve], the counterpart to
+@clpt[solve], but for disequations. It applies the equational part
+of the constraint store as a substitution to the new disequation
+and then calls @clpt[disunify]. It @clpt[disunify] returns
+@clpt[⊤], then the disequation was already guaranteed in the current
+constraint store and thus does not need to be recorded. If @clpt[disunify]
+returns @clpt[⊥] then the disequation is inconsistent with the current
+constraint store and thus @clpt[dissolve] itself returns @clpt[⊥]. 
+In the final situation, @clpt[disunify] returns a new disequation, 
+in which case @clpt[dissolve] adds that to the resulting constraint store.
+
+@figure["fig:dis-help"
         @list{Metafunctions used to process disequational constaints.}
         @(vl-append
           20
-          (disunify-pict)
-          (check-pict)
-          (param-elim-pict))]
+          (param-elim-pict)
+          (check-pict))]
 
-The portion of the constraint solver that deals with equations, specified by
-@clpt[unify] as shown in @figure-ref["fig:unify"], simply performs
-familiar syntactic unification@~cite[baader-snyder], and the consistent set of 
-simplified equations is the usual result, a most general unifier (mgu) for the equations 
-passed as arguments to the solver. In our definition of @clpt[unify], the first
-argument acts as an accumulator for equations to be processed, and the second
-holds a set of simplified equations in the form of an idempotent substitutions.
-The details are well known and standard. For that reason, we concentrate on explaining
-the parts of the solver that deal with disequational constraints in detail.
+The @clpt[disunify] function exploits unification and a few cleanup steps
+to determine if the input disequation is satisfiable. In addition, 
+@clpt[disunify] is always called with a disequation that has had the 
+equational portion of the constraint store applied to it (as a substitution).
 
+The key trick in this function is to observe that since
+a disequation is always a disjunction of inequalities, its negation is
+a conjuction of equalities and is thus suitable as an input to unification. 
+The first case in @clpt[disunify] covers the case where unification fails.
+In this situation we know that the disequation must have already been guaranteed
+to be false in constraint store (since the equational portion of the constraint
+store was applied as a substitution before calling @clpt[disunify]). Accordingly,
+@clpt[disunify] can simply return @clpt[⊤] to indicate that the disequation
+was redundant. 
 
-A new disequation is checked for consistency with @clpt[disunify], shown
-in @figure-ref["fig:disunify"], which returns a simplified form
-of the disequation (or @clpt[⊥] if it cannot be satisfied).
-All of @clpt[disunify]'s clauses dispatch on the result
-of unifying the @italic{equations}
-@clpt[((p_1 = p_2) ...)], corresponding to the disequations
-in the constraint's disjunction.
-If that succeeds, the result is passed along with the quantified 
-variables @(clpt (x ...)) to the auxiliary metafunction @(clpt param-elim). 
-This unification essentially performs the transformation from @clpt[(∨ (p_1 ≠ p_2) ...)]
-to @clpt[¬]@clpt[(∧ (p_1 = p_2) ...)].
-The first clause of @clpt[disunify] deals with the case where this unification 
-fails, in which case the two patterns can never be equal, so this is 
-always satisified and @clpt[disunify] just returns @clpt[⊤].
+Ignoring the call to @clpt[param-elim] in the second case of @clpt[disunify] for
+a moment, consider the case where @clpt[unify] returns an empty conjunct. This means
+that the given formula is guaranteed to be true and thus the given disequation
+is guaranteed to be false. In this case, we have failed to generate a valid
+derivation because one of the disequations must be false (in terms of the original
+Redex program, this means that we attempted to use some later case in a metafunction
+with an input that would have satisfied an earlier case) and so @clpt[diunify] must
+return @clpt[⊥]. And finally, the last case in @clpt[disunify] covers the situation
+where @clpt[unify] composed with @clpt[param-elim] returns a non-empty substitution. 
+In this case, we do not yet know if the disequation is true or false, so we collect
+the substitution that @clpt[unify] returned back into a disequation and return it,
+to be saved in the contraint store.
 
-If the unification succeeds, it returns an mgu for the patterns in question.
-This substitution is used to construct a simplified set of disequations
-that excludes the mgu, since any substitution equating the two patterns must
-be an instance of the mgu. 
-To add universal quantification, the resulting substitution is
-passed to @(clpt param-elim) which removes assignments to universally 
-quantified variables.
-Informally, we can justify this step by noting that we cannot satisfy the
-disequation by instantiating any such variables, 
-so we are essentially restricting the substitution to
-the other (existentially quantified) variables, since we must be able to
-satisfy the disequation by picking values for them only.
+This brings us to @clpt[param-elim], in 
+@figure-ref["fig:dis-help"]. It accepts a most-general
+unifier, as produced by a call to @clpt[unify] to handle a
+disequation, and all of the universally quantified variables
+in the original disequation. It's job is to remove clauses
+of the unifier when the correspond to clauses that will be
+false in the newly constructed disequation. There are two ways in which this can happen.
+First, if one of the clauses has the form @clpt[(x = p)] and
+@clpt[x] is one of the universally quantified variables, then we know that
+the corresponding clause in the disequation is @clpt[(x ≠ p)] must
+be false, since every pattern matches at least one ground term. 
+Furthermore, since the result of @clpt[unify] is idempotent, we know
+that simply dropping that clause does not affect any of the other 
+clauses. 
 
-If, after @(clpt param-elim) is applied, an empty environment is the result
-(the second clause), then it is impossible to satisfy the disequation through
-assignments to existentially quantified variables, 
-so @clpt[disunify] returns @clpt[⊥].
-In the third case, @(clpt param-elim) returns some conjunction of equations, 
-which represent an idempotent substitution, i.e. are between variables and 
-terms which do not contain the variables on the left-hand side. 
-These equations are equations are then combined into a disequational
-constraint, reversing the transformation of passing them into @clpt[unify].
+The other case is a bit more subtle. When one of the clauses
+is simply @clpt[(x_1 = x)] and, as before, @clpt[x] is one of
+the universally quantified variables, then this clause also must
+be dropped, according to the same reasoning (since @clpt[=] is symmetric).
+But some care must be taken here to avoid losing transitive inequalities.
+The function @clpt[elim-x] (not shown) handles this situation, constructing a new
+set of clauses without @clpt[x] but, in the case that we also have
+@clpt[(x_2 = x)], adds back the equation @clpt[(x_1 = x_2)]. For the
+full definition of @clpt[elim-x] and a proof that it works correctly,
+we refer the reader to the first author's masters dissertation@~cite[burke-masters].
 
-Finally, @clpt[check] is used to verify that the disequational constraints
-remain in a simplified form, where simplified means that at least one
-disequation in the disjunction has an (existentially quantified) variable
-on the right-hand side. In this form, the constraints remain consistent
-because we can always choose a value for the variable that does not unify 
-with the left-hand side. Otherwise, the constraint is passed to disunify
-once again, and the set of disequations is updated accordingly.
+Finally, we return to @clpt[check], deferred from the second
+paragraph in this section. It is used to verify that the
+verify the disequations and maintain their canonical form, once a new equation comes in.
+It does this by using @clpt[disunify] on each of the disequations that
+are not in the canonical form.
 
 @section[#:tag "sec:search"]{Search Heuristics}
 
@@ -289,8 +312,8 @@ once again, and the set of disequations is updated accordingly.
 
 Our model uses a much simpler pattern language than the one actually available
 in Redex. Although the derivation generator is not yet able to handle
-Redex's full pattern language@note{ The generator is not able to handle parts of the
-   pattern language that deal with evaluation contexts, compatible closure, or 
+Redex's full pattern language@note{The generator is not able to handle parts of the
+   pattern language that deal with evaluation contexts or 
    ``repeat'' patterns (ellipses).}, it does support a richer language than 
 the model, as shown in @figure-ref["fig:full-pats"].
 We now discuss briefly the interesting differences and how we support them.

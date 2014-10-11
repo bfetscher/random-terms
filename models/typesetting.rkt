@@ -97,14 +97,14 @@
    (render-reduction-relation R #:style 'compact-vertical)))
 
 (define (solve-pict [contract? #t])
-  (parameterize ([metafunction-pict-style 'left-right/vertical-side-conditions])
-    (with-rewriters/params
+  (left-curly-brace-style
+   (λ ()
      (render-metafunction solve #:contract? contract?))))
 
-(define (dis-solve-pict [contract? #t])
-  (parameterize ([metafunction-pict-style 'left-right/vertical-side-conditions])
-    (with-rewriters/params
-     (render-metafunction dis-solve #:contract? contract?))))
+(define (dissolve-pict [contract? #t])
+  (left-curly-brace-style
+   (λ ()
+     (render-metafunction dissolve #:contract? contract?))))
 
 (define (unify-pict [contract? #t])
   (parameterize ([metafunction-pict-style 'left-right])
@@ -112,14 +112,22 @@
      (render-metafunction unify #:contract? contract?))))
 
 (define (disunify-pict [contract? #t])
-  (parameterize ([metafunction-pict-style 'up-down])
-    (with-rewriters/params
+  (left-curly-brace-style
+   (λ ()
      (render-metafunction disunify #:contract? contract?))))
 
 (define (check-pict [contract? #t])
-  (parameterize ([metafunction-pict-style 'left-right])
-    (with-rewriters/params
+  (left-curly-brace-style
+   (λ ()
      (render-metafunction check #:contract? contract?))))
+
+(define (left-curly-brace-style t)
+  (parameterize ([metafunction-pict-style 'up-down/vertical-side-conditions]
+                 [where-make-prefix-pict
+                  (lambda ()
+                    ((current-text) "   if " (default-style) (default-font-size)))])
+    (with-rewriters/params
+     (t))))
 
 
 (define (param-elim-pict)
@@ -156,7 +164,7 @@
   (with-font-params
    (vl-append 40
               (solve-pict)
-              (dis-solve-pict)
+              (dissolve-pict)
               (unify-pict)
               (disunify-pict)
               (check-pict)

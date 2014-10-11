@@ -30,10 +30,10 @@
   (with-font-params p))
 
 (define-syntax-rule
-  (with-font-params e)
+  (with-font-params e1 e2 ...)
   (parameterize ([default-font-size 12]
                  [metafunction-font-size 12]
                  [default-font-size 12]
                  [label-font-size 12])
-    e))
+    e1 e2 ...))
 

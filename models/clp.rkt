@@ -23,7 +23,7 @@
         "reduce")
    (--> (P ⊢ (δ_g a ...) ∥ C_1)
         (P ⊢ (a ...) ∥ C_2)
-        (where C_2 (dis-solve δ_g C_1))
+        (where C_2 (dissolve δ_g C_1))
         "new constraint")))
 
 (define-metafunction CLP
@@ -52,4 +52,4 @@
   (with-font-params (render-term CLP exp)))
 
 (define-syntax-rule (rule-name exp)
-  (with-font-params (text exp (label-style) (label-font-size))))
+  (with-font-params (text (format "[~a]" exp) (label-style) (label-font-size))))

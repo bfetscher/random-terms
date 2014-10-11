@@ -20,22 +20,26 @@
 (define-metafunction U
   solve : e C -> C or ⊥
   [(solve e_new (∧ (∧ (x = p) ...) (∧ δ ...)))
-   (∧ (∧ (x_2 = p_2) ...) (∧ δ_2 ...))
-   (where (∧ (x_2 = p_2) ...) (unify ((apply-subst e_new (x ...) (p ...))) (∧ (x = p) ...)))
-   (where (∧ δ_2 ...) (check (∧ (apply-subst δ (x_2 ...) (p_2 ...)) ...)))]
-  [(solve e_new C)
+   (∧ (∧ (x_2 = p_2) ...)
+      (∧ δ_2 ...))
+   (where (∧ (x_2 = p_2) ...) (unify ((apply-subst e_new (x p) ...)) (∧ (x = p) ...)))
+   (where (∧ δ_2 ...) (check (∧ (apply-subst δ (x_2 p_2) ...) ...)))
+   or 
    ⊥])
 
 (define-metafunction U
-  dis-solve : δ C -> C or ⊥
-  [(dis-solve δ_new (∧ (∧ (x = p) ...) (∧ δ ...)))
-   (∧ (∧ (x = p) ...) (∧ δ_0 δ ...))
-   (where δ_0 (disunify (apply-subst δ_new (x ...) (p ...))))]
-  [(dis-solve δ_new (∧ (∧ (x = p) ...) (∧ δ ...)))
+  dissolve : δ C -> C or ⊥
+  [(dissolve δ_new (∧ (∧ (x = p) ...) (∧ δ ...)))
    (∧ (∧ (x = p) ...) (∧ δ ...))
-   (where ⊤ (disunify (apply-subst δ_new (x ...) (p ...))))]
-  [(dis-solve δ_new C)
-   ⊥])
+   (where ⊤ (disunify (apply-subst δ_new (x p) ...)))
+
+   or ⊥
+   (where ⊥ (disunify (apply-subst δ_new (x p) ...)))
+
+   or
+   (∧ (∧ (x = p) ...) (∧ δ_0 δ ...))
+   (where δ_0 (disunify (apply-subst δ_new (x p) ...)))])
+   
 
 (define-metafunction U
   unify : (e ...) (∧ (x = p) ...) -> (∧ (x = p) ...) or ⊥
@@ -86,13 +90,16 @@
   check : (∧ δ ...) -> (∧ δ ...) or ⊥
   [(check (∧ δ_1 ... (∀ (x_a ...) (∨ ((lst p_l ...) ≠ p_r) ...)) δ_2 ...))
    (check (∧ δ_1 ... δ_s δ_2 ...))
-   (where δ_s (disunify (∀ (x_a ...) (∨ ((lst p_l ...) ≠ p_r) ...))))]
-  [(check (∧ δ_1 ... (∀ (x_a ...) (∨ ((lst p_l ...) ≠ p_r) ...)) δ_2 ...))
+   (where δ_s (disunify (∀ (x_a ...) (∨ ((lst p_l ...) ≠ p_r) ...))))
+  
+   or
    (check (∧ δ_1 ... δ_2 ...))
-   (where ⊤ (disunify (∀ (x_a ...) (∨ ((lst p_l ...) ≠ p_r) ...))))]
-  [(check (∧ δ_1 ... (∀ (x_a ...) (∨ ((lst p_l ...) ≠ p_r) ...)) δ_2 ...))
+   (where ⊤ (disunify (∀ (x_a ...) (∨ ((lst p_l ...) ≠ p_r) ...))))
+   
+   or
    ⊥
    (where ⊥ (disunify (∀ (x_a ...) (∨ ((lst p_l ...) ≠ p_r) ...))))]
+  
   [(check (∧ δ ...))
    (∧ δ ...)])
 
@@ -107,9 +114,6 @@
    (side-condition (term (not-in x (p_0 ...))))
    (where ((x_3 = p_3) ...) (elim-x x ((x_1 = x) (x_2 = p_2) ...)))
    (clause-name "param-elim-2")]
-  [(param-elim ⊥ (x ...))
-   ⊥
-   (clause-name "param-elim-failed")]
   [(param-elim (∧ e ...) (x ...))
    (∧ e ...)
    (clause-name "param-elim-finish")])
@@ -141,7 +145,7 @@
    (where (∧ (∧ (x_2 = p_2) ...) (∧ δ_2 ...)) (solve e_0 (∧ (∧ (x = p) ...) (∧ δ ...))))]
   [(solve/test (δ_0 any ...) (∧ (x = p) ...) (∧ δ ...))
    (solve/test (any ...) (∧ (x = p) ...) (∧ δ_2 ...))
-   (where (∧ (∧ (x = p) ...) (∧ δ_2 ...)) (dis-solve δ_0 (∧ (∧ (x = p) ...) (∧ δ ...))))]
+   (where (∧ (∧ (x = p) ...) (∧ δ_2 ...)) (dissolve δ_0 (∧ (∧ (x = p) ...) (∧ δ ...))))]
   [(solve/test () (∧ e ...) (∧ δ ...))
    ((e ...) : (δ ...))]
   [(solve/test _ _ _)
@@ -224,7 +228,7 @@
   `(,P : () : ()))
 
 (define-metafunction U
-  [(apply-subst any (x ...) (p ...))
+  [(apply-subst any (x p) ...)
    ,(apply-subst-help (term ((x = p) ...)) (term any))])
 
 (define (apply-subst-help subst init-c)

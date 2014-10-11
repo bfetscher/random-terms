@@ -19,6 +19,7 @@
          j-pict/p
          g-p
          g-jdg-pict
+         g-of-12
          f-ex-pict
          f-comp-pict
          c-ext-pict
@@ -219,25 +220,20 @@
 
 (define (f-ex-pict)
   (with-font-params
-   (let ()
-     (define (align p) 
-       (lbl-superimpose p (ghost (render-term FexL | (a b c))|))))
-     (hc-append 
-      40
-      (render-metafunction g)
-      (vl-append
-       #;(hbl-append (render-term FexL |(|)
-                     (g-p)
-                     (align (render-term FexL | (a))|))
-                     (render-term FexL | → 1|))
-       (hbl-append (render-term FexL |(|)
-                   (g-p)
-                   (align (render-term FexL | (lst a b))|))
-                   (render-term FexL | → 2|))
-       (hbl-append (render-term FexL |(|)
-                   (g-p)
-                   (render-term FexL | (lst a b c))|)
-                   (render-term FexL | → 1|)))))))
+   (define (align p) 
+     (lbl-superimpose p (ghost (render-term FexL | (a b c))|))))
+   (hc-append 
+    40
+    (render-metafunction g)
+    (vl-append
+     (hbl-append (render-term FexL (g (lst 1 2)))
+                 (render-term FexL | = 2|))
+     (hbl-append (render-term FexL (g (lst 1 2 3)))
+                 (render-term FexL | = 1|))))))
+
+(define g-of-12
+  (with-font-params
+   (render-term FexL (g (list 1 2)))))
 
 (define j-pict/p
   (let

@@ -64,9 +64,11 @@
      `(,name "\u27ec" ,@(add-between stuff ", ") "\u27ed")]))
 
 (define (ast-rw lws)
-    (match lws
-      [(list _ _ e xs ps _)
-       (list "" e "{" xs  " → " ps "}")]))
+  (match lws
+    [(list _ _ e xs ps _)
+     (match (lw-e xs)
+       [(list _ x y _)
+        (list "" e "{" x " → " y  ", ...}")])]))
 
 (define-syntax-rule (with-all-rewriters e)
   (with-compound-rewriters
