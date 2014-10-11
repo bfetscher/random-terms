@@ -112,7 +112,7 @@
      (render-metafunction unify #:contract? contract?))))
 
 (define (disunify-pict [contract? #t])
-  (parameterize ([metafunction-pict-style 'left-right])
+  (parameterize ([metafunction-pict-style 'up-down])
     (with-rewriters/params
      (render-metafunction disunify #:contract? contract?))))
 

@@ -68,14 +68,19 @@
 (define-metafunction U
   disunify : δ -> δ or ⊤ or ⊥
   [(disunify (∀ (x ...) (∨ (p_1 ≠ p_2) ...)))
-   ⊤
-   (where ⊥ (unify ((p_1 = p_2) ...) (∧)))]
-  [(disunify (∀ (x ...) (∨ (p_1 ≠ p_2) ...)))
-   ⊥
-   (where (∧) (param-elim (unify ((p_1 = p_2) ...) (∧)) (x ...)))]
-  [(disunify (∀ (x ...) (∨ (p_1 ≠ p_2) ...)))
-   (∀ (x ...) (∨ (x_p ≠ p) ...))
-   (where (∧ (x_p = p) ...) (param-elim (unify ((p_1 = p_2) ...) (∧)) (x ...)))])
+   
+   ⊤ (where ⊥ (unify ((p_1 = p_2) ...) (∧)))
+  
+   or
+   ⊥ (where (∧) (param-elim (unify ((p_1 = p_2) ...) (∧))
+                            (x ...)))
+   
+   or
+   (∀ (x ...) 
+      (∨ (x_p ≠ p) ...))
+   (where (∧ (x_p = p) ...)
+          (param-elim (unify ((p_1 = p_2) ...) (∧))
+                      (x ...)))])
 
 (define-metafunction U
   check : (∧ δ ...) -> (∧ δ ...) or ⊥
