@@ -37,16 +37,18 @@
   [(freshen-l (∀ (x ...) (∨ (p_1 ≠ p_2) ...)))
    (∀ (x ...) (∨ ((freshen-p (x ...) p_1) ≠ (freshen-p (x ...) p_2)) ...))])
 
-(define test-P
-  (term
-   ((((j1 x_1) ←)
-     ((j1 (lst x_1 x_2)) ← (j1 x_1) (j1 x_2))))))
-#;
-(traces R
+(module+ main
+  
+  (define test-P
+    (term
+     ((((j1 x_1) ←)
+       ((j1 (lst x_1 x_2)) ← (j1 x_1) (j1 x_2))))))
+  
+  (traces R
           (term 
            (,test-P ⊢
                     ((j1 (lst 1 (lst 2 3)))) ∥
-                    (():()))))
+                    (∧ (∧) (∧))))))
 
 (define-syntax-rule (clpt exp) 
   (with-font-params (render-term CLP exp)))
