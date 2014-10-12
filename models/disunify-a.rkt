@@ -340,8 +340,7 @@
  (utest (term (((y = y) ((lst)  = (lst) )) : () : ()))
         (term (() : () : ())))
  (utest (term (((y = (lst) ) (y = z)) : ((w = (lst y))) : ()))
-        (term (() : ((z = (lst)) (y = (lst)) (w = (lst (lst)))) : ())))
- )
+        (term (() : ((z = (lst)) (y = (lst)) (w = (lst (lst)))) : ()))))
 
 (module+
  test
@@ -359,9 +358,9 @@
              (term (((x = (lst (lst)  (lst) ))) : ((∀ () (∨ (y ≠ (lst) )))))))
  (test-equal (term (disunify/test ((x = (lst (lst)  (lst) )) (y = (lst) ) (∀ () (x ≠ (lst y y))))))
              (term ⊥))
- (test-equal (term (disunify/test ((x = (lst (lst)  (lst) )) (y = (lst (lst) )) (∀ () (x ≠ (lst y y))))))
-             (term (((y = (lst (lst) )) (x = (lst (lst)  (lst) ))) : ())))
- )
+ (test-equal (term (disunify/test ((x = (lst (lst)  (lst) ))
+                                   (y = (lst (lst) )) (∀ () (x ≠ (lst y y))))))
+             (term (((y = (lst (lst) )) (x = (lst (lst)  (lst) ))) : ()))))
 
 (module+
  test
@@ -451,6 +450,4 @@
      ((∀ (c e) (x ≠ (lst c c)))
       (x = (lst (lst) (lst) ))
       (x = (lst a b)))))
-   (term ⊥))
-  
-  )
+   (term ⊥)))
