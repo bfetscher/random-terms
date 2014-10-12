@@ -44,11 +44,12 @@
      ((((j1 x_1) ←)
        ((j1 (lst x_1 x_2)) ← (j1 x_1) (j1 x_2))))))
   
+  (parameterize ([caching-enabled? #f])
   (traces R
           (term 
            (,test-P ⊢
                     ((j1 (lst 1 (lst 2 3)))) ∥
-                    (∧ (∧) (∧))))))
+                    (∧ (∧) (∧)))))))
 
 (define-syntax-rule (clpt exp) 
   (with-font-params (render-term CLP exp)))
