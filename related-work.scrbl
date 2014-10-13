@@ -34,7 +34,7 @@ Other uses of random testing for
 compiler testing throughout the years are discussed in the 1997
 survey of @citet[compiler-testing].
 
-In the area of random testing for compiler,
+In the area of random testing for compilers,
 of special note is Csmith@~cite[csmith], a highly effective tool for generating
 C programs for compiler testing. Csmith generates C programs that avoid
 undefined or unspecified behavior. These programs are then used for differential
@@ -78,8 +78,9 @@ to a term or is the prefix of some term that does. Their approach
 is quite general and can be used to encode many different types.
 They are able to encode a lambda calculi with polymorphically-typed
 constants and discuss its possible extension to even more challenging
-languages such as System-F. This method has the potential to be used
-for random generation by decoding randomly chosen bit strings.
+languages such as System-F. This method cannot be used for random generation
+because only bit-strings that have a prefix-closure property correspond
+to well-formed terms.
 
 @citet[equational-problems]
 @citet[colmerauer-inequations]
