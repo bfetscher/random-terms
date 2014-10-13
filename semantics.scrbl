@@ -13,7 +13,8 @@
           (except-in "models/typesetting.rkt" lang-pict)
           "pat-grammar.rkt"
           "common.rkt"
-          (only-in pict hbl-append))
+          (only-in pict hbl-append)
+          "dist-pict.rkt")
 
 @title[#:tag "sec:semantics"]{Derivation Generation in Detail}
 
@@ -299,7 +300,91 @@ are not in the canonical form.
 
 @section[#:tag "sec:search"]{Search Heuristics}
 
-@bold{@italic{Haven't written this section yet.}}
+Instead of generating every possible derivation, as the rewriting 
+relation in @figure-ref["fig:clp-red"] does, our implementation
+attempts to find a single random valid derivation. To do so, we
+introduce randomness at the choice points represented by the
+relation's @rule-name{reduce} rule. Given a goal
+of the form @clpt[(d p_r)] at the top of the goal stack, if
+there are multiple rules @clpt[((d p) ← a ...)] in the program
+such that the definition ids @clpt[d] match, then a reduction
+step may occur for each of those rules. 
+The implementation randomizes its search by varying the order
+in which the matching rules are attempted. 
+We employ two ways of randomizing the rule order, and choose
+equally between the two before attempting to generate a
+single derivation. (The chosen strategy is then used for
+the entire search attempt.)
+
+The first strategy simply chooses a random order for the
+rules at every choice point, with no regard for the structure
+of the rules or the search state. The initial rule is tried,
+and if it fails, either immediately or if we attempt to fulfill
+its premises and find that none of them are valid (i.e., we have to
+backtrack), then we continue with the remaining rules. 
+We cannot continue to use random ordering indefinitely, however,
+because if we try more recursive rules (those with more premises)
+too often, the derivation's size can become unbounded, and the
+search will never terminate. Accordingly, the search is
+parameterized with a depth bound, which places a limit on the
+number of times recursive rules can be unfolded before
+the search begins to use a termination strategy to bound
+the size of the unfinished parts of the derivation.
+The termination strategy is simple: we just order
+rules from least to most recursive and attempt to satisfy
+goals with the least recursive rules first.
+
+However, giving all rule orderings equal probability gives us a 
+distribution of derivations that is far from ideal. To see why,
+imagine that we are again choosing from the rules shown in
+@figure-ref["fig:types"], and attempting to generate a derivation
+for an expression of any type. At the initial step of our derivation,
+we have a 1 in 4 chance of choosing the number type rule, so one
+quarter of all expressions generated will just be a number. We run
+into the same problem again when attempting to satisfy premises of
+more recursive clauses, so the distribution is extremely skewed
+toward smaller derivations.
+
+@figure["fig:d-plots" 
+        @list{Density functions of the distributions used for the depth-dependent 
+              rule ordering, where the depth limit is five and there are 4 rules.
+              The x-axis ranges from 0 to 23.
+              (The scale of the y-axis on the leftmost
+              plot is larger.)}
+        @(centered(d-plots 430))]
+
+Our second strategy attempts to avoid favoring smaller
+derivations while still allowing for some randomization.
+The idea is straightforward: at smaller depths in the search,
+we prefer more recursive rules, and we prefer less
+recursive rules as the search depth increases.
+
+To implement this, we need some notion of how recursive
+a given permutation of the rules is. Suppose there are 4
+such rules. We first order the rules by decreasing recursiveness,
+and map them into the natural numbers in that order.
+We form the natural lexicographic ordering of the 
+permutations of 0 through 3, i.e. @clpt[(0 1 2 3)],
+@clpt[(0 1 3 2)], @clpt[(0 2 1 3)], up to @clpt[(3 2 1 0)]. 
+(There are 4! such permutations.)
+We then index into the permutations, preferring earlier
+elements in the ordering at smaller depths and later elements
+at larger depths. 
+To do this, we select the index from a binomial distribution
+@italic{B(n,p)} where @italic{n} is the number of permutations
+and @italic{p} scales with the current search depth, approaching
+1 with the depth limit.
+@Figure-ref["fig:d-plots"] plots the distributions we use
+for depths 0 thorough 4 with a limit of 5, and 4!
+elements in the permutation ordering.
+Once the depth limit is reached, we once again switch to the
+termination ordering of the rules as before.
+
+Finally, in all cases we terminate searches that appear to
+be stuck in unproductive or doomed parts of the search space 
+by placing limits on backtracking, search depth, and derivation size.
+When these limits are violated, the generator simply
+abandons the current search and reports failure.
 
 @section[#:tag "sec:pats"]{A Richer Pattern Language}
 
