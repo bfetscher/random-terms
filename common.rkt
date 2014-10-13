@@ -51,16 +51,17 @@
   (extend-style style-p "Triplicate C4p"))
 
 
-(for-each extend-style-c (list metafunction-style label-style))
 
 (define (lower-font-by font [n 2])
   (font (- (font) 2)))
 
-(when (member "Triplicate T4p" (get-face-list))
+(when #;(member "Triplicate T4p" (get-face-list)) #f
   
-  (for-each extend-style (list grammar-style literal-style
+  (for-each extend-style (list grammar-style #;literal-style
                                non-terminal-style non-terminal-subscript-style
                                non-terminal-superscript-style))
+  
+  (for-each extend-style-c (list metafunction-style label-style))
   
   (for-each lower-font-by (list label-font-size metafunction-font-size)))
 
