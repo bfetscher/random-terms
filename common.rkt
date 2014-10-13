@@ -4,7 +4,8 @@
          scribble/latex-properties
          scribble/latex-prefix
          (except-in slideshow/pict table)
-         redex/pict)
+         redex/pict
+         (only-in racket/draw get-face-list))
 
 (provide (all-defined-out))
 
@@ -36,4 +37,30 @@
                  [default-font-size 12]
                  [label-font-size 12])
     e1 e2 ...))
+
+(define (extend-style style-p [rule "Triplicate T4p"])
+   (define v (style-p)) 
+   (style-p
+    (let loop ([v v])
+      (if (pair? v)
+          (cons (car v) (loop (cdr v)))
+          #;(cons v rule)
+          rule))))
+
+(define (extend-style-c style-p)
+  (extend-style style-p "Triplicate C4p"))
+
+
+(for-each extend-style-c (list metafunction-style label-style))
+
+(define (lower-font-by font [n 2])
+  (font (- (font) 2)))
+
+(when (member "Triplicate T4p" (get-face-list))
+  
+  (for-each extend-style (list grammar-style literal-style
+                               non-terminal-style non-terminal-subscript-style
+                               non-terminal-superscript-style))
+  
+  (for-each lower-font-by (list label-font-size metafunction-font-size)))
 
