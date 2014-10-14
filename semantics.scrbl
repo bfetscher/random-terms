@@ -300,94 +300,114 @@ are not in the canonical form.
 
 @section[#:tag "sec:search"]{Search Heuristics}
 
-Instead of generating every possible derivation, as the rewriting 
-relation in @figure-ref["fig:clp-red"] does, our implementation
-attempts to find a single random valid derivation. To do so, we
-introduce randomness at the choice points represented by the
-relation's @rule-name{reduce} rule. Given a goal
-of the form @clpt[(d p_r)] at the top of the goal stack, if
-there are multiple rules @clpt[((d p) ← a ...)] in the program
-such that the definition ids @clpt[d] match, then a reduction
-step may occur for each of those rules. 
-The implementation randomizes its search by varying the order
-in which the matching rules are attempted. 
-We employ two ways of randomizing the rule order, and choose
-equally between the two before attempting to generate a
-single derivation. (The chosen strategy is then used for
-the entire search attempt.)
+To pick a single derivation from the set of candidates, our
+implementation must make explicit choices when there are
+multiple different states that a single reduction state
+reduces to. Such choices happen only in the
+@rule-name{reduce} rule, and only because there may be
+multiple different clauses, @clpt[((d p) ← a ...)], that could
+be used to generate the next reduction state.
 
-The first strategy simply chooses a random order for the
-rules at every choice point, with no regard for the structure
-of the rules or the search state. The initial rule is tried,
-and if it fails, either immediately or if we attempt to fulfill
-its premises and find that none of them are valid (i.e., we have to
-backtrack), then we continue with the remaining rules. 
-We cannot continue to use random ordering indefinitely, however,
-because if we try more recursive rules (those with more premises)
-too often, the derivation's size can become unbounded, and the
-search will never terminate. Accordingly, the search is
-parameterized with a depth bound, which places a limit on the
-number of times recursive rules can be unfolded before
-the search begins to use a termination strategy to bound
-the size of the unfinished parts of the derivation.
-The termination strategy is simple: we just order
-rules from least to most recursive and attempt to satisfy
-goals with the least recursive rules first.
+To make these choices, our implementation collects all of
+the candidate cases for the next definition to explore. It
+then randomly permutes the candidate rules and chooses the
+first one of the permuted rules, using it as the next piece
+of the derivation. It then continues to search for a
+complete derivation. That process may fail, in which case
+the implementation backtracks to this choice and picks the
+next rule in the permuted list. If none of the choices in
+the list leads to a successful derivation, then this attempt
+is itself a failure and the implementation either backtracks
+to an earlier such choice, or fails altogether.
 
-However, giving all rule orderings equal probability gives us a 
-distribution of derivations that is far from ideal. To see why,
-imagine that we are again choosing from the rules shown in
-@figure-ref["fig:types"], and attempting to generate a derivation
-for an expression of any type. At the initial step of our derivation,
-we have a 1 in 4 chance of choosing the number type rule, so one
-quarter of all expressions generated will just be a number. We run
-into the same problem again when attempting to satisfy premises of
-more recursive clauses, so the distribution is extremely skewed
-toward smaller derivations.
+There are two refinements that the implementation applies to
+this basic strategy. First, the search process has a depth 
+bound that it uses to control which production to choose.
+Each choice of a rule increments the depth bound and when
+the partial derivation exceeds the depth bound, then the
+search process no longer randomly permutes the candidates.
+Instead, it simply sorts them by the number of premises they have, 
+preferring rules with fewer premises in an attempt to finish
+the derivation off.
+
+The second refinement is the choice of how to randomly
+permute the list of candidate rules and our implementation
+uses two strategies. The first strategy is to just select
+from the possible permutations uniformly at random. The
+second strategy is to take into account how many premises
+each rule has and to prefer rules with more premises near
+the beginning of the construction of the derivation and
+rules with fewer premises as the search gets closer to the
+depth bound. To do this, the implementation sorts all of the possible
+permutations in a lexicographic order based on the number of
+premises of each choice. Then, it samples from a
+binomial distribution whose size matches the number of
+permutations and has probability proportional to the ratio of
+the current depth and the maximum depth. The sample determines
+which permutation to use.
 
 @figure["fig:d-plots" 
         @list{Density functions of the distributions used for the depth-dependent 
-              rule ordering, where the depth limit is five and there are 4 rules.
-              The x-axis ranges from 0 to 23.
-              (The scale of the y-axis on the leftmost
-              plot is larger.)}
-        @(centered(d-plots 430))]
+              rule ordering, where the depth limit is @(format "~a" max-depth)
+              and there are @(format "~a" number-of-choices) rules.}
+        @(centered(d-plots 420))]
 
-Our second strategy attempts to avoid favoring smaller
-derivations while still allowing for some randomization.
-The idea is straightforward: at smaller depths in the search,
-we prefer more recursive rules, and we prefer less
-recursive rules as the search depth increases.
+More concretely, imagine that the depth bound was 
+@(format "~a" max-depth) and there are 
+@(if (= max-depth number-of-choices) "also" "")
+@(format "~a" number-of-choices) rules available.
+Accordingly, there are @(format "~a" nperms) different ways
+to order the premises.  The graphs in 
+@figure-ref["fig:d-plots"] show the probability of choosing
+each permutation at each depth. Each graph has one
+x-coordinate for each different permutation and the height
+of each bar is the chance of choosing that permutation. The
+permutations along the x-axis are ordered lexicographically
+based on the number of premises that each rule has (so
+permutations that put rules with lots of premises near the
+beginning of the list are on the left and permutations that
+put rules with lots of premises near the end of the list are
+on the right). As the graph shows, rules with more premises
+are usually tried first at depth 0 and rules with fewer premises
+are usually tried first as the depth reaches the depth bound.
 
-To implement this, we need some notion of how recursive
-a given permutation of the rules is. Suppose there are 4
-such rules. We first order the rules by decreasing recursiveness,
-and map them into the natural numbers in that order.
-We form the natural lexicographic ordering of the 
-permutations of 0 through 3, i.e. @clpt[(0 1 2 3)],
-@clpt[(0 1 3 2)], @clpt[(0 2 1 3)], up to @clpt[(3 2 1 0)]. 
-(There are 4! such permutations.)
-We then index into the permutations, preferring earlier
-elements in the ordering at smaller depths and later elements
-at larger depths. 
-To do this, we select the index from a binomial distribution
-@italic{B(n,p)} where @italic{n} is the number of permutations
-and @italic{p} scales with the current search depth, approaching
-1 with the depth limit.
-@Figure-ref["fig:d-plots"] plots the distributions we use
-for depths 0 thorough 4 with a limit of 5, and 4!
-elements in the permutation ordering.
-Once the depth limit is reached, we once again switch to the
-termination ordering of the rules as before.
+These two permutation strategies are complementary, each
+with its own drawbacks. Consider using the first strategy
+that gives all rule ordering equal probability with the
+rules shown in @figure-ref["fig:types"]. At the initial step
+of our derivation, we have a 1 in 4 chance of choosing the
+type rule for numbers, so one quarter of all expressions
+generated will just be a number. This bias towards numbers
+also occurs when trying to satisfy premises of the other,
+more recursive clauses, so the distribution is skewed toward
+smaller derivations, which contradicts commonly held wisdom
+that bug finding is more effective when using larger terms.
+The other strategy avoids this problem, biasing the
+generation towards rules with more premises early on in the
+search and thus tending to produce larger terms.
+Unfortunately, our experience testing Redex program suggests
+that it is not uncommon for there to be rules with large
+number of premises that are completely unsatisfiable when
+they are used as the first rule in a derivation (when this
+happens there are typically a few other, simpler rules that
+must be used first to populate an environment or a store
+before the interesting and complex rule can succeed). For
+such models, using all rules with equal probability still
+is less than ideal, but is overall more likely to produce
+terms at all. Accordingly, since neither choice is always
+better than the other, our implementation decides between
+these two strategies randomly at the beginning of the search
+process for a single term, and uses the same strategy
+throughout that entire search.
 
 Finally, in all cases we terminate searches that appear to
-be stuck in unproductive or doomed parts of the search space 
-by placing limits on backtracking, search depth, and derivation size.
-When these limits are violated, the generator simply
-abandons the current search and reports failure.
+be stuck in unproductive or doomed parts of the search space
+by placing limits on backtracking, search depth, and a
+secondary, hard bound on derivation size. When these limits
+are violated, the generator simply abandons the current
+search and reports failure.
 
 @section[#:tag "sec:pats"]{A Richer Pattern Language}
-
 
 @figure["fig:full-pats" 
         @list{The subset of Redex's pattern language supported by the generator.
