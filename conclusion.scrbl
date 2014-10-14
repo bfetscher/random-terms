@@ -25,3 +25,5 @@ that discourage newcomers.
 project started and for an initial prototype implementation, to 
 Asumu Takikawa for his help with the delimited continuations model,
 and to Larry Henschen for his help with earlier versions of this work.
+Thanks to Hai Zhou, Li Li, Yuankai Chen, and Peng Kang for 
+graciously sharing their compute servers with us.
