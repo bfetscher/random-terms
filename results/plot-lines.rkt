@@ -76,18 +76,16 @@
                        crossover-points)]
                 [else
                  crossover-points]))))
-  (append 
-   crossover-points
-   (for/list ([type+pts (in-list types+datas)]
-              [n (in-naturals)])
-     (define type (list-ref type+pts 0))
-     (define pts (list-ref type+pts 1))
-     (lines
-      (reverse pts)
-      ;#:width 2
-      #:color ((type-colors) type)
-      #:style (list-ref line-styles n)
-      #:label ((type-names) type)))))
+  (for/list ([type+pts (in-list types+datas)]
+             [n (in-naturals)])
+    (define type (list-ref type+pts 0))
+    (define pts (list-ref type+pts 1))
+    (lines
+     (reverse pts)
+     ;#:width 2
+     #:color ((type-colors) type)
+     #:style (list-ref line-styles n)
+     #:label ((type-names) type))))
 
 (define (format-time number)
   (cond

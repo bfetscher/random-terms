@@ -18,13 +18,13 @@
         @list{Performance results by individual bug on the Redex 
               Benchmark, following the naming scheme
               @italic{<model-name>}-@italic{<bug-number>}.rkt}
-        @(add-trial-warning (plot-points 1ht))]
+        @(plot-points 24hr)]
 
 @figure["fig:lines"
         @list{Random testing performance of the derivation
               generator vs. ad-hoc random generation on
               the Redex Benchmark.}
-        @(add-trial-warning (line-plot/directory 1ht))]
+        @(line-plot/directory 24hr)]
 
 @;{
 

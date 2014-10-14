@@ -19,6 +19,7 @@
 (provide (all-defined-out))
 
 (define-runtime-path 1ht "1-hr-trial")
+(define-runtime-path 24hr "24-hr")
 
 (define (type->sym t)
   (hash-ref (hash 'search 'diamond
