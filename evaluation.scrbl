@@ -10,21 +10,119 @@
 
 @title[#:tag "sec:evaluation"]{Evaluating the Generator}
 
-@bold{@italic{Awaiting results from our comparison with Michal
-              and our final results from the Redex benchmark to
-              complete this section.}}
+@section[#:tag "sec:benchmark"]{Redex Benchmark}
+
+Our first effort at evaluating the effectiveness of the derivation
+generator compares it to the existing random expression generator
+included with Redex@~cite[sfp2009-kf], which we term the ``ad hoc'' 
+generation strategy in what follows. 
+This generator is based on the method of recursively unfolding
+non-terminals in a grammar.
+
+To compare the two generators, we used the Redex 
+Benchmark@~cite[redex-benchmark], a suite of buggy models
+developed specifically to evaluate methods of automated testing
+for Redex. Models included in the benchmark define
+a soundness property and come in a number of different
+versions, each of which introduces a single bug that can violate
+the soundness property into the model.
+Most models are of programming languages and most soundness
+properties are type-soundness.
+For each version of each model, we define two generators 
+and one soundness property, one using the  method explained 
+in this paper and one using Redex's ad hoc generation strategy. 
+For a single test run, we pair a generator with its soundness 
+property and repeatedly generate test cases using the
+generator, testing them with the soundness property, 
+and tracking the intervals between instances where the
+test case causes the soundness property to fail, exposing
+the bug. For this study, each run continued for either
+24 hours or until the uncertainty in the average interval
+between such counterexamples became acceptably small.
+
+This study used 6 different models@note{The benchmark
+      actually includes one more model, however the
+      details of that model currently preclude using
+      the derivation generator with it.}, each of which
+has between 3 and 9 different bugs introduced into it,
+for a total of 40 unique bugs.
+The models in the benchmark come from a number of different 
+sources, some synthesized based on our experience for the 
+benchmark, and some drawn from outside sources or pre-existing
+efforts in Redex. The latter are based on
+@citet[list-machine]'s list machine benchmark,
+the model of contracts for delimited continuation developed
+by @citet[delim-cont-cont], and the model of the Racket
+virtual machine from @citet[racket-virtual-machine].
+Detailed descriptions of all the models and bugs in the
+benchmark can be found in @citet[redex-benchmark].
 
 @figure["fig:points"
         @list{Performance results by individual bug on the Redex 
               Benchmark, following the naming scheme
               @italic{<model-name>}-@italic{<bug-number>}.rkt}
-        @(plot-points 24hr)]
+        @(centered (plot-points 24hr))]
+
+@Figure-ref["fig:points"] summarizes the results of the
+comparison on a per-bug basis. The y-axis is time
+in seconds, and for each bug we plot the average
+time it took each generator to find a counterexample.
+The bugs are arranged
+along the x-axis, sorted by the average time for both
+generators to find the bug. The error bars represent
+95% confidence intervals in the average. The two
+blank columns on the right are bugs that neither
+generator was able to find. 
+Note that the scale on the y-axis is logarithmic,
+and the average time ranges from a tenth of a second
+to several hours, an extremely wide range in the
+rarity of counterexamples.
 
 @figure["fig:lines"
         @list{Random testing performance of the derivation
               generator vs. ad-hoc random generation on
               the Redex Benchmark.}
         @(line-plot/directory 24hr)]
+
+To depict more clearly the relative testing effectiveness
+of the two generation methods, we plot our data slightly
+differently in @figure-ref["fig:lines"]. Here we show
+time in seconds on the x-axis (the y-axis from 
+@figure-ref["fig:points"], again on a log scale), 
+and total number of bugs found
+for each point in time on the y-axis. 
+This plot makes in clear that the derivation generator
+is much more effective, finding more bugs more 
+quickly at almost every time scale.
+In fact, an order of magnitude or more on the
+time scale separates the two generators for almost all
+of the plot.
+
+@section[#:tag "sec:ghc"]{}
+
+@bold{@italic{Awaiting results from our comparison with Michal
+              to complete this section.}}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+@; Old stuff, from previous draft:
 
 @;{
 

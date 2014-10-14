@@ -16,7 +16,7 @@
                  [plot-x-label "Time in Seconds"]
                  [plot-y-label "Number of Bugs Found"]
                  [plot-width 435] 
-                 [plot-height 300]
+                 [plot-height 265]
                  [plot-x-ticks (log-ticks #:number 20 #:base 10)]
                  [type-symbols type->sym]
                  [type-names type->name]

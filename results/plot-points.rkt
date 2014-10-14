@@ -32,18 +32,18 @@
             t))
 
 (define (type->name t)
-  (hash-ref (hash 'search "Random Derivation Generation"
-                  'grammar "Ad Hoc Random Generation")
+  (hash-ref (hash 'search "Derivation Generation"
+                  'grammar "Ad Hoc Generation")
             t))
 
 (define (plot-points data-directory)
   (parameterize ([plot-width 435]
-                 [plot-height 350]
+                 [plot-height 265]
                  [type-symbols type->sym]
                  [type-names type->name]
                  [type-colors type->color]
                  [plot-x-label #f]
-                 [plot-y-label "Average Number of Seconds to Find Each Bug"])
+                 [plot-y-label "Average Seconds to Find Each Bug"])
     (plot/log-directory data-directory)))
 
 (define (add-trial-warning pict)

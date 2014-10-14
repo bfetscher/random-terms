@@ -660,6 +660,7 @@
                                 #:pages '(1 46))
    #:date 1998))
 
+
 (define list-machine
   (make-bib
    #:author (authors "Andrew W. Appel" "Robert Dockins" "Xavier Leroy")
@@ -815,3 +816,10 @@
    #:date 2014
    #:location (techrpt-location #:institution "Northwestern University EECS"
                                 #:number "??")))
+
+(define redex-benchmark
+  (make-bib
+   #:author (authors "Robert Bruce Findler" "Casey Klein" "Burke Fetscher")
+   #:title "The Redex Reference"
+   #:date 2014
+   #:url "docs.racket-lang.org/redex"))
