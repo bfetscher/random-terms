@@ -60,7 +60,7 @@ benchmark can be found in @citet[redex-benchmark].
 @figure["fig:points"
         @list{Performance results by individual bug on the Redex 
               Benchmark, following the naming scheme
-              @italic{<model-name>}-@italic{<bug-number>}.rkt}
+              @italic{model name}-@italic{bug number}.}
         @(centered (plot-points 24hr))]
 
 @Figure-ref["fig:points"] summarizes the results of the

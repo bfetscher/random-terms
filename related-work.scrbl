@@ -8,6 +8,33 @@
 
 @title[#:tag "sec:related"]{Related Work}
 
+We first address work which our constraint solver draws
+on, and then related work in the field of random testing.
+
+@section[#:tag "sec:related-dqs"]{Disequations}
+
+@citet[colmerauer-inequations] seems to have been the first
+to introduce a method of solving disequational constraints of
+the type we use, however only existentially quantified
+variables are handled in this work.
+The presentation there is somewhat similar to ours in that
+a unification algorithm is used to simplify disequations.
+
+@citet[equational-problems] address the more general 
+problem of solving all first order logical formulas
+where equality is the only predicate, which they term 
+``equational problems,'' of which our constraints are a subset.
+They present a set of rules as rewrites
+on such formulas to transform them into solved forms.
+We believe our solver is essentially a way of factoring
+a stand-alone unifier out of their rules.
+
+
+@citet[pattern-unification]
+
+
+@section[#:tag "sec:related-testing"]{Random Testing}
+
 Quickcheck@~cite[QuickCheck] is a widely-used library
 for random testing in Haskell. It provides combinators supporting the
 definition of testable properties, random generators, and analysis
@@ -81,7 +108,3 @@ constants and discuss its possible extension to even more challenging
 languages such as System-F. This method cannot be used for random generation
 because only bit-strings that have a prefix-closure property correspond
 to well-formed terms.
-
-@citet[equational-problems]
-@citet[colmerauer-inequations]
-@citet[pattern-unification]
