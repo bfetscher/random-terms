@@ -27,7 +27,7 @@ time rejecting ill-typed terms instead actually testing the model.
 
 To make testing more effective, we built a solver that randomly
 generates solutions to problems involving a subset of first-order logic
-with equality and inequality constraints and we use that to
+with equality and inequality constraints, and we use that to
 transform a Redex specification of a type-system into a random
 generator of well-typed terms.
 
