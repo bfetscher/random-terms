@@ -48,7 +48,7 @@ The premises may consist of literal goals @clpt[(d p)] or disequational
 constraints @clpt[δ]. We dive into the operational meaning behind
 disequational constraints later in this section, but as their form suggests, they are
 the negation of an equation, in which some variables are universally quantified.
-The remaining variables in a disequation are (implicitly) existentially
+The remaining variables in a disequation are implicitly existentially
 quantified, as are the variables in equations.
 
 The reduction relation shown in @figure-ref["fig:clp-red"] generates
@@ -64,7 +64,7 @@ goal that must be satisfied to complete the derivation, or disequational constra
 that must be satisfied. A constraint store @clpt[C] is a set of 
 simplified equations and disequations that are guaranteed to be satisfiable.
 The notion of equality we use here is purely syntactic; two ground terms are equal
-to each other only if they have the same shape.
+to each other only if they are identical.
 
 Each step of the rewriting relation
 looks at the first entry in the goal stack and rewrites to another
@@ -122,7 +122,7 @@ The primary difference between a metafunction, as written in Redex,
 and a set of @clpt[((d p) ← a ...)] clauses from @figure-ref["fig:clp-grammar"]
 is ordering. Specifically, when the second clause in a metafunction fires,
 the then the pattern in the first clause must not match, but there is no
-such constraint in the model. Accordingly,
+ordering on rules in the model. Accordingly,
 the compilation process that translates metafunctions into the model must
 insert disequation constraints that capture the ordering of the cases
 in metafunctions.
@@ -220,8 +220,8 @@ returns a constraint store that combines the results of
           (dissolve-pict)
           (disunify-pict))]
 
-@Figure-ref["fig:dissolve"] shows @clpt[dissolve], the counterpart to
-@clpt[solve], but for disequations. It applies the equational part
+@Figure-ref["fig:dissolve"] shows @clpt[dissolve], the disequational
+counterpart to @clpt[solve]. It applies the equational part
 of the constraint store as a substitution to the new disequation
 and then calls @clpt[disunify]. It @clpt[disunify] returns
 @clpt[⊤], then the disequation was already guaranteed in the current
@@ -255,7 +255,7 @@ was redundant.
 
 Ignoring the call to @clpt[param-elim] in the second case of @clpt[disunify] for
 a moment, consider the case where @clpt[unify] returns an empty conjunct. This means
-that the given formula is guaranteed to be true and thus the given disequation
+that the @clpt[unify]'s argument is guaranteed to be true and thus the given disequation
 is guaranteed to be false. In this case, we have failed to generate a valid
 derivation because one of the disequations must be false (in terms of the original
 Redex program, this means that we attempted to use some later case in a metafunction
@@ -270,12 +270,12 @@ This brings us to @clpt[param-elim], in
 @figure-ref["fig:dis-help"]. It accepts a most-general
 unifier, as produced by a call to @clpt[unify] to handle a
 disequation, and all of the universally quantified variables
-in the original disequation. It's job is to remove clauses
-of the unifier when the correspond to clauses that will be
+in the original disequation. It removes equations
+of the unifier when they correspond to disequtions that will be
 false in the newly constructed disequation. There are two ways in which this can happen.
 First, if one of the clauses has the form @clpt[(x = p)] and
 @clpt[x] is one of the universally quantified variables, then we know that
-the corresponding clause in the disequation is @clpt[(x ≠ p)] must
+the corresponding clause in the disequation @clpt[(x ≠ p)] must
 be false, since every pattern matches at least one ground term. 
 Furthermore, since the result of @clpt[unify] is idempotent, we know
 that simply dropping that clause does not affect any of the other 
@@ -292,9 +292,11 @@ set of clauses without @clpt[x] but, in the case that we also have
 full definition of @clpt[elim-x] and a proof that it works correctly,
 we refer the reader to the first author's masters dissertation@~cite[burke-masters].
 
-Finally, we return to @clpt[check], deferred from the second
-paragraph in this section. It is used to verify that the
-verify the disequations and maintain their canonical form, once a new equation comes in.
+Finally, we return to @clpt[check], shown in @figure-ref["fig:dis-help"]. 
+Recall that @clpt[check] is passed the updated disequations after 
+a new equation has been added in @clpt[solve] (see @figure-ref["fig:solve"]).
+It is used to verify the disequations and maintain 
+their canonical form, once the new substitution has been applied.
 It does this by using @clpt[disunify] on each of the disequations that
 are not in the canonical form.
 
@@ -302,7 +304,7 @@ are not in the canonical form.
 
 To pick a single derivation from the set of candidates, our
 implementation must make explicit choices when there are
-multiple different states that a single reduction state
+differing states that a single reduction state
 reduces to. Such choices happen only in the
 @rule-name{reduce} rule, and only because there may be
 multiple different clauses, @clpt[((d p) ← a ...)], that could
@@ -328,11 +330,11 @@ the partial derivation exceeds the depth bound, then the
 search process no longer randomly permutes the candidates.
 Instead, it simply sorts them by the number of premises they have, 
 preferring rules with fewer premises in an attempt to finish
-the derivation off.
+the derivation off quickly.
 
 The second refinement is the choice of how to randomly
-permute the list of candidate rules and our implementation
-uses two strategies. The first strategy is to just select
+permute the list of candidate rules, for which we
+use two strategies. The first strategy is to just select
 from the possible permutations uniformly at random. The
 second strategy is to take into account how many premises
 each rule has and to prefer rules with more premises near
@@ -364,9 +366,9 @@ x-coordinate for each different permutation and the height
 of each bar is the chance of choosing that permutation. The
 permutations along the x-axis are ordered lexicographically
 based on the number of premises that each rule has (so
-permutations that put rules with lots of premises near the
+permutations that put rules with more premises near the
 beginning of the list are on the left and permutations that
-put rules with lots of premises near the end of the list are
+put rules with more premises near the end of the list are
 on the right). As the graph shows, rules with more premises
 are usually tried first at depth 0 and rules with fewer premises
 are usually tried first as the depth reaches the depth bound.
@@ -394,11 +396,15 @@ must be used first to populate an environment or a store
 before the interesting and complex rule can succeed). For
 such models, using all rules with equal probability still
 is less than ideal, but is overall more likely to produce
-terms at all. Accordingly, since neither choice is always
+terms at all. 
+
+Since neither strategy for ordering rules is always
 better than the other, our implementation decides between
-these two strategies randomly at the beginning of the search
+the two randomly at the beginning of the search
 process for a single term, and uses the same strategy
-throughout that entire search.
+throughout that entire search. This is the approach
+the generator we evaluate in @secref["sec:evaluation"]
+uses.
 
 Finally, in all cases we terminate searches that appear to
 be stuck in unproductive or doomed parts of the search space
@@ -458,9 +464,8 @@ that have been unified with the same mismatch pattern.
 Patterns of the form @slpt[(nt s)] are intended to successfully match a term 
 if the term matches one of the productions of the non-terminal @slpt[s]. (Redex
 patterns are always constructed in relation to some language.) It is less obvious how
-non-terminal patterns should be dealt with in the unifier. It would be nice to have
-an efficient method to decide if the terms defined by some pattern intersected with
-those defined by some non-terminal, but this reduces to the problem of computing
+non-terminal patterns should be dealt with in the unifier. 
+Finding the intersection of two such patterns reduces to the problem of computing
 the intersection of tree automata, for which there is no efficient algorithm@~cite[tata].
 
 Instead a conservative check is used at the time of unification.

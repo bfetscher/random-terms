@@ -24,13 +24,14 @@
 
 This section gives an overview of our method for generating well-typed
 terms by working through the generation of an example term.
-Our method receives as input a type derivation judgment form definition
-like the one in @figure-ref["fig:types"], a simply-typed
+We will show how generate a term satisfying the judgment form definition
+like the one in @figure-ref["fig:types"], a typing judgment for simply-typed
 lambda calculus with a single base type of natural numbers.
-It then builds a random derivation and reads the term off of the derivation.
+We begin with a goal pattern, which we will want the conclusion
+of the generated derivation to match.
 
-We start with a goal pattern, which the conclusion of the generated
-derivation will match:
+Our goal pattern will be the following, stating that we'd like to
+generate an expression with arbitrary type in the empty type environment:
 @(center-rule
   (typ • e_^0 τ_^0))
 and then randomly select one of the type rules. This time, the
@@ -58,7 +59,7 @@ on the variables indicate the step where they were generated:
                        (typ (x_^2 τ_x^2 (x_^1 τ_x^1 •)) (e_1^3 e_2^3) τ_^2)
                        (typ (x_^2 τ_x^2 (x_^1 τ_x^1 •)) e_1^3 (τ_2^3 → τ_^2))
                        (typ (x_^2 τ_x^2 (x_^1 τ_x^1 •)) e_2^3 τ_2^3)))))
-Abstraction has two premises, so there are now two branches of the derivation
+Application has two premises, so there are now two branches of the derivation
 that need to be filled in. Working on the left side first, 
 suppose the generator chooses the variable rule:
 @(center-rule
@@ -162,7 +163,7 @@ random values for the remaining, unconstrained variables, e.g.:
   (text-scale
    (typ • (λ (f (num → num)) (λ (a num) (f a))) ((num → num) → (num → num)))))
 
-We must be careful to obey the constraint that @et[x_1] and @et[x_2]
+We must be careful to obey the constraint that @et[x_^1] and @et[x_^2]
 are different, however, or else we would not get a well-typed
 term. For example, @et[(λ (f (num → num)) (λ (f num) (f f)))] is not
 well-typed but is an otherwise valid instantiation of the non-terminals.

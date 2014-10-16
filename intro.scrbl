@@ -31,6 +31,8 @@ with equality and inequality constraints, and we use that to
 transform a Redex specification of a type-system into a random
 generator of well-typed terms.
 
+@;{TODO: what we say about fixing here seems to contradict what we
+   say above. Fix this and discuss more in Sec. 4} 
 We evaluate our generator on a benchmark suite of buggy Redex
 models and show that it is far more effective than the 
 naive approach and less effective than the fixing function approach,
@@ -38,9 +40,16 @@ but still competitive. We also evaluate our generator against
 the best known, hand-tuned generator for random well-typed 
 terms@~cite[palka-workshop]. This generator handles only a language
 closely matched to the GHC Haskell compiler intermediate language, but is better
-than our generic generator, overall. We compared it head-to-head
-on two buggy versions of GHC and our generator is able to find one
-of the bugs, but not the other one. @;{TODO - update this}
+than our generic generator, overall.
+We compared the two generators by searching
+for counterexamples to two properties using a buggy version of
+GHC.
+A straightforward translation into Redex using our generator
+is able to find one bug infrequently, and to investigate
+the difficulties we refined that translation into a non-polymorphic
+model that was much more effective, demonstrating how
+polymorphism can be a difficult issue to tackle with 
+random testing.@;{TODO - update this more}
 We carefully explore why and
 discuss the issues in @secref["sec:evaluation"].
 

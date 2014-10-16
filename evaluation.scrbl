@@ -28,8 +28,8 @@ versions, each of which introduces a single bug that can violate
 the soundness property into the model.
 Most models are of programming languages and most soundness
 properties are type-soundness.
-For each version of each model, we define two generators 
-and one soundness property, one using the  method explained 
+For each version of each model, we define one soundness property
+and two generators, one using the  method explained 
 in this paper and one using Redex's ad hoc generation strategy. 
 For a single test run, we pair a generator with its soundness 
 property and repeatedly generate test cases using the
@@ -70,8 +70,10 @@ time it took each generator to find a counterexample.
 The bugs are arranged
 along the x-axis, sorted by the average time for both
 generators to find the bug. The error bars represent
-95% confidence intervals in the average. The two
-blank columns on the right are bugs that neither
+95% confidence intervals in the average, and in all
+cases except one, the errors are small enough
+to clearly differentiate the averages.
+The two blank columns on the right are bugs that neither
 generator was able to find. 
 Note that the scale on the y-axis is logarithmic,
 and the average time ranges from a tenth of a second
@@ -95,8 +97,8 @@ This plot makes it clear that the derivation generator
 is much more effective, finding more bugs more 
 quickly at almost every time scale.
 In fact, an order of magnitude or more on the
-time scale separates the two generators for almost all
-of the plot.
+time scale separates the two generators for almost
+the entire plot.
 
 While the derivation generator is more effective when it is
 used, it cannot be used with every Redex model, unlike the
