@@ -24,17 +24,18 @@
 
 This section gives an overview of our method for generating well-typed
 terms by working through the generation of an example term.
-We will show how generate a term satisfying the judgment form definition
-like the one in @figure-ref["fig:types"], a typing judgment for simply-typed
+We will build a derivation satisfying the judgment form definition
+in @figure-ref["fig:types"], a typing judgment for simply-typed
 lambda calculus with a single base type of natural numbers.
 We begin with a goal pattern, which we will want the conclusion
 of the generated derivation to match.
 
-Our goal pattern will be the following, stating that we'd like to
-generate an expression with arbitrary type in the empty type environment:
+Our goal pattern will be the following: 
 @(center-rule
   (typ • e_^0 τ_^0))
-and then randomly select one of the type rules. This time, the
+stating that we'd like to generate an expression with 
+arbitrary type in the empty type environment.
+We then randomly select one of the type rules. This time, the
 generator selects the abstraction rule, which requires us to
 specialize the values of @et[e_^0] and
 @et[τ_^0] in order to agree with the form of the
