@@ -255,7 +255,7 @@ was redundant.
 
 Ignoring the call to @clpt[param-elim] in the second case of @clpt[disunify] for
 a moment, consider the case where @clpt[unify] returns an empty conjunct. This means
-that the @clpt[unify]'s argument is guaranteed to be true and thus the given disequation
+that @clpt[unify]'s argument is guaranteed to be true and thus the given disequation
 is guaranteed to be false. In this case, we have failed to generate a valid
 derivation because one of the disequations must be false (in terms of the original
 Redex program, this means that we attempted to use some later case in a metafunction
@@ -292,8 +292,8 @@ set of clauses without @clpt[x] but, in the case that we also have
 full definition of @clpt[elim-x] and a proof that it works correctly,
 we refer the reader to the first author's masters dissertation@~cite[burke-masters].
 
-Finally, we return to @clpt[check], shown in @figure-ref["fig:dis-help"]. 
-Recall that @clpt[check] is passed the updated disequations after 
+Finally, we return to @clpt[check], shown in @figure-ref["fig:dis-help"],
+which is passed the updated disequations after 
 a new equation has been added in @clpt[solve] (see @figure-ref["fig:solve"]).
 It is used to verify the disequations and maintain 
 their canonical form, once the new substitution has been applied.
@@ -333,8 +333,8 @@ preferring rules with fewer premises in an attempt to finish
 the derivation off quickly.
 
 The second refinement is the choice of how to randomly
-permute the list of candidate rules, for which we
-use two strategies. The first strategy is to just select
+permute the list of candidate rules, and the generator uses
+two strategies. The first strategy is to just select
 from the possible permutations uniformly at random. The
 second strategy is to take into account how many premises
 each rule has and to prefer rules with more premises near
