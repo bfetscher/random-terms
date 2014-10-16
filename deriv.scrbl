@@ -165,6 +165,6 @@ random values for the remaining, unconstrained variables, e.g.:
    (typ • (λ (f (num → num)) (λ (a num) (f a))) ((num → num) → (num → num)))))
 
 We must be careful to obey the constraint that @et[x_^1] and @et[x_^2]
-are different, however, or else we would not get a well-typed
-term. For example, @et[(λ (f (num → num)) (λ (f num) (f f)))] is not
+are different, which was introduced earlier during the derivation, as otherwise
+we might not get a well-typed term. For example, @et[(λ (f (num → num)) (λ (f num) (f f)))] is not
 well-typed but is an otherwise valid instantiation of the non-terminals.
