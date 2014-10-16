@@ -80,7 +80,7 @@ rarity of counterexamples.
 
 @figure["fig:lines"
         @list{Random testing performance of the derivation
-              generator vs. ad-hoc random generation on
+              generator vs. ad hoc random generation on
               the Redex Benchmark.}
         @(line-plot/directory 24hr)]
 
@@ -98,28 +98,20 @@ In fact, an order of magnitude or more on the
 time scale separates the two generators for almost all
 of the plot.
 
-@; TODO did I go too far here?
-As a counterpoint, is it true that
-in a practical sense, the derivation generator does suffer
-from some significant limitations when compared with 
-the ad-hoc generator. The parts of the pattern langauge that
-it can't handle are significant and commonly used by
-Redex engineers@note{This
-    paper and its model being one such use case.}, 
-particularly ellipses.
-It cannot handle judgments that use Redex's
-capability to escape to Racket, and some
-judgments may have structure that causes our
-search heuristics to fail.
-The model from the Redex Benchmark that we
-did not include in this study is an example
-of the latter; it is a type judgment that
-for practical reasons was ``cps-transformed'', so
-that all recursive judgments have only a single premise,
-which causes most generation attempts to be non-terminating.
-Finally, it requires that the model in question have
-a type system or something like it to be applicable, 
-which is not always the case.        
+While the derivation generator is more effective when it is
+used, it cannot be used with every Redex model, unlike the
+ad hoc generator. There are three broad categories why it
+may not apply to a given model. First, the language may not
+have a type system, or the type system's implementation
+might use constructs that the generator fundamentally cannot
+handle (like escaping to Racket code to run arbitrary
+computation). Second, the generator currently cannot handle
+ellipses (aka repetition or Kleene star); we hope to someday
+figure out how to generalize our solver to support those
+patterns, however. And finally, some judgment forms thwart
+our termination heuristics. Indeed, there is one model in
+the Redex benchmark that we excluded for the third reason
+(let-poly).
 
 @section[#:tag "sec:ghc"]{}
 
