@@ -41,7 +41,7 @@ typed term generator. Their work addresses specifically the
 problem of generating well-formed lambda terms based an
 implementation of a type-checker (in Haskell). They measured
 their approach against property 1 from @secref["sec:ghc"]
-and it performs better than Redex's generator, but they are
+and it performs better than Redex's 'poly' generator, but they are
 working from a lower-level specification of the type system
 than we are. Also, their approach observes the order of
 evaluation of the predicate, and prunes the search space
