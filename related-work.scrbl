@@ -86,6 +86,20 @@ datatypes of this size'', the size being around 80 constructors. This provides
 some insight into the effort involved in writing the generator described
 in @citet[palka-diss].)
 
+Using Feat to generate well-typed programs requires first generating
+all programs, and then filtering out the ones
+that are not well-typed, which is usually too slow for practical use.
+The method presented in @citet[uniform] builds
+on top of Feat, and allows generating values of algebraic data types that satisfy
+a computable predicate given as a Haskell function. When the predicate is lazy,
+the generation is usually faster than naive generating and filtering. Similarly to
+the comparison presented in @secref["sec:ghc"] of this paper, that generation method
+has been applied to generating well-typed lambda terms, and compared to
+a hand-written generator presented in @citet[palka-diss]. The comparison was based
+on the same property as Property 1 used in @secref["sec:ghc"], and resulted
+in the presented generator requiring about 7 times more CPU time to find
+the same number of counterexamples as the hand-written reference generator.
+
 Another, more specialized, approach to enumerations was taken by 
 @citet[counting-lambdas]. Their work addresses specifically the problem
 of enumerating well-formed lambda terms. (Terms where all variables

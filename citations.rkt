@@ -53,6 +53,7 @@
 (define esop (string-append European Symposium "Programming"))
 (define cade (string-append International Conference "Automated Deduction"))
 (define iclp (string-append International Conference "Logic Programming"))
+(define flops (string-append International Symposium "Functional and Logic Programming"))
 (define rta (string-append International Conference "Rewriting Techniques and Applications"))
 (define tphols (string-append International Conference "Theorem Proving in Higher Order Logics"))
 (define sefm (string-append IEEE International Conference "Software Engineering and Formal Methods"))
@@ -799,6 +800,14 @@
    #:date 2012
    #:location (proceedings-location haskell
                                     #:pages '(61 72))))
+
+(define uniform
+  (make-bib
+   #:author (authors "Koen Claessen" "Jonas Duregard" "Michal H. Palka")
+   #:title "Generating Constrained Random Data with Uniform Distribution"
+   #:date 2014
+   #:location (proceedings-location flops
+                                    #:pages '(18 34))))
 
 (define every-bit-counts
   (make-bib
