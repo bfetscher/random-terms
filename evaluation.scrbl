@@ -148,9 +148,18 @@ Such an automatically derived generator is likely to make some
 performance tradeoffs versus a specialized one, and this comparison 
 gave us an excellent opportunity to investigate those.
 
-We compared the generators on a version of GHC with known
-bugs and two soundness properties known to expose those
-bugs. @bold{@italic{TODO:property details}} @;{TODO: what are the properties?????}
+We compared the generators by testing two of the properties used in @citet[palka-diss],
+and using same baseline version of the GHC (7.3.20111013) that was used there.
+
+@bold{Property 1} checks whether turning on optimization influences the strictness of the
+compiled Haskell code. The property fails if the compiled function is less strict with optimization turned on.
+@bold{Property 2} observes the order of evaluation, and fails if optimized code has a
+different order of evaluation.
+
+Counterexamples from the first property demonstrate erroneus behavior of the compiler,
+as the strictness of Haskell expressions should not be influenced by optimization. In contrast,
+changing the order of evaluation is allowed for a Haskell compiler to some extent, so
+the second property can usually demonstrate interesting cases of the compiler behavior, rather than bugs.
 
 @(define table-head
    (list @bold{Generator}
