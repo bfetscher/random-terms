@@ -83,7 +83,6 @@ itself can be read off of the reduction sequence that reaches that state.
               tree of derivations.}
         @(clp-red-pict)]
 
-The two rules defining the relation act as follows.
 When a goal of the form @clpt[(d p)] is the first element
 of the goal stack (as is the root case, when the initial goal is the
 sole element), then the @rule-name{reduce} rule applies. For every
