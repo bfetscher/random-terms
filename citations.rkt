@@ -4,7 +4,7 @@
 
 (provide (all-defined-out))
 
-(define-cite ~cite citet generate-bibliography #:style number-style)
+(define-cite ~cite citet generate-bibliography)
 
 ;; ----------------------------------------
 
@@ -726,7 +726,7 @@
 
 (define palka-workshop
   (make-bib
-   #:author (authors "Michal H. Pa\u0142ka" "Koen Claessen"
+   #:author (authors "Michał H. Pałka" "Koen Claessen"
                      "Alejandro Russo" "John Hughes")
    #:title "Testing an Optimising Compiler by Generating Random Lambda Terms"
    #:location (proceedings-location "International Workshop on Automation of Software Test")
@@ -734,7 +734,7 @@
 
 (define palka-diss
   (make-bib
-   #:author "Michal H. Pa\u0142ka"
+   #:author "Michał H. Pałka"
    #:title "Testing an Optimising Compiler by Generating Random Lambda Terms"
    #:location (dissertation-location #:institution "Chalmers University of Technology, Göteborg"
                                      #:degree "Licentiate")

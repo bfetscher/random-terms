@@ -11,12 +11,17 @@
 
 @title[#:tag "sec:evaluation"]{Evaluating the Generator}
 
+We evaluate the generator in two ways. First, we compare it's
+effectiveness against the standard Redex generator on Redex's
+benchmark suite. Second, we compare it against the best known
+hand-tuned typed term generator.
+
 @section[#:tag "sec:benchmark"]{Redex Benchmark}
 
 Our first effort at evaluating the effectiveness of the derivation
 generator compares it to the existing random expression generator
 included with Redex@~cite[sfp2009-kf], which we term the ``ad hoc'' 
-generation strategy in what follows. 
+generation strategy in what follows.
 This generator is based on the method of recursively unfolding
 non-terminals in a grammar.
 
@@ -41,12 +46,9 @@ the bug. For this study, each run continued for either
 24 hours or until the uncertainty in the average interval
 between such counterexamples became acceptably small.
 
-This study used 6 different models@note{The benchmark
-      actually includes one more model, however the
-      details of that model currently preclude using
-      the derivation generator with it.}, each of which
+This study used 6 different models, each of which
 has between 3 and 9 different bugs introduced into it,
-for a total of 40 unique bugs.
+for a total of 40 different bugs.
 The models in the benchmark come from a number of different 
 sources, some synthesized based on our experience for the 
 benchmark, and some drawn from outside sources or pre-existing
@@ -112,31 +114,30 @@ computation). Second, the generator currently cannot handle
 ellipses (aka repetition or Kleene star); we hope to someday
 figure out how to generalize our solver to support those
 patterns, however. And finally, some judgment forms thwart
-our termination heuristics. Indeed, there is one model in
-the Redex benchmark that we excluded for the third reason
+our termination heuristics. Indeed, the one model in
+the Redex benchmark that we excluded was for the third reason
 (let-poly).
 
 @section[#:tag "sec:ghc"]{Testing GHC: A Comparison With a Specialized Generator}
 
 We also compared the derivation generator we developed for
-Redex to a more specialized generator of typed terms.
+Redex to a specialized generator of typed terms.
 This generator was designed to be used for differential
-testing of GHC, and generates terms for a 
+testing of GHC, and generates terms for a specific variant of the 
 lambda calculus with polymorphic constants, chosen to be
 close to the compiler's intermediate language.
 The generator is implemented using Quickcheck@~cite[QuickCheck],
-a widely-used library for random testing in Haskell,
 and is able to leverage its extensive support for
 writing random test case generators.
 Writing a generator for well-typed terms in this
 context required significant effort, essentially
 implementing a function from types to terms in Quickcheck.
-On the other hand, implementing the entire generator from
+The effort yielded significant benefit, however, as implementing the entire generator from
 the ground up provided many opportunities for specialized
 optimizations, such as variations of type rules that
 are more likely to succeed, or varying the frequency with
-which different constants are chosen. The details
-are dicusssed in @citet[palka-diss].
+which different constants are chosen. @citet[palka-diss] discusses
+the details.
 
 Implementing this language in Redex was easy: we were
 able to port the formal description in @citet[palka-diss]
@@ -196,8 +197,8 @@ targeting a size of 90, the largest, on both properties.
 Likewise, Redex was only able to find counterexamples when targeting
 the largest depth on property one. There, the hand-written
 generator was able to find a counterexample every 12K terms,
-and about once every 260 seconds. The Redex generator
-both found terms much more rarely, at one in 4000K, and
+about once every 260 seconds. The Redex generator
+both found counterexamples much less frequently, at one in 4000K, and
 generated terms several orders of magnitude more slowly.
 Property two was more difficult for the hand-written 
 generator, and our first try in Redex was unable to 
@@ -214,7 +215,9 @@ are larger than almost all of the terms that Redex produced
 The majority of counterexamples we were able to produce
 with the hand-written generator fell in this larger range.
 @;{TODO: should we plot counterexamples on the histogram,
-   or perhap indicate the range in which they fall?}
+   or perhap indicate the range in which they fall?
+   
+   No need, IMO. --robby}
 
 
 @figure["fig:size-hists"
@@ -257,8 +260,8 @@ the first try in Redex, though still slower than the hand-written
 generator. 
 This model's counterexample rate is especially interesting.
 For property one, it ranges from one in 500K terms at depth
-6 to, astonishingly, one in 320 at depth 8, a dramatic
-example of the widely-held belief that larger terms
+6 to, astonishingly, one in 320 at depth 8, providing more evidence
+that larger terms
 make better test cases.
 This success rate is also much better than that of the hand-written
 generator, and in fact, it was this model that was most
@@ -270,17 +273,19 @@ property 2, only finding a counterexample once
 every 4000K terms, and at very large time intervals.
 We don't presently know how to explain this discrepancy.
 
-@;TODO conclude -- what things were learned about random testing
-
-
-
-
-
-
-
-
-
-
-
-
+Overall, our conclusion is that our generator is not
+competitive with the hand-tuned generator when it has
+to cope with polymorphism. Polymorphism, in turn, is
+problematic because it requires the generator to make
+parallel choices that must match up, but where the generator
+does not discover that those choices must match until 
+much later in the derivation. Because the choice point
+is far from the place where the constraint is discovered,
+the generator spends much of its time backtracking.
+The remarkable effectiveness of the Redex generator when
+removing the polymorphism from the model provides further
+evidence that we understand what makes these counterexamples
+so difficult to find, and the ease with which we could
+conduct this experiment speaks to the value of a general-purpose
+generator.
 

@@ -13,12 +13,11 @@ on, and then related work in the field of random testing.
 
 @section[#:tag "sec:related-dqs"]{Disequations}
 
-@citet[colmerauer-inequations] seems to have been the first
+@citet[colmerauer-inequations] is the first
 to introduce a method of solving disequational constraints of
-the type we use, however only existentially quantified
-variables are handled in this work.
-The presentation there is somewhat similar to ours in that
-a unification algorithm is used to simplify disequations.
+the type we use, but his work handles only existentially quantified
+variables. Like him, we too use
+the unification algorithm to simplify disequations.
 
 @citet[equational-problems] address the more general 
 problem of solving all first order logical formulas
