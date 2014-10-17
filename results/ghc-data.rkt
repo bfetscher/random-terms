@@ -1,13 +1,15 @@
 #lang racket
 
 (require racket/runtime-path
+         pict
          plot)
 
 (define-runtime-path data "ghc/data")
 
 (provide make-table
          table-prop1-data
-         table-prop2-data)
+         table-prop2-data
+         hists-pict)
 
 (define test-aggr (build-path data
                               "test32_2ex_hand_50_2014-10-11.aggr"))
@@ -24,15 +26,16 @@
     ("Redex non-poly (depth: 8)" "test37_redex_8_nopoly_2014-10-14.aggr")))
 
 (define table-prop2-data
-  '(("Hand-written (size: 50)"   "test32_2ex_hand_50_2014-10-11.aggr")
-    ("Hand-written (size: 70)"   "test21_2ex_hand_70_2014-10-11.aggr")
-    ("Hand-written (size: 90)"   "test33_2ex_hand_90_2014-10-11.aggr")
-    ("Redex poly (depth: 6)"     "test28_2ex_redex_6_2014-10-11.aggr")
-    ("Redex poly (depth: 7)"     "test19_2ex_redex_7_2014-10-11.aggr")
-    ("Redex poly (depth: 8)"     "test29_2ex_redex_8_2014-10-11.aggr")
-    ("Redex non-poly (depth: 6)" "test42_2ex_redex_6_nopoly_2014-10-14.aggr")
-    ("Redex non-poly (depth: 7)" "test41_2ex_redex_7_nopoly_2014-10-14.aggr")
-    ("Redex non-poly (depth: 8)" "test38_2ex_redex_8_nopoly_2014-10-14.aggr")))
+  '(("Hand-written (size: 50)"    "test32_2ex_hand_50_2014-10-11.aggr")
+    ("Hand-written (size: 70)"    "test21_2ex_hand_70_2014-10-11.aggr")
+    ("Hand-written (size: 90)"    "test33_2ex_hand_90_2014-10-11.aggr")
+    ("Redex poly (depth: 6)"      "test28_2ex_redex_6_2014-10-11.aggr")
+    ("Redex poly (depth: 7)"      "test19_2ex_redex_7_2014-10-11.aggr")
+    ("Redex poly (depth: 8)"      "test29_2ex_redex_8_2014-10-11.aggr")
+    ("Redex non-poly (depth: 6)"  "test42_2ex_redex_6_nopoly_2014-10-14.aggr")
+    ("Redex non-poly (depth: 7)"  "test41_2ex_redex_7_nopoly_2014-10-14.aggr")
+    ("Redex non-poly (depth: 8)"  "test38_2ex_redex_8_nopoly_2014-10-14.aggr")
+    ("Redex non-poly (depth: 10)" "test43_2ex_redex_10_nopoly_2014-10-14.aggr")))
 
 (struct runtime (name a b) #:transparent)
 (struct aggr (gentime childtime tries-hist ctxs-hist) #:transparent)
@@ -46,15 +49,15 @@
                   time-ctx) #:transparent)
 
 (define-syntax-rule (inf-check n exp)
-    (if (= +inf.0 n)
-        "∞"
-        exp))
+  (if (= +inf.0 n)
+      "∞"
+      exp))
 
 (define (show-num n)
   (if (n . > . 1000)
       (string-append (~r (round (/ n 1000))) "K")
       (~r n #:precision 2)))
-                     
+
 
 (define (make-table tdata)
   (for/list ([row (in-list tdata)])
@@ -142,25 +145,58 @@
              #:key (match-lambda [(list size num) size]))))
 
 (define (get-max hist-list)
-  (apply max (map (match-lambda [(list size num) size]) hist-list)))
+  (define szs (map (match-lambda [(list size num) size]) hist-list))
+  (if (empty? szs)
+      0
+      (apply max szs)))
 
-(define (aggr-hist aggr)
+
+(define (tries/20 aggr)
+  (round (/ (raw-data-num-tries (aggr->data aggr)) 20)))
+
+(define (aggr-hist aggr [show-cexps? #t] [y-max 60000] [max? #f] [x-label? #t])
   (define thist (aggr-tries-hist aggr))
   (define chist (aggr-ctxs-hist aggr))
-  (define the-max (max (get-max thist) (get-max chist)))
-  (parameterize ([plot-x-label "size"]
+  (define the-max (or max? (max (get-max thist) (get-max chist))))
+  (parameterize ([plot-x-label (and x-label? "size")]
                  [plot-y-label #f])
     (plot-pict
-     (list
-      (points '(5 5) #:size 0.1)
-      (discrete-histogram
-       #:add-ticks? #f
-       #:y-max 60000
-       (sort/erase (add-zeros thist the-max)))
-      (discrete-histogram
-       #:color 'red
-       #:add-ticks? #f
-       #:y-max 60000
-       (sort/erase
-        (scale-hist (add-zeros chist the-max) 10000)))))))
+     (append
+      (list
+       (points '(5 5) #:size 0.1)
+       (discrete-histogram
+        #:add-ticks? #f
+        #:y-max y-max
+        (sort/erase (add-zeros thist the-max))))
+      (if show-cexps?
+          (list
+           (discrete-histogram
+            #:color 'red
+            #:add-ticks? #f
+            #:y-max y-max
+            (sort/erase
+             (scale-hist (add-zeros chist the-max) 10000))))
+          '())))))
 
+(define hists-cmp '(("Hand-written (size: 90)" "test33_2ex_hand_90_2014-10-11.aggr")
+                    ("Redex poly (depth: 8)" "test29_2ex_redex_8_2014-10-11.aggr")
+                    ("Redex non-poly (depth: 8)" "test38_2ex_redex_8_nopoly_2014-10-14.aggr")))
+
+
+(define (hists-pict height width)
+  (define name/aggrs
+    (for/list ([np (in-list hists-cmp)])
+      (list (first np) (parse-aggr (build-path data (second np))))))
+  (define x-max (apply max (map (match-lambda [(list n a)
+                                               (get-max (aggr-tries-hist a))])
+                                name/aggrs)))
+  (apply hc-append
+         (map (match-lambda [(list n a)
+                             (parameterize ([plot-y-ticks no-ticks]
+                                            [plot-x-far-ticks no-ticks]
+                                            [plot-font-size 12]
+                                            [plot-title n]
+                                            [plot-height height]
+                                            [plot-width (round (/ width 3))])
+                               (aggr-hist a #f (tries/20 a) x-max #f))])
+              name/aggrs)))

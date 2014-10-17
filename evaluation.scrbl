@@ -143,9 +143,9 @@ able to port the formal description in @citet[palka-diss]
 directly into Redex with little difficulty.
 Once a type system is defined in Redex we can use the
 derivation generator immediately to generate well-typed terms.
-Such an automatically derived generator must make some 
-performance tradeoffs, and this comparison gave us an excellent 
-opportunity to investigate those.
+Such an automatically derived generator is likely to make some 
+performance tradeoffs versus a specialized one, and this comparison 
+gave us an excellent opportunity to investigate those.
 
 We compared the generators on a version of GHC with known
 bugs and two soundness properties known to expose those
@@ -158,10 +158,10 @@ bugs. @;{TODO: what are the properties?????}
                     @bold{Check Time (s)}
                     @bold{Time/Ctrex. (s)}))
 
-@figure["fig:prop2-table" @list{Testing GHC: comparison of the derivation
-                                generator and a hand-written typed term
-                                generator.}
-                                ]{
+@figure["fig:prop2-table" 
+        @list{Testing GHC: comparison of the derivation
+              generator and a hand-written typed term
+              generator.}]{
   @centered{
     @tabular[#:sep @hspace[1]
              (cons
@@ -172,18 +172,15 @@ bugs. @;{TODO: what are the properties?????}
                (cons (cons @bold{Property 2} (build-list 4 (λ (_) "")))
                      (make-table table-prop2-data))))]
      }}
-]
 
-@;{
-@figure["fig:prop1-table" "Property 2"]{
-  @centered{
-    @tabular[#:sep @hspace[1]
-             (cons
-              table-head
-              (make-table table-prop2-data))]
-     }}
-]}
-
+@figure["fig:size-hists"
+        @list{Histograms of the sizes (number of internal nodes)
+              of terms produced by the different runs.
+              The vertical scale of each plot is one twentieth
+              of the total number of terms in that run.}]{
+         @centered[(hists-pict 200 430)]}
+                 
+        
 
 
 
