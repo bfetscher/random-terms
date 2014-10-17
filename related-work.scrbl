@@ -39,26 +39,23 @@ for random testing in Haskell. It provides combinators supporting the
 definition of testable properties, random generators, and analysis
 of results. Although Quickcheck's approach is much more general than
 the one taken here, it has been used to implement a random generator
-for well-typed terms robust enough to find bugs in GHC.@~cite[palka-diss]
+for well-typed terms robust enough to find bugs in GHC@~cite[palka-diss].
 This generator provides a good contrast to the approach of this work,
 as it was implemented by hand, albeit with the assistance of a powerful
 test framework. Significant effort was spent on adjusting the distribution
 of terms and optimization, even adjusting the type system in clever
 ways. Our approach, on the other hand, is to provide a straightforward
-way to implement a test generator, ideally by simply writing down the
-type system, the inherent tradeoff being that an automatically derived
-generator is almost certain to be much slower and likely to have a
-less effective distribution of terms.
+way to implement a test generator. The relationship to Pałka's work is discussed
+in more detail in @secref["sec:ghc"].
 
 Random program generation for testing purposes is not a new idea
 and goes back at least to @citet[Hanford], who details the
-development and application of the ``syntax machine'', essentially
-a tool for producing random expressions from a grammar similar to
-Redex original term generation method. The tool was intended for 
+development and application of the ``syntax machine'', a generator of random program expressions.
+The tool was intended for 
 testing compilers, a common target for this type of random generation. 
 Other uses of random testing for
-compiler testing throughout the years are discussed in the 1997
-survey of @citet[compiler-testing].
+compiler testing throughout the years are discussed in  @citet[compiler-testing]'s
+survey.
 
 In the area of random testing for compilers,
 of special note is Csmith@~cite[csmith], a highly effective tool for generating
@@ -107,3 +104,12 @@ constants and discuss its possible extension to even more challenging
 languages such as System-F. This method cannot be used for random generation
 because only bit-strings that have a prefix-closure property correspond
 to well-formed terms.
+
+This paper is one of two papers submitted to ESOP that
+discusses random testing in the context of Redex. The other
+is entitled @italic{Practical, Fair, and Efficient
+ Enumeration for Algebraic Data-Structures}. This paper has
+a more effective generator, but one that does not apply to
+every Redex model. The technical content is otherwise
+completely different.
+
