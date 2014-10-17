@@ -110,6 +110,7 @@ discusses random testing in the context of Redex. The other
 is entitled @italic{Practical, Fair, and Efficient
  Enumeration for Algebraic Data-Structures}. This paper has
 a more effective generator, but one that does not apply to
-every Redex model. The technical content is otherwise
-completely different.
-
+every Redex model, as discussed in @secref["sec:benchmark"]. 
+The technical content is otherwise completely different,
+specifically the goal-directed search in this paper and the
+enumeration in the other paper are independent and complementary.
