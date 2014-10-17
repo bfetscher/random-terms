@@ -37,12 +37,15 @@ to Redex's.
 @section[#:tag "sec:related-testing"]{Random Testing}
 
 The most closely related work to ours is @citet[uniform]'s
-typed term generator. Their work addresses specifically the problem
-of generating well-formed lambda terms based an implementation
-of a type-checker (in Haskell). They measured their approach
-against property 1 from @secref["sec:ghc"] and it performs better
-than Redex's generator, but they are working from a lower-level
-specification of the type system than we are.
+typed term generator. Their work addresses specifically the
+problem of generating well-formed lambda terms based an
+implementation of a type-checker (in Haskell). They measured
+their approach against property 1 from @secref["sec:ghc"]
+and it performs better than Redex's generator, but they are
+working from a lower-level specification of the type system
+than we are. Also, their approach observes the order of
+evaluation of the predicate, and prunes the search space
+based on that; it does not use constraint solving.
 
 Quickcheck@~cite[QuickCheck] is a widely-used library
 for random testing in Haskell. It provides combinators supporting the
