@@ -28,9 +28,11 @@ on such formulas to transform them into solved forms.
 We believe our solver is essentially a way of factoring
 a stand-alone unifier out of their rules.
 
-
-@citet[pattern-unification]
-
+We are currently investigating extending our solver to
+handle Redex's repeat patterns. 
+In this area, we note @citet[pattern-unification]'s work 
+on sequence unification, which handles patterns similar 
+to Redex's.
 
 @section[#:tag "sec:related-testing"]{Random Testing}
 
