@@ -173,7 +173,9 @@ the compiler behavior, rather than bugs.
         @list{Comparison of the derivation
               generator and a hand-written typed term
               generator. ∞ indicates runs where no
-              counterexamples were found.}]{
+              counterexamples were found. Runs marked with *
+              found only one counterexample, which gives
+              low confidence to their figures. }]{
   @centered{
     @tabular[#:sep @hspace[1]
              (cons
