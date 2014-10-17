@@ -1,7 +1,8 @@
 #lang racket
 (require redex 
          "clp.rkt"
-         "pats.rkt")
+         "pats.rkt"
+         "program.rkt")
 
 ;; This is the Redex code for the example below:
 (let ()
@@ -49,15 +50,48 @@
 ;;   3 = false
 ;;   (even (lst <bool> <nat>)) is the shape of 'even'
 
+(define ep
+  (term ((((ep (lst 1 (lst 1 n))) = (ep n))
+          ((ep 0) = 2)
+          ((ep n) = 3)))))
+
+(define epc (parameterize ([fresh-inc 10000]
+                           [caching-enabled? #f])
+              (term (compile ,ep))))
+
+#|
+epc =
+'((((ep (lst (lst 1 (lst 1 n_3)) x_10000)) ← 
+                                             (ep (lst n_3 x_10000)))
+     ((ep (lst 0 2)) ← 
+                     (∀ (n_3) (∨ ((lst 1 (lst 1 n_3)) ≠ 0))))
+     ((ep (lst n_1 3)) ← 
+                       (∀ (n_3) (∨ ((lst 1 (lst 1 n_3)) ≠ n_1))) 
+                       (∀ () (∨ (0 ≠ n_1))))))
+
+(∧
+  (∧ (n_1_3 = n))
+  (∧
+   (∀ () (∨ (n ≠ 0)))
+   (∀
+    (n_3)
+    (∨
+     (n
+      ≠
+      (lst
+       1
+       (lst 1 n_3)))))))
+
+|#
+
 (define awkward-even-P
-  (term ((((even (lst 2 0)) ←)
-          ((even (lst 2 (lst 1 (lst 1 n)))) ← (evenp (lst 2 n)))
-          ((even (lst 3 n_1)) 
+  (term ((((evenp (lst x (lst 1 (lst 1 n)))) ← (evenp (lst x n)))
+          ((evenp (lst 2 0)) ← (∀ (x_2) (∨ (x ≠ 2))))
+          ((evenp (lst 3 n_1)) 
            ← 
-           (∀ (n_2) (∨ ((lst 3 n_1)
-                        ≠ 
-                        (lst (evenp (lst 2 n_2))
-                             (lst 1 (lst 1 n_2))))))
+           (∀ (x_3 n_2) (∨ ((lst 3 n_1)
+                            ≠ 
+                            (lst x_3 (lst 1 (lst 1 n_2))))))
            (∀ () (∨ (n_1 ≠ 0))))))))
 
 (parameterize ([caching-enabled? #f])
@@ -65,5 +99,5 @@
           (term 
            (,awkward-even-P
             ⊢
-            ((even (lst 3 n))) ∥
+            ((evenp (lst 3 n))) ∥
             (∧ (∧) (∧))))))
