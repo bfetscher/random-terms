@@ -10,6 +10,7 @@
           "citations.rkt"
           "typesetting.rkt"
           "models/clp.rkt"
+          "models/even-model-example.rkt"
           (except-in "models/typesetting.rkt" lang-pict)
           "pat-grammar.rkt"
           "common.rkt"
@@ -120,7 +121,8 @@ scales up to support features in Redex that are not covered in this model.
 
 The primary difference between a metafunction, as written in Redex,
 and a set of @clpt[((d p) ← a ...)] clauses from @figure-ref["fig:clp-grammar"]
-is sensitivity to the ordering of clauses. Specifically, when the second clause in a metafunction fires,
+is sensitivity to the ordering of clauses. 
+Specifically, when the second clause in a metafunction fires,
 the then the pattern in the first clause must not match, in contrast to
 the rules in the model, which fire regardless of their relative order. Accordingly,
 the compilation process that translates metafunctions into the model must
@@ -199,6 +201,20 @@ that @clpt[C] is always satisfiable. Whenever a new
 constraint is added to the set, consistency is checked again
 and the new set is simplified to maintain the canonical
 form.
+
+To better understand how the solver works, consider this (non-standard)
+definition of evenness, using Peano numbers, written as a series of @clpt[r]
+clauses in our model:
+@table[(style #f '(centered))
+       (list (list 
+              (paragraph (style #f '()) 
+                         (list @clpt/e[(list-ref awkward-even 0)])))
+             (list 
+              (paragraph (style #f '()) 
+                         (list @clpt/e[(list-ref awkward-even 1)])))
+             (list 
+              (paragraph (style #f '()) 
+                         (list @clpt/e[(list-ref awkward-even 2)]))))]
 
 @Figure-ref["fig:solve"] shows @clpt[solve], the entry point to the solver
 for new equational constraints. It accepts an equation and a constraint

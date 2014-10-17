@@ -4,15 +4,24 @@
          "pats.rkt"
          "program.rkt")
 
+(provide awkward-even
+         state0
+         state1-simplified
+         state->C
+         state->a)
+
 ;; This is the Redex code for the example below:
 (let ()
   (define-language L
     (n ::= z (s n)))
   
   (define-metafunction L
-    [(evenp (s (s n))) (evenp n)]
-    [(evenp z) true]
-    [(evenp n) false])
+    [(evenp z) 
+     true]
+    [(evenp (s (s n)))
+     (evenp n)]
+    [(evenp n)
+     false])
   
   (test-equal (term (evenp z)) (term true))
   (test-equal (term (evenp (s z))) (term false))
@@ -50,54 +59,97 @@
 ;;   3 = false
 ;;   (even (lst <bool> <nat>)) is the shape of 'even'
 
-(define ep
-  (term ((((ep (lst 1 (lst 1 n))) = (ep n))
-          ((ep 0) = 2)
-          ((ep n) = 3)))))
-
-(define epc (parameterize ([fresh-inc 10000]
-                           [caching-enabled? #f])
-              (term (compile ,ep))))
-
-#|
-epc =
-'((((ep (lst (lst 1 (lst 1 n_3)) x_10000)) ← 
-                                             (ep (lst n_3 x_10000)))
-     ((ep (lst 0 2)) ← 
-                     (∀ (n_3) (∨ ((lst 1 (lst 1 n_3)) ≠ 0))))
-     ((ep (lst n_1 3)) ← 
-                       (∀ (n_3) (∨ ((lst 1 (lst 1 n_3)) ≠ n_1))) 
-                       (∀ () (∨ (0 ≠ n_1))))))
-
-(∧
-  (∧ (n_1_3 = n))
-  (∧
-   (∀ () (∨ (n ≠ 0)))
-   (∀
-    (n_3)
-    (∨
-     (n
-      ≠
-      (lst
-       1
-       (lst 1 n_3)))))))
-
-|#
+(define awkward-even
+  (term (((even (lst 2 0)) ←)
+         ((even (lst b (lst 1 (lst 1 n)))) ← (even (lst b n)))
+         ((even (lst 3 n_1))
+          ← 
+          (∀ (n_2) (∨ (n_1 ≠ (lst 1 (lst 1 n_2)))))
+          (∀ () (∨ (n_1 ≠ 0)))))))
 
 (define awkward-even-P
-  (term ((((evenp (lst x (lst 1 (lst 1 n)))) ← (evenp (lst x n)))
-          ((evenp (lst 2 0)) ← (∀ (x_2) (∨ (x ≠ 2))))
-          ((evenp (lst 3 n_1)) 
-           ← 
-           (∀ (x_3 n_2) (∨ ((lst 3 n_1)
-                            ≠ 
-                            (lst x_3 (lst 1 (lst 1 n_2))))))
-           (∀ () (∨ (n_1 ≠ 0))))))))
+  (term (,awkward-even)))
 
-(parameterize ([caching-enabled? #f])
-  (traces R
-          (term 
-           (,awkward-even-P
-            ⊢
-            ((evenp (lst 3 n))) ∥
-            (∧ (∧) (∧))))))
+(caching-enabled? #f)
+
+(define state0
+  (term 
+   (,awkward-even-P
+    ⊢
+    ((even (lst 3 (lst 1 (lst 1 (lst 1 0))))))
+    ∥
+    (∧ (∧) (∧)))))
+
+(define state1
+  (let ()
+    (define one-step (apply-reduction-relation R state0))
+    (define (no-successor? state) (null? (apply-reduction-relation R state)))
+    (define terminal-states (filter no-successor? one-step))
+    (unless (= 1 (length terminal-states))
+      (error 'even-model-example.rkt 
+             "expected a single terminal state, got ~a" (length terminal-states)))
+    (car terminal-states)))
+
+
+(define (rewrite-variable orig-exp src dest)
+  (define found-it? #f)
+  (begin0 
+    (let loop ([exp orig-exp])
+      (cond
+        [(pair? exp) (cons (loop (car exp)) (loop (cdr exp)))]
+        [(equal? exp src) 
+         (set! found-it? #t)
+         dest]
+        [(equal? exp dest) (error 'rewrite-variable "found occurrence of ~s in ~s" dest exp)]
+        [else exp]))
+    (unless found-it?
+      (error 'rewrite-variable "never found ~s in ~s" src orig-exp))))
+
+(define state1-simplified
+  (rewrite-variable 
+   state1
+   'n_1_3 'n_3))
+
+(define-metafunction pats/mf
+  rewrite-pattern : p -> any
+  [(rewrite-pattern (lst 1 p)) (s (rewrite-pattern p))]
+  [(rewrite-pattern 0) z]
+  [(rewrite-pattern 2) true]
+  [(rewrite-pattern 3) false]
+  [(rewrite-pattern x) x])
+
+
+(define-metafunction pats/mf
+  rewrite-eqn : e -> any
+  [(rewrite-eqn (p_1 = p_2))
+   ((rewrite-pattern p_1) = (rewrite-pattern p_2))])
+
+(define-metafunction pats/mf
+  rewrite-diseqn : δ -> any
+  [(rewrite-diseqn (∀ () (∨ (p_1 ≠ p_2))))
+   ((rewrite-pattern p_1) ≠ (rewrite-pattern p_2))]
+  [(rewrite-diseqn (∀ (x ...) (∨ (p_1 ≠ p_2))))
+   (∀ (x ...) ((rewrite-pattern p_1) ≠ (rewrite-pattern p_2)))]
+  [(rewrite-diseqn (∀ (x ...) (∨ (p_1 ≠ p_2) ...)))
+   (∀ (x ...) (∨ ((rewrite-pattern p_1) ≠ (rewrite-pattern p_2)) ...))])
+
+(define-metafunction pats/mf
+  rewrite-C : C -> any
+  [(rewrite-C (∧ (∧ e ...) (∧ δ ...)))
+   (∧ (rewrite-eqn e) ... (rewrite-diseqn δ) ...)])
+
+(define-metafunction pats/mf
+  rewrite-as : (a ...) -> any
+  [(rewrite-as ()) ()]
+  [(rewrite-as ((d p) a ...))
+   ((d (rewrite-p p)) any_2 ...)
+   (where (any_2 ...) (rewrite-as (a ...)))]
+  [(rewrite-as (δ a ...))
+   ((rewrite-diseqn δ) any_2 ...)
+   (where (any_2 ...) (rewrite-as (a ...)))])
+
+(define (state->C state) (term (rewrite-C ,(list-ref state 4))))
+(define (state->a state) (term (rewrite-as ,(list-ref state 2))))
+
+;(traces R state0)
+
