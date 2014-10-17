@@ -27,8 +27,8 @@
             t))
 
 (define (type->color t)
-  (hash-ref (hash 'search 'blue
-                  'grammar 'red)
+  (hash-ref (hash 'search 1
+                  'grammar 2)
             t))
 
 (define (type->name t)
@@ -38,7 +38,7 @@
 
 (define (plot-points data-directory)
   (parameterize ([plot-width 435]
-                 [plot-height 265]
+                 [plot-height 335]
                  [type-symbols type->sym]
                  [type-names type->name]
                  [type-colors type->color]

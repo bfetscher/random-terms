@@ -197,6 +197,7 @@
                                             [plot-font-size 12]
                                             [plot-title n]
                                             [plot-height height]
-                                            [plot-width (round (/ width 3))])
+                                            [plot-width (round (/ width 3))]
+                                            [rectangle-style 'transparent])
                                (aggr-hist a #f (tries/20 a) x-max #f))])
               name/aggrs)))

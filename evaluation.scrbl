@@ -16,7 +16,7 @@ effectiveness against the standard Redex generator on Redex's
 benchmark suite. Second, we compare it against the best known
 hand-tuned typed term generator.
 
-@section[#:tag "sec:benchmark"]{Redex Benchmark}
+@section[#:tag "sec:benchmark"]{The Redex Benchmark}
 
 Our first effort at evaluating the effectiveness of the derivation
 generator compares it to the existing random expression generator
@@ -24,6 +24,12 @@ included with Redex@~cite[sfp2009-kf], which we term the ``ad hoc''
 generation strategy in what follows.
 This generator is based on the method of recursively unfolding
 non-terminals in a grammar.
+
+@figure["fig:points"
+        @list{Performance results by individual bug on the Redex 
+              Benchmark, following the naming scheme
+              @italic{model name}-@italic{bug number}.}
+        @(centered (plot-points 24hr))]
 
 To compare the two generators, we used the Redex 
 Benchmark@~cite[redex-benchmark], a suite of buggy models
@@ -54,17 +60,11 @@ sources, some synthesized based on our experience for the
 benchmark, and some drawn from outside sources or pre-existing
 efforts in Redex. The latter are based on
 @citet[list-machine]'s list machine benchmark,
-the model of contracts for delimited continuation developed
+the model of contracts for delimited continuations developed
 by @citet[delim-cont-cont], and the model of the Racket
 virtual machine from @citet[racket-virtual-machine].
 Detailed descriptions of all the models and bugs in the
 benchmark can be found in @citet[redex-benchmark].
-
-@figure["fig:points"
-        @list{Performance results by individual bug on the Redex 
-              Benchmark, following the naming scheme
-              @italic{model name}-@italic{bug number}.}
-        @(centered (plot-points 24hr))]
 
 @Figure-ref["fig:points"] summarizes the results of the
 comparison on a per-bug basis. The y-axis is time
@@ -94,7 +94,7 @@ of the two generation methods, we plot our data slightly
 differently in @figure-ref["fig:lines"]. Here we show
 time in seconds on the x-axis (the y-axis from 
 @figure-ref["fig:points"], again on a log scale), 
-and total number of bugs found
+and the total number of bugs found
 for each point in time on the y-axis. 
 This plot makes it clear that the derivation generator
 is much more effective, finding more bugs more 
@@ -105,8 +105,9 @@ the entire plot.
 
 While the derivation generator is more effective when it is
 used, it cannot be used with every Redex model, unlike the
-ad hoc generator. There are three broad categories why it
-may not apply to a given model. First, the language may not
+ad hoc generator. There are three broad categories of models
+to which it may not apply.
+First, the language may not
 have a type system, or the type system's implementation
 might use constructs that the generator fundamentally cannot
 handle (like escaping to Racket code to run arbitrary
@@ -171,7 +172,8 @@ the second property can usually demonstrate interesting cases of the compiler be
 @figure["fig:table" 
         @list{Comparison of the derivation
               generator and a hand-written typed term
-              generator.}]{
+              generator. ∞ indicates runs where no
+              counterexamples were found.}]{
   @centered{
     @tabular[#:sep @hspace[1]
              (cons
@@ -188,8 +190,9 @@ of the two generators. Each row represents a run of one of the
 generators, with a few varying parameters. We refer
 to @citet[palka-diss]'s generator as ``hand-written.'' It takes
 a size parameter, which we varied over 50, 70, and 90 for each property.
-The initial implementation of this system in the Redex is
-called ``Redex poly.'' The Redex generator takes a depth
+``Redex poly'' is our initial implementation of this system in the Redex,
+the direction translation of the language from @citet[palka-diss].
+The Redex generator takes a depth
 parameter, which we vary over 6,7,8, and, in one case, 10.
 ``Redex non-poly'' is a modified version of our initial implementation,
 the details of which we discuss below. The columns show
@@ -223,10 +226,6 @@ are larger than almost all of the terms that Redex produced
 (most of which are clumped below a size of 25).
 The majority of counterexamples we were able to produce
 with the hand-written generator fell in this larger range.
-@;{TODO: should we plot counterexamples on the histogram,
-   or perhap indicate the range in which they fall?
-   
-   No need, IMO. --robby}
 
 
 @figure["fig:size-hists"
@@ -247,7 +246,7 @@ size of the search space expands.
 We hypothesized that the backtracking was caused by
 making doomed choices when instantiating polymorphic types
 and only discovering that much later in the search,
-causing it have get stuck in expensive backtracking cycles.
+causing it to get stuck in expensive backtracking cycles.
 The hand-written generator avoids such problems by
 encoding model-specific knowledge in heuristics.
 
