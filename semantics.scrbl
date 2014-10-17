@@ -44,7 +44,7 @@ into them via a process we discuss in @secref["sec:mf-semantics"].
 
 The conclusion of each rule has the form @clpt[(d p)], where @clpt[d] is an 
 identifier naming the definition and @clpt[p] is a pattern.
-The premises may consist of literal goals @clpt[(d p)] or disequational
+The premises @clpt[a] may consist of literal goals @clpt[(d p)] or disequational
 constraints @clpt[δ]. We dive into the operational meaning behind
 disequational constraints later in this section, but as their form suggests, they are
 the negation of an equation, in which some variables are universally quantified.
@@ -57,7 +57,8 @@ with an initial goal of the form @clpt[(d p)], where
 @clpt[d] is the identifier of some definition
 in @clpt[P] and @clpt[p] is a pattern
 that matches the conclusion of all of the generated derivations.
-The relation acts on states of the form @clpt[(P ⊢ (a ...) ∥ C)],
+The relation is defined using two rules: @rule-name{reduce} and @rule-name{new constraint}.
+The states that the relation acts on are of the form @clpt[(P ⊢ (a ...) ∥ C)],
 where @clpt[(a ...)] represents a stack of goals, which can
 either be incomplete derivations of the form @clpt[(d p)], indicating a
 goal that must be satisfied to complete the derivation, or disequational constraints 
@@ -82,7 +83,7 @@ itself can be read off of the reduction sequence that reaches that state.
               tree of derivations.}
         @(clp-red-pict)]
 
-There are two rules in the relation.
+The two rules defining the relation act as follows.
 When a goal of the form @clpt[(d p)] is the first element
 of the goal stack (as is the root case, when the initial goal is the
 sole element), then the @rule-name{reduce} rule applies. For every
@@ -97,7 +98,7 @@ instead of a @clpt[C_2]). The new goal stack has
 all of the previously pending goals as well as the new ones introduced
 by the premises of the rule.
 
-The second rule covers the case where a disequational constraint @clpt[δ] 
+The @rule-name{new constraint} rule covers the case where a disequational constraint @clpt[δ] 
 is the first element in the goal
 stack. In that case, the disequational solver is called with the
 current constraint store and the disequation. If it returns a new constraint
