@@ -156,7 +156,7 @@ compiled Haskell code. The property fails if the compiled function is less stric
 @bold{Property 2} observes the order of evaluation, and fails if optimized code has a
 different order of evaluation compared to unoptimized code.
 
-Counterexamples from the first property demonstrate erroneus behavior of the compiler,
+Counterexamples from the first property demonstrate erroneous behavior of the compiler,
 as the strictness of Haskell expressions should not be influenced by optimization. In contrast,
 changing the order of evaluation is allowed for a Haskell compiler to some extent, so
 counterexamples from the second property usually demonstrate interesting cases of
@@ -201,7 +201,7 @@ the average time to generate a term, the average time to check
 a term, and finally the average time per counterexample over the
 entire run. Note that the goal type of terms used to test
 the two properties differs, which may affect generation time
-for otherwise identical generators.w
+for otherwise identical generators.
 
 A generator based on our initial Redex implementation was
 able to find counterexamples for only one of the properties,
@@ -221,7 +221,7 @@ find any counterexamples there.
 Comparing the test cases from both generators,
 we found that Redex was producing
 significantly smaller terms than the hand-written generator.
-The left two histrograms in @figure-ref["fig:size-hists"]
+The left two histograms in @figure-ref["fig:size-hists"]
 compare the size distributions, which show that
 most of the terms made by the hand-written generator
 are larger than almost all of the terms that Redex produced
