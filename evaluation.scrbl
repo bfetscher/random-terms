@@ -27,8 +27,7 @@ non-terminals in a grammar.
 
 @figure["fig:points"
         @list{Performance results by individual bug on the Redex 
-              Benchmark, following the naming scheme
-              @italic{model name}-@italic{bug number}.}
+              Benchmark.}
         @(centered (plot-points 24hr))]
 
 To compare the two generators, we used the Redex 
@@ -200,7 +199,9 @@ the details of which we discuss below. The columns show
 approximately how many tries it took to find a counterexample,
 the average time to generate a term, the average time to check
 a term, and finally the average time per counterexample over the
-entire run.
+entire run. Note that the goal type of terms used to test
+the two properties differs, which may affect generation time
+for otherwise identical generators.w
 
 A generator based on our initial Redex implementation was
 able to find counterexamples for only one of the properties,
