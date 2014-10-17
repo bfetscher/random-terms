@@ -120,9 +120,9 @@ scales up to support features in Redex that are not covered in this model.
 
 The primary difference between a metafunction, as written in Redex,
 and a set of @clpt[((d p) ← a ...)] clauses from @figure-ref["fig:clp-grammar"]
-is ordering. Specifically, when the second clause in a metafunction fires,
-the then the pattern in the first clause must not match, but there is no
-ordering on rules in the model. Accordingly,
+is sensitivity to the ordering of clauses. Specifically, when the second clause in a metafunction fires,
+the then the pattern in the first clause must not match, in contrast to
+the rules in the model, which fire regardless of their relative order. Accordingly,
 the compilation process that translates metafunctions into the model must
 insert disequation constraints that capture the ordering of the cases
 in metafunctions.
