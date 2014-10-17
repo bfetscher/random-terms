@@ -815,7 +815,7 @@
    #:title "Property-based Automated Test Generation"
    #:date 2014
    #:location (techrpt-location #:institution "Northwestern University EECS"
-                                #:number "??")))
+                                #:number "NU-EECS-14-05")))
 
 (define redex-benchmark
   (make-bib
