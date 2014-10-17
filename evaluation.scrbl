@@ -155,12 +155,13 @@ and using same baseline version of the GHC (7.3.20111013) that was used there.
 @bold{Property 1} checks whether turning on optimization influences the strictness of the
 compiled Haskell code. The property fails if the compiled function is less strict with optimization turned on.
 @bold{Property 2} observes the order of evaluation, and fails if optimized code has a
-different order of evaluation.
+different order of evaluation compared to unoptimized code.
 
 Counterexamples from the first property demonstrate erroneus behavior of the compiler,
 as the strictness of Haskell expressions should not be influenced by optimization. In contrast,
 changing the order of evaluation is allowed for a Haskell compiler to some extent, so
-the second property can usually demonstrate interesting cases of the compiler behavior, rather than bugs.
+counterexamples from the second property usually demonstrate interesting cases of
+the compiler behavior, rather than bugs.
 
 @(define table-head
    (list @bold{Generator}
