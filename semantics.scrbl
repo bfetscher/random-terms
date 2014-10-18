@@ -36,14 +36,19 @@ semantics.
               @(init-lang)]
 
 The grammar in @figure-ref["fig:clp-grammar"] describes the language of the model.
-A program @clpt[P] consists of  definitions @clpt[D] and each definition consists 
-of a set of inference rules @clpt[((d p) ← a ...)], here written
+A program @clpt[P] consists of  definitions @clpt[D], which
+are sets of inference rules @clpt[((d p) ← a ...)], here written
 horizontally with the conclusion on the left and premises on the right. (Note that
 ellipses are used in a precise manner to indicate repetition of the immediately
 previous expression, following Scheme tradition. They do not indicate elided text.)
 Definitions can express both judgment forms and metafunctions. They are a strict
 generalization of judgment forms, and metafunctions are compiled
 into them via a process we discuss in @secref["sec:mf-semantics"].
+
+@figure["fig:clp-red"
+        @list{Reduction rules describing generation of the complete
+              tree of derivations.}
+        @(clp-red-pict)]
 
 The conclusion of each rule has the form @clpt[(d p)], where @clpt[d] is an 
 identifier naming the definition and @clpt[p] is a pattern.
@@ -80,11 +85,6 @@ discovery of such doomed reduction sequences causes backtracking. Reduction
 sequences that lead to valid derivations
 always end with a state of the form @clpt[(P ⊢ () ∥ C)], and the derivation 
 itself can be read off of the reduction sequence that reaches that state.
-
-@figure["fig:clp-red"
-        @list{Reduction rules describing generation of the complete
-              tree of derivations.}
-        @(clp-red-pict)]
 
 When a goal of the form @clpt[(d p)] is the first element
 of the goal stack (as is the root case, when the initial goal is the
@@ -128,8 +128,7 @@ Specifically, when the second clause in a metafunction fires,
 the then the pattern in the first clause must not match, in contrast to
 the rules in the model, which fire regardless of their relative order. Accordingly,
 the compilation process that translates metafunctions into the model must
-insert disequation constraints that capture the ordering of the cases
-in metafunctions.
+insert disequation constraints to capture the ordering of the cases.
 
 As an example, consider the
 metafunction definition of @clpt[g] on the left and some example applications on the right:
@@ -183,12 +182,6 @@ Each disequality is between the left-hand side patterns of one of the previous
 clauses and the left-hand side of the current clause, and it is quantified 
 over all variables in the previous clause's left-hand side.
 
-@figure["fig:solve"
-        @list{The Solver for Equations}
-        @(vl-append
-          20
-          (solve-pict)
-          (unify-pict))]
 
 @section[#:tag "sec:solve"]{The Constraint Solver}
 
@@ -200,7 +193,7 @@ the constraint store and are kept in the canonical form
 the additional constraint that the equational portion of the
 store is idempotent (when applied as a substitution) and
 that @clpt[C] is always satisfiable. Whenever a new
-constraint is added to the set, consistency is checked again
+constraint is added, consistency is checked again
 and the new set is simplified to maintain the canonical
 form.
 
@@ -249,6 +242,13 @@ and checks their consistency. Finally, if all that succeeds, @clpt[check]
 returns a constraint store that combines the results of
 @clpt[unify] and @clpt[check]. If either @clpt[unify] or @clpt[check] fails, then
 @clpt[solve] returns @clpt[⊥].
+
+@figure["fig:solve"
+        @list{The Solver for Equations}
+        @(vl-append
+          20
+          (solve-pict)
+          (unify-pict))]
 
 @figure["fig:dissolve"
         "The Solver for Disequations"
@@ -332,10 +332,9 @@ we refer the reader to the first author's masters dissertation@~cite[burke-maste
 Finally, we return to @clpt[check], shown in @figure-ref["fig:dis-help"],
 which is passed the updated disequations after 
 a new equation has been added in @clpt[solve] (see @figure-ref["fig:solve"]).
-It is used to verify the disequations and maintain 
+It verifies the disequations and maintains 
 their canonical form, once the new substitution has been applied.
-It does this by using @clpt[disunify] on each of the disequations that
-are not in the canonical form.
+It does this by applying @clpt[disunify] to any non-canonical disequations.
 
 @section[#:tag "sec:search"]{Search Heuristics}
 
@@ -354,9 +353,9 @@ first one of the permuted rules, using it as the next piece
 of the derivation. It then continues to search for a
 complete derivation. That process may fail, in which case
 the implementation backtracks to this choice and picks the
-next rule in the permuted list. If none of the choices in
-the list leads to a successful derivation, then this attempt
-is itself a failure and the implementation either backtracks
+next rule in the permuted list. If none of the choices
+leads to a successful derivation, then this attempt
+is failure and the implementation either backtracks
 to an earlier such choice, or fails altogether.
 
 There are two refinements that the implementation applies to

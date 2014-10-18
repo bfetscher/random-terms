@@ -16,6 +16,11 @@ effectiveness against the standard Redex generator on Redex's
 benchmark suite. Second, we compare it against the best known
 hand-tuned typed term generator.
 
+@figure["fig:points"
+        @list{Performance results by individual bug on the Redex 
+              Benchmark.}
+        @(centered (plot-points 24hr))]
+
 @section[#:tag "sec:benchmark"]{The Redex Benchmark}
 
 Our first effort at evaluating the effectiveness of the derivation
@@ -24,11 +29,6 @@ included with Redex@~cite[sfp2009-kf], which we term the ``ad hoc''
 generation strategy in what follows.
 This generator is based on the method of recursively unfolding
 non-terminals in a grammar.
-
-@figure["fig:points"
-        @list{Performance results by individual bug on the Redex 
-              Benchmark.}
-        @(centered (plot-points 24hr))]
 
 To compare the two generators, we used the Redex 
 Benchmark@~cite[redex-benchmark], a suite of buggy models
@@ -65,6 +65,12 @@ virtual machine from @citet[racket-virtual-machine].
 Detailed descriptions of all the models and bugs in the
 benchmark can be found in @citet[redex-benchmark].
 
+@figure["fig:lines"
+        @list{Random testing performance of the derivation
+              generator vs. ad hoc random generation on
+              the Redex Benchmark.}
+        @(line-plot/directory 24hr)]
+
 @Figure-ref["fig:points"] summarizes the results of the
 comparison on a per-bug basis. The y-axis is time
 in seconds, and for each bug we plot the average
@@ -77,16 +83,10 @@ cases except one, the errors are small enough
 to clearly differentiate the averages.
 The two blank columns on the right are bugs that neither
 generator was able to find. 
-Note that the scale on the y-axis is logarithmic,
+The vertical scale is logarithmic,
 and the average time ranges from a tenth of a second
 to several hours, an extremely wide range in the
 rarity of counterexamples.
-
-@figure["fig:lines"
-        @list{Random testing performance of the derivation
-              generator vs. ad hoc random generation on
-              the Redex Benchmark.}
-        @(line-plot/directory 24hr)]
 
 To depict more clearly the relative testing effectiveness
 of the two generation methods, we plot our data slightly
@@ -115,8 +115,8 @@ ellipses (aka repetition or Kleene star); we hope to someday
 figure out how to generalize our solver to support those
 patterns, however. And finally, some judgment forms thwart
 our termination heuristics. Indeed, the one model in
-the Redex benchmark that we excluded was for the third reason
-(let-poly).
+the Redex benchmark that we excluded (let-poly) was for the third reason.
+
 
 @section[#:tag "sec:ghc"]{Testing GHC: A Comparison With a Specialized Generator}
 
@@ -139,6 +139,14 @@ are more likely to succeed, or varying the frequency with
 which different constants are chosen. @citet[palka-diss] discusses
 the details.
 
+@(define table-head
+   (list @bold{Generator}
+                    @bold{Terms/Ctrex.}
+                    @bold{Gen. Time (s)}
+                    @bold{Check Time (s)}
+                    @bold{Time/Ctrex. (s)}))
+
+
 Implementing this language in Redex was easy: we were
 able to port the formal description in @citet[palka-diss]
 directly into Redex with little difficulty.
@@ -150,7 +158,6 @@ gave us an excellent opportunity to investigate those.
 
 We compared the generators by testing two of the properties used in @citet[palka-diss],
 and using same baseline version of the GHC (7.3.20111013) that was used there.
-
 @bold{Property 1} checks whether turning on optimization influences the strictness of the
 compiled Haskell code. The property fails if the compiled 
 function is less strict with optimization turned on.
@@ -163,12 +170,6 @@ changing the order of evaluation is allowed for a Haskell compiler to some exten
 counterexamples from the second property usually demonstrate interesting cases of
 the compiler behavior, rather than bugs.
 
-@(define table-head
-   (list @bold{Generator}
-                    @bold{Terms/Ctrex.}
-                    @bold{Gen. Time (s)}
-                    @bold{Check Time (s)}
-                    @bold{Time/Ctrex. (s)}))
 
 @figure["fig:table" 
         @list{Comparison of the derivation
@@ -221,6 +222,15 @@ Property two was more difficult for the hand-written
 generator, and our first try in Redex was unable to 
 find any counterexamples there.
 
+
+
+@figure["fig:size-hists"
+        @list{Histograms of the sizes (number of internal nodes)
+              of terms produced by the different runs.
+              The vertical scale of each plot is one twentieth
+              of the total number of terms in that run.}]{
+         @centered[(hists-pict 200 430)]}
+
 Comparing the test cases from both generators,
 we found that Redex was producing
 significantly smaller terms than the hand-written generator.
@@ -231,14 +241,6 @@ are larger than almost all of the terms that Redex produced
 (most of which are clumped below a size of 25).
 The majority of counterexamples we were able to produce
 with the hand-written generator fell in this larger range.
-
-
-@figure["fig:size-hists"
-        @list{Histograms of the sizes (number of internal nodes)
-              of terms produced by the different runs.
-              The vertical scale of each plot is one twentieth
-              of the total number of terms in that run.}]{
-         @centered[(hists-pict 200 430)]}
                  
 Digging deeper, we found that Redex's generator was backtracking
 an excessive amount.
@@ -285,6 +287,7 @@ Thus, it is interesting that it did much worse on
 property 2, only finding a counterexample once
 every 4000K terms, and at very large time intervals.
 We don't presently know how to explain this discrepancy.
+
 
 Overall, our conclusion is that our generator is not
 competitive with the hand-tuned generator when it has

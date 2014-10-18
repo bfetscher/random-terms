@@ -38,7 +38,7 @@
 
 (define (plot-points data-directory)
   (parameterize ([plot-width 435]
-                 [plot-height 335]
+                 [plot-height 275]
                  [type-symbols type->sym]
                  [type-names type->name]
                  [type-colors type->color]

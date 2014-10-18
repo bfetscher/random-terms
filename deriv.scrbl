@@ -60,8 +60,8 @@ on the variables indicate the step where they were generated:
                        (typ (x_^2 τ_x^2 (x_^1 τ_x^1 •)) (e_1^3 e_2^3) τ_^2)
                        (typ (x_^2 τ_x^2 (x_^1 τ_x^1 •)) e_1^3 (τ_2^3 → τ_^2))
                        (typ (x_^2 τ_x^2 (x_^1 τ_x^1 •)) e_2^3 τ_2^3)))))
-Application has two premises, so there are now two branches of the derivation
-that need to be filled in. Working on the left side first, 
+Application has two premises, so there are now two unfinished
+branches of the derivation. Working on the left side first, 
 suppose the generator chooses the variable rule:
 @(center-rule
   (infer #:h-dec min (typ • (λ (x_^1 τ_x^1) (λ (x_^2 τ_x^2) (x_^4 e_2^3))) (τ_x^1 → (τ_x^2 → τ_^2)))
@@ -107,8 +107,8 @@ If we now choose that last rule, we have this partial derivation:
                        (typ (x_^2 τ_x^2 (x_^1 τ_x^1 •)) e_2^3 τ_2^3)))))
 
 
-The generator now picks the first clause of @et[lookup] and completes
-the left branch of the derivation.
+The generator now chooses @et[lookup]'s first clause, completing
+the left branch.
 
 @(center-rule
   (infer #:h-dec min (typ • (λ (x_^1 (τ_2^3 → τ_^2)) (λ (x_^2 τ_x^2) (x_^1 e_2^3))) ((τ_2^3 → τ_^2) → (τ_x^2 → τ_^2)))
