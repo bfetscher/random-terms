@@ -204,15 +204,20 @@ constraint is added to the set, consistency is checked again
 and the new set is simplified to maintain the canonical
 form.
 
+@;{
 To better understand how the solver works, consider the following
 definition of evenness for Peano numbers, a series of @clpt[r]
-clauses compiled via the process of @secref["sec:mf-semantics"] from
-the somewhat awkward predicate defined at right:
+clauses at left compiled via the process of @secref["sec:mf-semantics"] from
+the somewhat awkward predicate defined at left:
 @table[(style #f (list (table-cells `((,(style #f '(bottom))
                                        ,(style #f '(bottom))
                                        ,(style #f '(bottom)))))))
        (list
         (list
+         (paragraph (style #f '())
+                    (list (vc-append (even?-pict)
+                                     (blank 25))))
+         (paragraph (style #f '()) (hspace 3))
          (table (style #f (list (table-cells `((,(style #f '(top)))
                                                (,(style #f '(vcenter)))
                                                (,(style #f '(bottom)))))))
@@ -227,20 +232,17 @@ the somewhat awkward predicate defined at right:
                          (paragraph (style #f '()) 
                                     (list (vc-append (blank 2)
                                                      @clpt/e[(list-ref awkward-even-rw 2)])))))))
-         (paragraph (style #f '()) (hspace 3))
-         (paragraph (style #f '())
-                    (list (vc-append (even?-pict)
-                                     (blank 30))))
          ))]
 As a running example to illustrate our solver, we'll follow a short reduction
-sequence based on a program @clpt[P] containing only the above definition.
+sequence based on a program @clpt[P] containing only the above definition.}
+
 
 @Figure-ref["fig:solve"] shows @clpt[solve], the entry point to the solver
 for new equational constraints. It accepts an equation and a constraint
 store and either returns a new constraint store that is equivalent to
 the conjunction of the constraint store and the equation or @clpt[⊥], indicating
-that adding @racket[e] is inconsistent with the constraint store. It
-applies the equational portion of the constraint store as a substitution and
+that adding @clpt[e] is inconsistent with the constraint store. 
+It applies the equational portion of the constraint store as a substitution and
 then performans syntactic unification@~cite[baader-snyder] to build a new equational 
 portion of the constraint. It then calls @clpt[check], which simplifies the disequational constraints
 and checks their consistency. Finally, if all that succeeds, @clpt[check] 

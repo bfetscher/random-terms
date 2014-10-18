@@ -71,11 +71,11 @@
 
 (define awkward-even
   (term (((even (lst 2 0)) ←)
-         ((even (lst b (lst 1 (lst 1 n)))) ← (even (lst b n)))
-         ((even (lst 3 n_1))
+         ((even (lst b_ (lst 1 (lst 1 n_)))) ← (even (lst b_ n_)))
+         ((even (lst 3 n_))
           ← 
-          (∀ (n_2) (∨ (n_1 ≠ (lst 1 (lst 1 n_2)))))
-          (∀ () (∨ (n_1 ≠ 0)))))))
+          (∀ (n_1) (∨ (n_ ≠ (lst 1 (lst 1 n_1)))))
+          (∀ () (∨ (n_ ≠ 0)))))))
 
 
 (define awkward-even-P
@@ -119,7 +119,7 @@
 (define state1-simplified
   (rewrite-variable 
    state1
-   'n_1_3 'n_3))
+   'n__3 'n_2))
 
 (define-metafunction pats/mf
   rewrite-pattern : p -> any
