@@ -821,10 +821,9 @@
 (define burke-masters
   (make-bib
    #:author "Burke Fetscher"
-   #:title "Property-based Automated Test Generation"
+   #:title "Property-based Automated Test Generation (unpublished)"
    #:date 2014
-   #:location (techrpt-location #:institution "Northwestern University EECS"
-                                #:number "NU-EECS-14-05")))
+   #:url "http://users.eecs.northwestern.edu/~baf111/masters"))
 
 (define redex-benchmark
   (make-bib
