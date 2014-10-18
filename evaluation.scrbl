@@ -152,7 +152,8 @@ We compared the generators by testing two of the properties used in @citet[palka
 and using same baseline version of the GHC (7.3.20111013) that was used there.
 
 @bold{Property 1} checks whether turning on optimization influences the strictness of the
-compiled Haskell code. The property fails if the compiled function is less strict with optimization turned on.
+compiled Haskell code. The property fails if the compiled 
+function is less strict with optimization turned on.
 @bold{Property 2} observes the order of evaluation, and fails if optimized code has a
 different order of evaluation compared to unoptimized code.
 

@@ -1,49 +1,59 @@
 #lang racket
 (require redex 
+         "../common.rkt"
          "clp.rkt"
          "pats.rkt"
          "program.rkt")
 
 (provide awkward-even
+         awkward-even-rw
          state0
          state1-simplified
          state->C
-         state->a)
+         state->a
+         even?-pict)
 
 ;; This is the Redex code for the example below:
-(let ()
   (define-language L
     (n ::= z (s n)))
   
   (define-metafunction L
-    [(evenp z) 
+    [(even? z) 
      true]
-    [(evenp (s (s n)))
-     (evenp n)]
-    [(evenp n)
+    [(even? (s (s n)))
+     (even? n)]
+    [(even? n)
      false])
+
+(define (even?-pict)
+  (parameterize ([metafunction-pict-style 'left-right])
+    (with-font-params
+     (render-metafunction even?))))
   
-  (test-equal (term (evenp z)) (term true))
-  (test-equal (term (evenp (s z))) (term false))
-  (test-equal (term (evenp (s (s z)))) (term true))
-  (test-equal (term (evenp (s (s (s z))))) (term false))
+(module+ test
+  (test-equal (term (even? z)) (term true))
+  (test-equal (term (even? (s z))) (term false))
+  (test-equal (term (even? (s (s z)))) (term true))
+  (test-equal (term (even? (s (s (s z))))) (term false)))
   
   (define-judgment-form L
     #:mode (odd I)
-    [(where false (evenp n))
+    [(where false (even? n))
      --------
      (odd n)])
   
+(module+ test
   (test-equal (judgment-holds (odd z)) #f)
   (test-equal (judgment-holds (odd (s z))) #t)
   (test-equal (judgment-holds (odd (s (s z)))) #f)
-  (test-equal (judgment-holds (odd (s (s (s z))))) #t)
+  (test-equal (judgment-holds (odd (s (s (s z))))) #t))
   
   (define (to-nat n)
     (match n
       [`z 0]
       [`(s ,n) (+ 1 (to-nat n))]))
   
+(module+ test
   (define ht (make-hash))
   (for ([x (in-range 100)])
     (define candidate (generate-term L #:satisfying (odd n) 5))
@@ -66,6 +76,7 @@
           ← 
           (∀ (n_2) (∨ (n_1 ≠ (lst 1 (lst 1 n_2)))))
           (∀ () (∨ (n_1 ≠ 0)))))))
+
 
 (define awkward-even-P
   (term (,awkward-even)))
@@ -112,7 +123,9 @@
 
 (define-metafunction pats/mf
   rewrite-pattern : p -> any
-  [(rewrite-pattern (lst 1 p)) (s (rewrite-pattern p))]
+  [(rewrite-pattern (lst p_1 p_2)) 
+   (lst (rewrite-pattern p_1) (rewrite-pattern p_2))]
+  [(rewrite-pattern 1) s]
   [(rewrite-pattern 0) z]
   [(rewrite-pattern 2) true]
   [(rewrite-pattern 3) false]
@@ -142,14 +155,25 @@
   rewrite-as : (a ...) -> any
   [(rewrite-as ()) ()]
   [(rewrite-as ((d p) a ...))
-   ((d (rewrite-p p)) any_2 ...)
+   ((d (rewrite-pattern p)) any_2 ...)
    (where (any_2 ...) (rewrite-as (a ...)))]
   [(rewrite-as (δ a ...))
    ((rewrite-diseqn δ) any_2 ...)
    (where (any_2 ...) (rewrite-as (a ...)))])
 
+(define-metafunction pats/mf
+  rewrite-r : r -> any
+  [(rewrite-r ((d p) ← a ...))
+   ((d (rewrite-pattern p)) ← any_r ...)
+   (where (any_r ...) (rewrite-as (a ...)))])
+
 (define (state->C state) (term (rewrite-C ,(list-ref state 4))))
 (define (state->a state) (term (rewrite-as ,(list-ref state 2))))
+
+(define awkward-even-rw
+  (redex-let pats/mf 
+             ([(r ...) awkward-even])
+             (term ((rewrite-r r) ...))))
 
 ;(traces R state0)
 

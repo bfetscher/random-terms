@@ -4,9 +4,11 @@
           scribble/core
           scribble/manual
           scriblib/footnote
+          racket/pretty
+          (only-in pict vc-append ghost)
           (only-in slideshow/pict scale-to-fit scale)
           (only-in "models/stlc.rkt" stlc-type-pict-horiz)
-          (only-in pict vl-append)
+          (only-in pict vl-append blank)
           "citations.rkt"
           "typesetting.rkt"
           "models/clp.rkt"
@@ -202,19 +204,36 @@ constraint is added to the set, consistency is checked again
 and the new set is simplified to maintain the canonical
 form.
 
-To better understand how the solver works, consider this (non-standard)
-definition of evenness, using Peano numbers, written as a series of @clpt[r]
-clauses in our model:
-@table[(style #f '(centered))
-       (list (list 
-              (paragraph (style #f '()) 
-                         (list @clpt/e[(list-ref awkward-even 0)])))
-             (list 
-              (paragraph (style #f '()) 
-                         (list @clpt/e[(list-ref awkward-even 1)])))
-             (list 
-              (paragraph (style #f '()) 
-                         (list @clpt/e[(list-ref awkward-even 2)]))))]
+To better understand how the solver works, consider the following
+definition of evenness for Peano numbers, a series of @clpt[r]
+clauses compiled via the process of @secref["sec:mf-semantics"] from
+the somewhat awkward predicate defined at right:
+@table[(style #f (list (table-cells `((,(style #f '(bottom))
+                                       ,(style #f '(bottom))
+                                       ,(style #f '(bottom)))))))
+       (list
+        (list
+         (table (style #f (list (table-cells `((,(style #f '(top)))
+                                               (,(style #f '(vcenter)))
+                                               (,(style #f '(bottom)))))))
+                (parameterize ([pretty-print-columns 60])
+                  (list (list 
+                         (paragraph (style #f '()) 
+                                    (list @clpt/e[(list-ref awkward-even-rw 0)])))
+                        (list 
+                         (paragraph (style #f '()) 
+                                    (list @clpt/e[(list-ref awkward-even-rw 1)])))
+                        (list 
+                         (paragraph (style #f '()) 
+                                    (list (vc-append (blank 2)
+                                                     @clpt/e[(list-ref awkward-even-rw 2)])))))))
+         (paragraph (style #f '()) (hspace 3))
+         (paragraph (style #f '())
+                    (list (vc-append (even?-pict)
+                                     (blank 30))))
+         ))]
+As a running example to illustrate our solver, we'll follow a short reduction
+sequence based on a program @clpt[P] containing only the above definition.
 
 @Figure-ref["fig:solve"] shows @clpt[solve], the entry point to the solver
 for new equational constraints. It accepts an equation and a constraint
