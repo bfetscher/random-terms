@@ -18,12 +18,9 @@
     (n ::= z (s n)))
   
   (define-metafunction L
-    [(even? z) 
-     true]
-    [(even? (s (s n)))
-     (even? n)]
-    [(even? n)
-     false])
+    [(even? z) true]
+    [(even? (s (s n))) (even? n)]
+    [(even? n) false])
 
 (define (even?-pict)
   (parameterize ([metafunction-pict-style 'left-right])
@@ -148,6 +145,10 @@
 
 (define-metafunction pats/mf
   rewrite-C : C -> any
+  [(rewrite-C (∧ (∧ e) (∧)))
+   (rewrite-eqn e)]
+  [(rewrite-C (∧ (∧) (∧ δ)))
+   (rewrite-diseqn δ)]
   [(rewrite-C (∧ (∧ e ...) (∧ δ ...)))
    (∧ (rewrite-eqn e) ... (rewrite-diseqn δ) ...)])
 
