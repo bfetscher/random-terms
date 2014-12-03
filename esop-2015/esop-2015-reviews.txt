@@ -1,0 +1,172 @@
+===========================================================================
+                            ESOP15 Review #82A
+                     Updated 2 Nov 2014 3:48:13pm EST
+---------------------------------------------------------------------------
+   Paper #82: Making Random Judgments: Automatically Generating Well-Typed
+              Terms from the Definition of a Type-System
+---------------------------------------------------------------------------
+
+                      Overall merit: 3. Accept
+                 Reviewer expertise: 4. Expert
+
+                      ===== Comments for author =====
+
+The paper proposes, implements, and evaluates a new constraint-based
+approach for generating well-typed terms using a translation into FOL
+with equality and inequality. Based on the results of the evaluation,
+the approach is then compared to several existing works. The primary
+motivation for this work is automated property-based testing and the
+work on Redex, but the results are potentially interested for proof
+search and logic (see for instance the work of Marek Zaionc). The
+paper is well-written, and provides some interesting insights, in
+particular with respect to polymorphism. 
+
+Minor comments:
+
+- The word random in the title suggests (at least to me) that the
+  focus of the paper is on quantitative properties of well-typed
+  terms, as in the work of Grygiel and Lescanne.
+
+- IMHO, the introductory section begs a small comment on the Curry
+  Howard isomorphism, and on the equivalence between generating
+  well-typed terms in a type system and valid derivations in a
+  corresponding logic. For instance, a brief comparison with the
+  following paper could be interesting to have:
+
+ Automatically Generating Problems and Solutions for Natural
+ Deduction, IJCAI 2013, Umair Ahmed, Sumit Gulwani, Amey Karkare
+
+===========================================================================
+                            ESOP15 Review #82B
+                     Updated 20 Nov 2014 9:41:46am EST
+---------------------------------------------------------------------------
+   Paper #82: Making Random Judgments: Automatically Generating Well-Typed
+              Terms from the Definition of a Type-System
+---------------------------------------------------------------------------
+
+                      Overall merit: 3. Accept
+                 Reviewer expertise: 3. Knowledgeable
+
+                      ===== Comments for author =====
+
+This paper addresses the issue of generating well-typed terms in a generic manner, starting from a type system definition. The work is carried out in the context of PLT Redex, and language workbench in which relying on randomized testing of properties is very frequent. The problem described is real: generating random (well-formed) terms only based on the language grammar creates tons of badly-typed terms, making the overall approach much less applicable for prototyping statically-typed languages. The current state-of-the-practice is to generate and then filter out, which is highly inefficient.
+
+The paper proposes to use the type system definition in the term generation process so as to guide generation towards producing only well-typed terms. The idea is to basically build valid type derivation trees. Overall, the paper is well-motivated (did I mention this is a real problem?) and easy to read. The proposed solution makes sense, and includes a few interesting design choices, especially regarding the heuristics chosen in the implementation. 
+
+The evaluation of the paper is well done. It first compares the new generator against the standard Redex generator and then compares it against a state-of-the-art hand-written generator for the specific case of Haskell's core language. The results are really good compared to the standard Redex generator. One could argue the results are not that impressive compared to the hand-written generator (especially if one considers the scenario with polymorphism), but that would be missing the point that this paper settles to address the issue in a general manner, independently of the considered language. Considering this huge challenge, the results represent a valuable contribution. This being said, the paper is scientifically honest about the shortcomings, and this is good: this work is clearly not the end of the story, there is more research to be done, but it is a solid step forward.
+
+The main limitation regarding the proposal (and its immediate practical applicability) is that the supported language is limited: it does support neither ellipses (kleene star) nor evaluation contexts.
+This is really problematic because it seems these features are used pervasively in Redex models.
+I would have hoped a more thorough discussion of the implications of these limitations--in particular, I wonder how the standard Redex benchmarks have been used considering these limitations: is it really the case that the benchs do not use these features? or have the authors prepared variants of the bench models to eliminate the use of these features? 
+I would appreciate a clarification of this point during the author response.
+
+Finally I should say that I didn't spot any issue in the description of the constraint solving approach, but I am no expert in constraint resolution algorithms. (I was able to follow the description, though, which is written in an accessible manner). My only question as an outsider on this technique is why the authors have not considered using an external SMT solver. Is there an inherent limitation with SMT solvers that makes them unfit for the problem at hand? or was it a design requirement to have a self-contained Racket implementation of constraint resolution? Or more generally, isn't there work in the area of constraint programming that could have been of some use here?
+
+
+Details:
+
+- p2 "we'd": no such contractions in scientific writing
+
+- p2/p3 the text talks about the "application rule" instead of the "abstraction rule"
+
+- p7 "the then the"
+
+- p8 "performans"
+
+- p14 "it's" -> "its"
+
+- p14 "of of t"
+
+- p14 "This means that we can get failures at this stage of generation, but it tends not to happen very often for practical Redex model" -> did it happen in the benchs?
+
+- p16 "some judgment forms thwart our termination heuristics" -> why? can you characterize these more precisely?
+
+- p19 "We don't presently know how to explain this discrepancy." any new insight since the submission?
+
+- "the remarkable effectiveness of the Redex generator when removing polymorphism from the model provides further evidence that we understand what makes these counterexamples so difficult to find"
+->  that is true with property 1, where Redex non-poly performs well, but property 2 completely breaks even in the case of non-poly. 
+
+- "ease with which we could conduct this experiment" -> who says it was easy? (subjective claim)
+
+===========================================================================
+                            ESOP15 Review #82C
+                    Updated 24 Nov 2014 11:58:14am EST
+---------------------------------------------------------------------------
+   Paper #82: Making Random Judgments: Automatically Generating Well-Typed
+              Terms from the Definition of a Type-System
+---------------------------------------------------------------------------
+
+                      Overall merit: 2. Weak reject
+                 Reviewer expertise: 2. Some familiarity
+
+                      ===== Comments for author =====
+
+This paper presents a new method for randomly generating well-typed
+terms for a given type system. A naive strategy for doing this is
+to randomly generate untyped terms repeatedly and to reject those
+that do not typecheck. But this strategy cannot be used in practice,
+because it leads to too many rejections and is highly inefficient.
+The method in the paper aims at generate useful random samples efficiently.
+It works directly on partial derivations in the type system, and
+attempts to complete such derivations to complete ones by making
+various random choices. To achieve efficiency and produce interesting
+samples, it uses a customized solver for equality and disequality
+constraints, and adopts interesting heuristics for biasing
+random choices towards finding useful typechecked terms quickly.
+The method in the paper was implemented and tested against
+existing approaches. This empirical evaluation shows the promise
+of the approach.
+
+I found the problem of randomly generating well-typed terms
+very interesting. Also, I think that the explanation of
+various decisions in the sampling heuristics is nice and
+illuminating. It is likely that the results in the paper
+lead to useful tools for testing various properties of
+typed programming languages.
+
+However, I am hesitant for recommending this paper for
+acceptance. The proposed method is a sampler for some
+distribution over typed terms, but it is unclear what
+this distribution is. Although I understand that this
+is a hard question and the paper focuses more on empirical
+results, the absence of an answer to this question
+bothers me. One way to counter my criticism is to consider
+a simplified setting and to spell out the distribution from
+which the method takes samples.
+
+* fourth paragraph, p7:
+(a) When I read this part of the paper, I didn't remember what metafunctions
+are. So, the first sentence of this paragraph confused me.
+(b) the then the ==> then the
+
+* first paragraph, p10:
+one of the disequations ==> one of the negated disequations
+
+* section 3.4, p13-14:
+It was tough for me to follow this section. The second paragraph in the
+section has a sentence starting with "When two patterns", and I couldn't
+understand the sentence. The last three paragraphs of the section were
+also difficult to follow.
+
+===========================================================================
+                            ESOP15 Review #82D
+                    Updated 29 Nov 2014 12:32:32pm EST
+---------------------------------------------------------------------------
+   Paper #82: Making Random Judgments: Automatically Generating Well-Typed
+              Terms from the Definition of a Type-System
+---------------------------------------------------------------------------
+
+                      Overall merit: 3. Accept
+                 Reviewer expertise: 3. Knowledgeable
+
+                      ===== Comments for author =====
+
+The paper introduces a generic mechanism for generating random Redex terms describing semantics of typed functional programs. The method consists of picking random judgement used to define the semantics. Among the contributions, the use of (minimalistic) constraint solver supporting disunification.
+
+As such it provides a distinct alternative to submission #71 to ESOP which describes a combinator based method for generating such random terms, with which it shares an example (the definition for a simple typed lambda calculus). However, a detailed comparison with submission #71 in terms of goals and methodology would help the reader of both papers to more easily distinguish their contributions.
+
+The paper is well written and provides adequate background information (e.g. the coverage os disequality constraints). The empirical assessment is accurate and spots out the weakness of the proposed generic method in the presence of polymorphism when compared with the best special-purpose (GHC internal code specific) hand-made generator.
+
+While authors mention that deeper terms provide better test cases, even in the presence of fixed choices, the largest depth limit they can handle seems to be 8. 
+That might is explained by the  large number of possible tree-like structures of a given depth, but it would be useful to state why generation of deeper terms is problematic.
+
