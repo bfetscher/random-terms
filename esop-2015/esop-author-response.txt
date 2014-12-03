@@ -1,0 +1,63 @@
+========== Review A ==========
+
+We will look into Zaionc's work and Ahmed et al. Thanks for
+the pointers.
+
+========== Review B ==========
+
+We agree that the missing support for ellipses is
+problematic for Redex users. This issue can always be
+avoiding by rewriting the model to avoid ellipses, but it is
+tedious. None of the models we used for the benchmark in
+this paper have ellipses; in cases where the models did use
+them, such as the Racket virtual machine model, we rewrote
+the models.
+
+Contexts are less of a concern for our generator because
+they are never used in type system definitions. (Although
+they certainly could be used, people have not found them to
+be useful in jugment forms.)
+
+We looked into using an external SMT solver, but could not
+find one that gave us back a description of the solution
+space instead of just a single solution, so we cannot do
+random search. We may just be using them improperly, and any
+advice or pointers would be welcome.
+
+========== Review C ==========
+
+We agree that the state of knowledge about distributions of
+well-typed terms is not where we would like it to be. As far
+as we are aware, the state of the art in this area is
+_Counting and Generating Lambda Terms_ by Grygiel and
+Lescanne (JFP 2013), which develops a distribution for
+closed terms and uses that to investigate the relative
+frequency of well-typed terms.  One of the results in that
+paper is that well-typed terms are extremely sparse in the
+space of all terms, which helps to explain why generating
+well-typed terms up front is fruitful.
+
+Unfortunately we do not actually know what the distribution
+of well-typed terms is even for very simple type systems.
+
+========== Review D ==========
+
+Paper #71 takes a completely different approach to the
+problem than the this paper and paper #71 uncovers new ideas
+about enumeration and fairness. In terms of the empirical
+evaluation in the context of Redex itself, this paper's
+technique is orders of magnitude more efficient than that in
+#71 --- when it applies! That is, there are many Redex
+models that do not have type systems. In that case, using the
+techniques in this paper serve only to slow down generation
+(and thus do not get used).
+
+Our approach to generation can generate terms of depth
+greater than 8 for many type systems, but not for the
+polymorphic system we compare against in section 4.2. We
+believe larger depths become intractable for this and
+similar systems because the relative scarcity of well-typed
+terms grows with depth. Grygiel and Lescanne (JFP 2013)
+demonstrate how quickly the scarcity grows for even simple
+types (see Table 2 page 25). We will add a note discussing
+this to the paper.

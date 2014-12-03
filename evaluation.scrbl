@@ -120,6 +120,8 @@ the Redex benchmark that we excluded (let-poly) was for the third reason.
 
 @section[#:tag "sec:ghc"]{Testing GHC: A Comparison With a Specialized Generator}
 
+@bold{Add note about relative scarcity and depth (Grygiel/Lescanne)}
+
 We also compared the derivation generator we developed for
 Redex to a specialized generator of typed terms.
 This generator was designed to be used for differential
