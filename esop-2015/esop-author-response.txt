@@ -32,13 +32,19 @@ as we are aware, the state of the art in this area is
 _Counting and Generating Lambda Terms_ by Grygiel and
 Lescanne (JFP 2013), which develops a distribution for
 closed terms and uses that to investigate the relative
-frequency of well-typed terms.  One of the results in that
+frequency of well-typed terms. One of the results in that
 paper is that well-typed terms are extremely sparse in the
 space of all terms, which helps to explain why generating
 well-typed terms up front is fruitful.
 
-Unfortunately we do not actually know what the distribution
-of well-typed terms is even for very simple type systems.
+Our approach for generating random well-typed terms is to make
+best effort for achieving a good random distribution, but without
+providing strong guarantees about it. Constructing an efficient
+generation method that guarantees a certain distribution while
+being general enough to support Redex models is desirable, but
+remains an open problem.  Unfortunately, this means that we do
+not actually know what the distribution of well-typed terms our
+tool generates, even for very simple type systems.
 
 ========== Review D ==========
 
