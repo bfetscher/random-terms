@@ -55,7 +55,7 @@ tool generates, even for very simple type systems.
 ========== Review D ==========
 
 Paper #71 takes a completely different approach to the
-problem than the this paper and paper #71 uncovers new ideas
+problem than this paper and paper #71 uncovers new ideas
 about enumeration and fairness. In terms of the empirical
 evaluation in the context of Redex itself, this paper's
 technique is orders of magnitude more efficient than that in
