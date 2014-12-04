@@ -831,3 +831,19 @@
    #:title "The Redex Reference"
    #:date 2014
    #:url "docs.racket-lang.org/redex"))
+
+(define cKanren
+  (make-bib
+   #:author (authors "Claire E. Alvis" "Jeremiah J. Willcock" "Kyle M. Carter"
+                     "William E. Byrd" "Daniel P. Friedman")
+   #:title "cKanren: miniKanren with Constraints"
+   #:date 2011
+   #:location (proceedings-location scheme-workshop)))
+
+(define byrd-phd
+  (make-bib
+   #:author "William E. Byrd"
+   #:title "Relational Programming in miniKanren: Techniques, Applications, and Implementations"
+   #:date 2009
+   #:location (dissertation-location #:institution "Indiana University")))
+   

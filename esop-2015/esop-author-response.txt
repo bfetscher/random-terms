@@ -24,6 +24,12 @@ space instead of just a single solution, so we cannot do
 random search. We may just be using them improperly, and any
 advice or pointers would be welcome.
 
+There is work in the area of constraint programming to
+handle existentially quantified disequality constraints,
+such as miniKanren or cKanren, but not the universally
+quantified constraints we need. We have added this to our
+discussion of related work.
+
 ========== Review C ==========
 
 We agree that the state of knowledge about distributions of

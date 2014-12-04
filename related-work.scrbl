@@ -28,6 +28,15 @@ on such formulas to transform them into solved forms.
 We believe our solver is essentially a way of factoring
 a stand-alone unifier out of their rules.
 
+@citet[byrd-phd] notes that a related form of disequality 
+constraints has been available in many Prolog implementations
+and constraint programming systems since Prolog II. 
+Notably, miniKanren@~cite[byrd-phd] and cKanren@~cite[cKanren] 
+implement them in a way similar to us, using unification as
+a subroutine.
+However, as far as we know, none of these systems supports
+the universally quantified constraints we require.
+
 We are currently investigating extending our solver to
 handle Redex's repeat patterns. 
 In this area, we note @citet[pattern-unification]'s work 
