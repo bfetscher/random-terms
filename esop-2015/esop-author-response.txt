@@ -59,7 +59,7 @@ problem than the this paper and paper #71 uncovers new ideas
 about enumeration and fairness. In terms of the empirical
 evaluation in the context of Redex itself, this paper's
 technique is orders of magnitude more efficient than that in
-#71 (see this by comparing figure X in #71 to figure Y in
+#71 (see this by comparing figure 3 in #71 to figure 11 in
 this submission; they both show the ad hoc generator you can
 use as a reference point) - when it applies! That is, there
 are many Redex models that do not have type systems. In that
