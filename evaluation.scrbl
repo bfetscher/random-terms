@@ -114,7 +114,15 @@ computation). Second, the generator currently cannot handle
 ellipses (aka repetition or Kleene star); we hope to someday
 figure out how to generalize our solver to support those
 patterns, however. And finally, some judgment forms thwart
-our termination heuristics. Indeed, the one model in
+our termination heuristics.@note{Specifically, our heuristics
+  make the assumptions that choosing rules with fewer
+  premises minimizes the growth of the success continuation,
+  and that terminal nodes in the search space are uniformly
+  distributed. Typically these are safe assumptions, but not
+  always; the benchmark's let-poly, for example,
+  is a CPS-transformed type judgment, thus the continuation
+  is embedded in the model, breaking the first 
+  assumption.}Indeed, the one model in
 the Redex benchmark that we excluded (let-poly) was for the third reason.
 
 

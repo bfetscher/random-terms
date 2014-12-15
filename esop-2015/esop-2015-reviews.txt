@@ -90,13 +90,25 @@ Fixed.
 
 >- p14 "This means that we can get failures at this stage of generation, but it tends not to happen very often for practical Redex model" -> did it happen in the benchs?
 >
+TODO
+Don't know in an absolute sense, but I do know that most failures in the benchmark are not of this form; they
+are search failures, or constraint violations. Worth including in the paper?
+
 >- p16 "some judgment forms thwart our termination heuristics" -> why? can you characterize these more precisely?
 >
+Added note discussing this.
+
 >- p19 "We don't presently know how to explain this discrepancy." any new insight since the submission?
 >
+No new insight! This ties into the next point too, perhaps.
+
 >- "the remarkable effectiveness of the Redex generator when removing polymorphism from the model provides further evidence that we understand what makes these counterexamples so difficult to find"
 >->  that is true with property 1, where Redex non-poly performs well, but property 2 completely breaks even in the case of non-poly. 
 >
+TODO
+This is true, although it's also clear the property 2 is much more difficult to find in the first place. Still thinking about
+how to respond here.
+
 >- "ease with which we could conduct this experiment" -> who says it was easy? (subjective claim)
 >
 Changed to specify that the easy part was implementing the generator in Redex.
