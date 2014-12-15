@@ -499,7 +499,7 @@ place, disequations are added between the pattern in question and other patterns
 that have been unified with the same mismatch pattern.
 
 Patterns of the form @slpt[(nt s)] refer to a user-specified grammar, and
-match a term if it can be parsed as one of the productions of a non-terminal
+match a term if it can be parsed as one of the productions of the non-terminal
 @slpt[s] of the grammar. It is less obvious how such
 non-terminal patterns should be dealt with in the unifier. 
 To unify two such patterns, the intersection of two non-terminals should

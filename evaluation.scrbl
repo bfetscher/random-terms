@@ -312,7 +312,8 @@ the generator spends much of its time backtracking.
 The remarkable effectiveness of the Redex generator when
 removing the polymorphism from the model provides further
 evidence that we understand what makes these counterexamples
-so difficult to find, and the ease with which we could
-conduct this experiment speaks to the value of a general-purpose
-generator.
+so difficult to find. The ease with which we were
+able to implement this language in Redex, and
+as a result, conduct this experiment,
+speaks to the value of a general-purpose generator.
 

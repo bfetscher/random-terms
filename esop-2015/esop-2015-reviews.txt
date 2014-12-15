@@ -99,6 +99,8 @@ Fixed.
 >
 >- "ease with which we could conduct this experiment" -> who says it was easy? (subjective claim)
 >
+Changed to specify that the easy part was implementing the generator in Redex.
+
 >===========================================================================
 >                            ESOP15 Review #82C
 >                    Updated 24 Nov 2014 11:58:14am EST
