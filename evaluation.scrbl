@@ -120,8 +120,6 @@ the Redex benchmark that we excluded (let-poly) was for the third reason.
 
 @section[#:tag "sec:ghc"]{Testing GHC: A Comparison With a Specialized Generator}
 
-@bold{Add note about relative scarcity and depth (Grygiel/Lescanne)}
-
 We also compared the derivation generator we developed for
 Redex to a specialized generator of typed terms.
 This generator was designed to be used for differential
@@ -200,6 +198,17 @@ a size parameter, which we varied over 50, 70, and 90 for each property.
 the direction translation of the language from @citet[palka-diss].
 The Redex generator takes a depth
 parameter, which we vary over 6,7,8, and, in one case, 10.
+The depths are chosen so that both generators target
+terms of similar size.@note{Although we are able to generate terms
+                           of larger depth, the runtime increases quickly
+                           with the depth. One possible explanation is that
+                           well-typed terms become very sparse as term size
+                           increases. @citet[counting-lambdas]
+                           show how scarce well-typed terms are even for
+                           simple types. In our experience polymorphism
+                           exacerbates this problem.}
+(@Figure-ref["fig:size-hists"] compares generated terms at
+targets of size 90 and depth 8).
 ``Redex non-poly'' is a modified version of our initial implementation,
 the details of which we discuss below. The columns show
 approximately how many tries it took to find a counterexample,

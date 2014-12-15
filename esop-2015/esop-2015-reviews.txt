@@ -185,3 +185,5 @@ Fixed, although I'm not sure this made things any clearer.
 >While authors mention that deeper terms provide better test cases, even in the presence of fixed choices, the largest depth limit they can handle seems to be 8. 
 >That might is explained by the  large number of possible tree-like structures of a given depth, but it would be useful to state why generation of deeper terms is problematic.
 >
+Added a note explaining why we chose those depths, and discussing difficulty of generating large terms in terms of 
+scarcity of well-typed terms.
