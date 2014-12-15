@@ -126,13 +126,3 @@ constants and discuss its possible extension to even more challenging
 languages such as System-F. This method cannot be used for random generation
 because only bit-strings that have a prefix-closure property correspond
 to well-formed terms.
-
-This paper is one of two papers submitted to ESOP that
-discusses random testing in the context of Redex. The other
-is entitled @italic{Practical, Fair, and Efficient
- Enumeration for Algebraic Data-Structures}. This paper has
-a more effective generator, but one that does not apply to
-every Redex model, as discussed in @secref["sec:benchmark"]. 
-The technical content is otherwise completely different,
-specifically the goal-directed search in this paper and the
-enumeration in the other paper are independent and complementary.
