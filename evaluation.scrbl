@@ -11,7 +11,7 @@
 
 @title[#:tag "sec:evaluation"]{Evaluating the Generator}
 
-We evaluate the generator in two ways. First, we compare it's
+We evaluate the generator in two ways. First, we compare its
 effectiveness against the standard Redex generator on Redex's
 benchmark suite. Second, we compare it against the best known
 hand-tuned typed term generator.

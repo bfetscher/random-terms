@@ -125,7 +125,7 @@ The primary difference between a metafunction, as written in Redex,
 and a set of @clpt[((d p) ← a ...)] clauses from @figure-ref["fig:clp-grammar"]
 is sensitivity to the ordering of clauses. 
 Specifically, when the second clause in a metafunction fires,
-the then the pattern in the first clause must not match, in contrast to
+then the pattern in the first clause must not match, in contrast to
 the rules in the model, which fire regardless of their relative order. Accordingly,
 the compilation process that translates metafunctions into the model must
 insert disequation constraints to capture the ordering of the cases.
@@ -236,7 +236,7 @@ store and either returns a new constraint store that is equivalent to
 the conjunction of the constraint store and the equation or @clpt[⊥], indicating
 that adding @clpt[e] is inconsistent with the constraint store. 
 It applies the equational portion of the constraint store as a substitution and
-then performans syntactic unification@~cite[baader-snyder] to build a new equational 
+then performs syntactic unification@~cite[baader-snyder] to build a new equational 
 portion of the constraint. It then calls @clpt[check], which simplifies the disequational constraints
 and checks their consistency. Finally, if all that succeeds, @clpt[check] 
 returns a constraint store that combines the results of
@@ -294,7 +294,7 @@ Ignoring the call to @clpt[param-elim] in the second case of @clpt[disunify] for
 a moment, consider the case where @clpt[unify] returns an empty conjunct. This means
 that @clpt[unify]'s argument is guaranteed to be true and thus the given disequation
 is guaranteed to be false. In this case, we have failed to generate a valid
-derivation because one of the disequations must be false (in terms of the original
+derivation because one of the negated disequations must be false (in terms of the original
 Redex program, this means that we attempted to use some later case in a metafunction
 with an input that would have satisfied an earlier case) and so @clpt[diunify] must
 return @clpt[⊥]. And finally, the last case in @clpt[disunify] covers the situation
@@ -492,7 +492,7 @@ as a literal elsewhere in the language. These are handled similarly to the patte
 the @slpt[b] non-terminal within the unifier.
 
 Patterns of the from @slpt[(mismatch-name s p)]  match the pattern 
-@slpt[p] with the constraint that two occurrences of of the same name @slpt[s] may never
+@slpt[p] with the constraint that two occurrences of the same name @slpt[s] may never
 match equal terms. These are straightforward: whenever a unification with a mismatch takes
 place, disequations are added between the pattern in question and other patterns
 that have been unified with the same mismatch pattern.

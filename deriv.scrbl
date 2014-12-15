@@ -33,7 +33,7 @@ of the generated derivation to match.
 Our goal pattern will be the following: 
 @(center-rule
   (typ • e_^0 τ_^0))
-stating that we'd like to generate an expression with 
+stating that we would like to generate an expression with 
 arbitrary type in the empty type environment.
 We then randomly select one of the type rules. This time, the
 generator selects the abstraction rule, which requires us to
@@ -41,8 +41,8 @@ specialize the values of @et[e_^0] and
 @et[τ_^0] in order to agree with the form of the
 rule's conclusion.
 To do that, we first generate a new set of
-variables to replace the ones in the application rule and then
-unify our conclusion with the specialized application rule. We put a super-script 
+variables to replace the ones in the abstraction rule and then
+unify our conclusion with the specialized rule. We put a super-script 
 @et[1] on these variables to indicate that they were introduced in the
 first step of the derivation building process, giving us this partial derivation.
 @(center-rule
