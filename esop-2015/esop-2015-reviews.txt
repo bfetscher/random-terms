@@ -163,6 +163,9 @@ Fixed, although I'm not sure this made things any clearer.
 >understand the sentence. The last three paragraphs of the section were
 >also difficult to follow.
 >
+Rewrote much of this section to attempt to make it clearer, especially
+the parts referred to above.
+
 >===========================================================================
 >                            ESOP15 Review #82D
 >                    Updated 29 Nov 2014 12:32:32pm EST

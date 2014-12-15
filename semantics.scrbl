@@ -457,24 +457,25 @@ search and reports failure.
            @italic{c} represents any Racket constant.}
         @(centered(pats-supp-lang-pict))]
 
-Our model uses a much simpler pattern language than the one actually available
-in Redex. Although the derivation generator is not yet able to handle
-Redex's full pattern language@note{The generator is not able to handle parts of the
+The model we present in @secref["sec:semantics"] uses a much simpler pattern language 
+than Redex itself. 
+The portion of Redex's internal pattern language supported by the generator@note{The 
+   generator is not able to handle parts of the
    pattern language that deal with evaluation contexts or 
-   ``repeat'' patterns (ellipses).}, it does support a richer language than 
-the model, as shown in @figure-ref["fig:full-pats"].
-We now discuss briefly the interesting differences and how we support them.
+   ``repeat'' patterns (ellipses).} is shown in @figure-ref["fig:full-pats"].
+We now discuss briefly the interesting differences between this language and
+the language of our model and how we support them in Redex's implementation.
 
 Named patterns of the form @slpt[(:name s p)]
 correspond to variables @italic{x} in the simplified version of the pattern
-language from @figure-ref["fig:clp-grammar"], except that the variable is attached to a sub-pattern.
+language from @figure-ref["fig:clp-grammar"], except that the variable @slpt[s]
+is paired with a pattern @slpt[p].
 From the matcher's perspective, this form is intended to match a 
-term with a pattern @slpt[p] and then bind the matched term to the name @slpt[s]. 
-In the generator, named patterns are treated essentially as logic variables. When two patterns are
-unified, they are both pre-processed to extract the pattern @slpt[p] for each
-named pattern, which is rewritten into a logic variable with the
-identifier @slpt[s], unifying the new pattern with the current
-value for @slpt[s] (if it exists).
+term with the pattern @slpt[p] and then bind the matched term to the name @slpt[s]. 
+The generator pre-processes all patterns with a first pass that extracts
+the attached pattern @slpt[p] and attempts to update the current
+constraint store with the equation @slpt[(s = p)], after which @slpt[s] can
+be treated as a logic variable.
 
 The @slpt[b] and @slpt[v] non-terminals are built-in patterns that match subsets of
 Racket values. The productions of @slpt[b] are straightforward; @slpt[:integer], for example,
@@ -497,24 +498,22 @@ match equal terms. These are straightforward: whenever a unification with a mism
 place, disequations are added between the pattern in question and other patterns
 that have been unified with the same mismatch pattern.
 
-Patterns of the form @slpt[(nt s)] are intended to successfully match a term 
-if the term matches one of the productions of the non-terminal @slpt[s]. (Redex
-patterns are always constructed in relation to some language.) It is less obvious how
+Patterns of the form @slpt[(nt s)] refer to a user-specified grammar, and
+match a term if it can be parsed as one of the productions of a non-terminal
+@slpt[s] of the grammar. It is less obvious how such
 non-terminal patterns should be dealt with in the unifier. 
-Finding the intersection of two such patterns reduces to the problem of computing
-the intersection of tree automata, for which there is no efficient algorithm@~cite[tata].
-
+To unify two such patterns, the intersection of two non-terminals should
+be computed, which reduces to the problem of computing the intersection 
+of tree automata, for which there is no efficient algorithm@~cite[tata].
 Instead a conservative check is used at the time of unification.
-When unifying a non-terminal with another pattern, we
-unfold each non-terminal once, replacing any 
-embedded non-terminal references with the pattern @slpt[:any]. Then
-we check that the pattern unifies with at least one of the non-terminal 
-expansions, failing if none of them unify.
-
+When unifying a non-terminal with another pattern, we attempt
+to unify the pattern with each production of the non-terminal, 
+replacing any embedded non-terminal references with the pattern @slpt[:any]. 
+We require that at least one of the unifications succeeds.
 Because this is not a complete check for pattern intersection, we save the names
-of the non-terminals as extra information in the result of each unification
-involving a non-terminal until the entire generation process is complete.
-Then, once we generate a concrete term, check to see if any of the
+of the non-terminals as extra information embedded in the constraint store
+until the entire generation process is complete.
+Then, once we generate a concrete term, we check to see if any of the
 non-terminals would have been violated (using a matching algorithm). 
 This means that we can get failures at this stage of generation, but it
 tends not to happen very often for practical Redex models.
