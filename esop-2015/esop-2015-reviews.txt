@@ -33,9 +33,14 @@
 >  corresponding logic. For instance, a brief comparison with the
 >  following paper could be interesting to have:
 >
+TODO
+
 > Automatically Generating Problems and Solutions for Natural
 > Deduction, IJCAI 2013, Umair Ahmed, Sumit Gulwani, Amey Karkare
 >
+TODO
+Read this, it wasn't clear that it would be that useful to discuss.
+
 >===========================================================================
 >                            ESOP15 Review #82B
 >                     Updated 20 Nov 2014 9:41:46am EST

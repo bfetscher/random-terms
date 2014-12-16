@@ -717,7 +717,7 @@
 
 (define counting-lambdas
   (make-bib
-   #:author (authors "Katarina Grygiel" "Pierre Lescanne")
+   #:author (authors "Katarzyna Grygiel" "Pierre Lescanne")
    #:title "Counting and generating lambda terms"
    #:location (journal-location jfp
                                 #:volume 23
