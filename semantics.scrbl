@@ -296,7 +296,7 @@ that @clpt[unify]'s argument is guaranteed to be true and thus the given disequa
 is guaranteed to be false. In this case, we have failed to generate a valid
 derivation because one of the negated disequations must be false (in terms of the original
 Redex program, this means that we attempted to use some later case in a metafunction
-with an input that would have satisfied an earlier case) and so @clpt[diunify] must
+with an input that would have satisfied an earlier case) and so @clpt[disunify] must
 return @clpt[⊥]. And finally, the last case in @clpt[disunify] covers the situation
 where @clpt[unify] composed with @clpt[param-elim] returns a non-empty substitution. 
 In this case, we do not yet know if the disequation is true or false, so we collect
@@ -308,7 +308,7 @@ This brings us to @clpt[param-elim], in
 unifier, as produced by a call to @clpt[unify] to handle a
 disequation, and all of the universally quantified variables
 in the original disequation. It removes equations
-of the unifier when they correspond to disequtions that will be
+of the unifier when they correspond to disequations that will be
 false in the newly constructed disequation. There are two ways in which this can happen.
 First, if one of the clauses has the form @clpt[(x = p)] and
 @clpt[x] is one of the universally quantified variables, then we know that
