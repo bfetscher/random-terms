@@ -1,3 +1,6 @@
+TODO: run more of the stuff at the right-hand side of the figure 10
+(try to get rid of giant error bar)
+
 >===========================================================================
 >                            ESOP15 Review #82A
 >                     Updated 2 Nov 2014 3:48:13pm EST
@@ -33,12 +36,11 @@
 >  corresponding logic. For instance, a brief comparison with the
 >  following paper could be interesting to have:
 >
-TODO
 
 > Automatically Generating Problems and Solutions for Natural
 > Deduction, IJCAI 2013, Umair Ahmed, Sumit Gulwani, Amey Karkare
 >
-TODO
+TODO: add to related work (but first check their related work section)
 Read this, it wasn't clear that it would be that useful to discuss.
 
 >===========================================================================
@@ -95,7 +97,7 @@ Fixed.
 
 >- p14 "This means that we can get failures at this stage of generation, but it tends not to happen very often for practical Redex model" -> did it happen in the benchs?
 >
-TODO
+TODO: do it!
 Don't know in an absolute sense, but I do know that most failures in the benchmark are not of this form; they
 are search failures, or constraint violations. Worth including in the paper?
 
@@ -110,7 +112,7 @@ No new insight! This ties into the next point too, perhaps.
 >- "the remarkable effectiveness of the Redex generator when removing polymorphism from the model provides further evidence that we understand what makes these counterexamples so difficult to find"
 >->  that is true with property 1, where Redex non-poly performs well, but property 2 completely breaks even in the case of non-poly. 
 >
-TODO
+TODO: edit to say improvement is in generation speed, not bug-finding.
 This is true, although it's also clear the property 2 is much more difficult to find in the first place. Still thinking about
 how to respond here.
 
