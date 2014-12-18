@@ -307,7 +307,6 @@ property 2, only finding a counterexample once
 every 4000K terms, and at very large time intervals.
 We don't presently know how to explain this discrepancy.
 
-
 Overall, our conclusion is that our generator is not
 competitive with the hand-tuned generator when it has
 to cope with polymorphism. Polymorphism, in turn, is
@@ -317,10 +316,11 @@ does not discover that those choices must match until
 much later in the derivation. Because the choice point
 is far from the place where the constraint is discovered,
 the generator spends much of its time backtracking.
-The remarkable effectiveness of the Redex generator when
-removing the polymorphism from the model provides further
-evidence that we understand what makes these counterexamples
-so difficult to find. The ease with which we were
+The improvement in generation speed for the
+Redex generator when removing polymorphism provides 
+evidence for our explanation of what makes generating
+these terms difficult.
+The ease with which we were
 able to implement this language in Redex, and
 as a result, conduct this experiment,
 speaks to the value of a general-purpose generator.
