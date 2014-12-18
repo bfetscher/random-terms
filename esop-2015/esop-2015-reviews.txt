@@ -112,9 +112,7 @@ No new insight! This ties into the next point too, perhaps.
 >- "the remarkable effectiveness of the Redex generator when removing polymorphism from the model provides further evidence that we understand what makes these counterexamples so difficult to find"
 >->  that is true with property 1, where Redex non-poly performs well, but property 2 completely breaks even in the case of non-poly. 
 >
-TODO: edit to say improvement is in generation speed, not bug-finding.
-This is true, although it's also clear the property 2 is much more difficult to find in the first place. Still thinking about
-how to respond here.
+Edited to say improvement is in generation speed, not bug-finding.
 
 >- "ease with which we could conduct this experiment" -> who says it was easy? (subjective claim)
 >
