@@ -48,7 +48,10 @@ generator, testing them with the soundness property,
 and tracking the intervals between instances where the
 test case causes the soundness property to fail, exposing
 the bug. For this study, each run continued for either
-24 hours or until the uncertainty in the average interval
+24 hours@note{With one exception: we ran the derivation
+              generator on ``rvm-3'' for a total of 32 days
+              of processor time to reduce its uncertainty.}
+or until the uncertainty in the average interval
 between such counterexamples became acceptably small.
 
 This study used 6 different models, each of which
@@ -79,7 +82,7 @@ The bugs are arranged
 along the x-axis, sorted by the average time for both
 generators to find the bug. The error bars represent
 95% confidence intervals in the average, and in all
-cases except one, the errors are small enough
+cases the errors are small enough
 to clearly differentiate the averages.
 The two blank columns on the right are bugs that neither
 generator was able to find. 
