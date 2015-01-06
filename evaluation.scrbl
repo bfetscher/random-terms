@@ -117,16 +117,14 @@ computation). Second, the generator currently cannot handle
 ellipses (aka repetition or Kleene star); we hope to someday
 figure out how to generalize our solver to support those
 patterns, however. And finally, some judgment forms thwart
-our termination heuristics.@note{Specifically, our heuristics
-  make the assumptions that the cost of completing the
-  derivation is proportional to the size of the goal stack,
-  and that terminal nodes in the search space are uniformly
-  distributed. Typically these are safe assumptions, but not
-  always; the benchmark's let-poly, for example,
-  is a CPS-transformed type judgment, embedding the search's
-  continuation in the model, and breaking the first assumption.}
-Indeed, the one model in the Redex benchmark that we excluded 
-(let-poly) was for the third reason.
+our termination heuristics. Specifically, our heuristics
+make the assumptions that the cost of completing the
+derivation is proportional to the size of the goal stack,
+and that terminal nodes in the search space are uniformly
+distributed. Typically these are safe assumptions, but not
+always; the benchmark's ``let-poly'' model, for example,
+is a CPS-transformed type judgment, embedding the search's
+continuation in the model, and breaking the first assumption.
 
 
 @section[#:tag "sec:ghc"]{Testing GHC: A Comparison With a Specialized Generator}
