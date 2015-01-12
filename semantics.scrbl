@@ -304,7 +304,20 @@ is guaranteed to be false. In this case, we have failed to generate a valid
 derivation because one of the negated disequations must be false (in terms of the original
 Redex program, this means that we attempted to use some later case in a metafunction
 with an input that would have satisfied an earlier case) and so @clpt[disunify] must
-return @clpt[⊥]. And finally, the last case in @clpt[disunify] covers the situation
+return @clpt[⊥]. 
+
+But there is a subtle point here. Imagine that @clpt[unify] returns
+only a single clause of the form @clpt[(x = p)] where @clpt[x] is one of the 
+universally quantified variables. We know that in that case, the corresponding
+disequation @clpt[(∀ (x) (x ≠ p))] is guaranteed to be false because
+every pattern admits at least one concrete term. This is where
+@clpt[param-elim] comes in. It cleans up the result of @clpt[unify]
+by eliminating all clauses that, when negated and placed back
+under the quantifier would be guaranteed to hold so the reasoning
+in the previous paragraph holds and the second case of @clpt[disunify]
+behaves properly.
+
+The last case in @clpt[disunify] covers the situation
 where @clpt[unify] composed with @clpt[param-elim] returns a non-empty substitution. 
 In this case, we do not yet know if the disequation is true or false, so we collect
 the substitution that @clpt[unify] returned back into a disequation and return it,
@@ -316,25 +329,14 @@ unifier, as produced by a call to @clpt[unify] to handle a
 disequation, and the second argument is the universally
 quantified variables from the original disequation. Its goal
 is to clean up the unifier by removing redundant and useless
-clauses so that the explanation in the previous paragraph
-about @clpt[disunify] is correct. More precisely, if there
-are any clauses in the result of @clpt[param-elim], they
-must not (yet) be guaranteed to be false (with the current
-constraint store), or else the case-based reasoning for
-@clpt[disunify] is incorrect.
+clauses. 
 
-There are two ways in which clauses can be false.
-First, if one of the clauses has the form @clpt[(x = p)] and
-@clpt[x] is one of the universally quantified variables, then we know that
-the corresponding clause in the disequation @clpt[(x ≠ p)] must
-be false, since every pattern matches at least one ground term. 
-Furthermore, since the result of @clpt[unify] is idempotent, we know
-that simply dropping that clause does not affect any of the other 
-clauses.
-
-The other case is a bit more subtle. When one of the clauses
-is simply @clpt[(x_1 = x)] and, as before, @clpt[x] is one of
-the universally quantified variables, then this clause also must
+There are two ways in which clauses can be false. In addition
+to clauses has the form @clpt[(x = p)] where
+@clpt[x] is one of the universally quantified variables, 
+it may also be the case that we have a clause of the form
+@clpt[(x_1 = x)] and, as before, @clpt[x] is one of
+the universally quantified variables. This clause also must
 be dropped, according to the same reasoning (since @clpt[=] is symmetric).
 But some care must be taken here to avoid losing transitive inequalities.
 The function @clpt[elim-x] (not shown) handles this situation, constructing a new
