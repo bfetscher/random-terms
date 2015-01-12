@@ -193,8 +193,10 @@ derivation that it is building. These contraints are called
 the constraint store and are kept in the canonical form 
 @clpt[C], as shown in @figure-ref["fig:clp-grammar"], with
 the additional constraint that the equational portion of the
-store is idempotent (when applied as a substitution) and
-that @clpt[C] is always satisfiable. Whenever a new
+store can be considered an idempotent substitution. That is, it always
+equates variables with with @clpt[p]s and, no variable on 
+the left-hand side of an equality also appears in any
+right-hand side. Whenever a new
 constraint is added, consistency is checked again
 and the new set is simplified to maintain the canonical
 form.
