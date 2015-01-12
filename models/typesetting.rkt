@@ -21,7 +21,7 @@
 (define (init-lang)
   (with-font-params
    (with-atomic-rewriter 
-    'number "Literal"
+    'number "Constant"
     (with-atomic-rewriter 
      'variable-not-otherwise-mentioned "Variable"
      (with-atomic-rewriter

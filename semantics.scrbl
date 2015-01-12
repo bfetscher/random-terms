@@ -40,7 +40,8 @@ A program @clpt[P] consists of  definitions @clpt[D], which
 are sets of inference rules @clpt[((d p) ← a ...)], here written
 horizontally with the conclusion on the left and premises on the right. (Note that
 ellipses are used in a precise manner to indicate repetition of the immediately
-previous expression, following Scheme tradition. They do not indicate elided text.)
+previous expression, in this case @clpt[a], following Scheme tradition. 
+They do not indicate elided text.)
 Definitions can express both judgment forms and metafunctions. They are a strict
 generalization of judgment forms, and metafunctions are compiled
 into them via a process we discuss in @secref["sec:mf-semantics"].
@@ -54,8 +55,9 @@ The conclusion of each rule has the form @clpt[(d p)], where @clpt[d] is an
 identifier naming the definition and @clpt[p] is a pattern.
 The premises @clpt[a] may consist of literal goals @clpt[(d p)] or disequational
 constraints @clpt[δ]. We dive into the operational meaning behind
-disequational constraints later in this section, but as their form suggests, they are
-the negation of an equation, in which some variables are universally quantified.
+disequational constraints later in this section, but as their form in 
+@figure-ref["fig:clp-grammar"] suggests, they are the negation of an equation, 
+in which the variables listed following @clpt[∀] are universally quantified.
 The remaining variables in a disequation are implicitly existentially
 quantified, as are the variables in equations.
 

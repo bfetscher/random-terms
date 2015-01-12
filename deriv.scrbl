@@ -41,7 +41,7 @@ specialize the values of @et[e_^0] and
 @et[τ_^0] in order to agree with the form of the
 rule's conclusion.
 To do that, we first generate a new set of
-variables to replace the ones in the abstraction rule and then
+variables to replace the ones in the abstraction rule, and then
 unify our conclusion with the specialized rule. We put a super-script 
 @et[1] on these variables to indicate that they were introduced in the
 first step of the derivation building process, giving us this partial derivation.
@@ -107,8 +107,8 @@ If we now choose that last rule, we have this partial derivation:
                        (typ (x_^2 τ_x^2 (x_^1 τ_x^1 •)) e_2^3 τ_2^3)))))
 
 
-The generator now chooses @et[lookup]'s first clause, completing
-the left branch.
+The generator now chooses @et[lookup]'s first clause,
+which has no premises, thus completing the left branch.
 
 @(center-rule
   (infer #:h-dec min (typ • (λ (x_^1 (τ_2^3 → τ_^2)) (λ (x_^2 τ_x^2) (x_^1 e_2^3))) ((τ_2^3 → τ_^2) → (τ_x^2 → τ_^2)))
