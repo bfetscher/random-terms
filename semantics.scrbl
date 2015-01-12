@@ -239,9 +239,12 @@ for new equational constraints. It accepts an equation and a constraint
 store and either returns a new constraint store that is equivalent to
 the conjunction of the constraint store and the equation or @clpt[⊥], indicating
 that adding @clpt[e] is inconsistent with the constraint store. 
-It applies the equational portion of the constraint store as a substitution and
-then performs syntactic unification@~cite[baader-snyder] to build a new equational 
-portion of the constraint. It then calls @clpt[check], which simplifies the disequational constraints
+In its body, it first applies the equational portion of the constraint
+store as a substitution to the equation. Second, it
+performs syntactic unification@~cite[baader-snyder] of
+the resulting equation with the equations from the original
+store to build a new equational portion of the constraint.
+Third, it calls @clpt[check], which simplifies the disequational constraints
 and checks their consistency. Finally, if all that succeeds, @clpt[check] 
 returns a constraint store that combines the results of
 @clpt[unify] and @clpt[check]. If either @clpt[unify] or @clpt[check] fails, then
@@ -308,19 +311,26 @@ the substitution that @clpt[unify] returned back into a disequation and return i
 to be saved in the contraint store.
 
 This brings us to @clpt[param-elim], in 
-@figure-ref["fig:dis-help"]. It accepts a most-general
+@figure-ref["fig:dis-help"]. Its first argument is a
 unifier, as produced by a call to @clpt[unify] to handle a
-disequation, and all of the universally quantified variables
-in the original disequation. It removes equations
-of the unifier when they correspond to disequations that will be
-false in the newly constructed disequation. There are two ways in which this can happen.
+disequation, and the second argument is the universally
+quantified variables from the original disequation. Its goal
+is to clean up the unifier by removing redundant and useless
+clauses so that the explanation in the previous paragraph
+about @clpt[disunify] is correct. More precisely, if there
+are any clauses in the result of @clpt[param-elim], they
+must not (yet) be guaranteed to be false (with the current
+constraint store), or else the case-based reasoning for
+@clpt[disunify] is incorrect.
+
+There are two ways in which clauses can be false.
 First, if one of the clauses has the form @clpt[(x = p)] and
 @clpt[x] is one of the universally quantified variables, then we know that
 the corresponding clause in the disequation @clpt[(x ≠ p)] must
 be false, since every pattern matches at least one ground term. 
 Furthermore, since the result of @clpt[unify] is idempotent, we know
 that simply dropping that clause does not affect any of the other 
-clauses. 
+clauses.
 
 The other case is a bit more subtle. When one of the clauses
 is simply @clpt[(x_1 = x)] and, as before, @clpt[x] is one of
@@ -334,9 +344,9 @@ full definition of @clpt[elim-x] and a proof that it works correctly,
 we refer the reader to the first author's masters dissertation@~cite[burke-masters].
 
 Finally, we return to @clpt[check], shown in @figure-ref["fig:dis-help"],
-which is passed the updated disequations after 
+which is passed the updated disequations after
 a new equation has been added in @clpt[solve] (see @figure-ref["fig:solve"]).
-It verifies the disequations and maintains 
+It verifies the disequations and maintains
 their canonical form, once the new substitution has been applied.
 It does this by applying @clpt[disunify] to any non-canonical disequations.
 
