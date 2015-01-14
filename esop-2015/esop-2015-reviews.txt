@@ -1,5 +1,3 @@
-TODO: run more of the stuff at the right-hand side of the figure 10
-(try to get rid of giant error bar)
 
 >===========================================================================
 >                            ESOP15 Review #82A
@@ -97,9 +95,7 @@ Fixed.
 
 >- p14 "This means that we can get failures at this stage of generation, but it tends not to happen very often for practical Redex model" -> did it happen in the benchs?
 >
-TODO: do it!
-Don't know in an absolute sense, but I do know that most failures in the benchmark are not of this form; they
-are search failures, or constraint violations. Worth including in the paper?
+Counted these failures on the benchmark, and added a note regarding failure rates.
 
 >- p16 "some judgment forms thwart our termination heuristics" -> why? can you characterize these more precisely?
 >

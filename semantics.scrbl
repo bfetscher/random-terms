@@ -532,4 +532,7 @@ until the entire generation process is complete.
 Then, once we generate a concrete term, we check to see if any of the
 non-terminals would have been violated (using a matching algorithm). 
 This means that we can get failures at this stage of generation, but it
-tends not to happen very often for practical Redex models.
+tends not to happen very often for practical Redex models.@note{To be more
+  precise, such failures occur on about 0.5% of attempts when
+  running the entire benchmark (see @secref["sec:benchmark"]) for a fixed
+  amount of time per model.}
