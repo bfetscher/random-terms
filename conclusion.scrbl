@@ -31,5 +31,5 @@ Thanks to Hai Zhou, Li Li, Yuankai Chen, and Peng Kang for
 graciously sharing their compute servers with us.
 Thanks to the Ministry of Science and Technology of the R.O.C.
 for their support (under Contract MOST 103-2811-E-002-015)
-when Findler visited at CSIE department at National Taiwan University.
+when Findler visited the CSIE department at National Taiwan University.
 Thanks also to the NSF for their support of this work.
