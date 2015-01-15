@@ -176,5 +176,14 @@
              ([(r ...) awkward-even])
              (term ((rewrite-r r) ...))))
 
-;(traces R state0)
+(define (reduction-pretty-printer v port width text)
+  (default-pretty-printer
+   (match v
+     [`(,program ⊢ ,gs ∥ ,cstrs)
+      `(P ⊢ ,(term (rewrite-as ,gs)) ∥ ,(term (rewrite-C ,cstrs)))]
+     [else (error 'reduction-pretty-printer "bad reductions state: ~s" v)])
+   port width text))
+
+#;(traces R state0
+          #:pp reduction-pretty-printer)
 

@@ -533,6 +533,8 @@ Then, once we generate a concrete term, we check to see if any of the
 non-terminals would have been violated (using a matching algorithm). 
 This means that we can get failures at this stage of generation, but it
 tends not to happen very often for practical Redex models.@note{To be more
-  precise, such failures occur on about 0.5% of attempts when
-  running the entire benchmark (see @secref["sec:benchmark"]) for a fixed
-  amount of time per model.}
+  precise, on the Redex benchmark (see @secref["sec:benchmark"]) such failures
+  occur on all ``delim-cont'' models 2.9±1.1% of the time, on all ``poly-stlc''
+  models 3.3±0.3% of the time, on the ``rvm-6'' model 8.6±2.9% of the time,
+  and are not observed on the other models.}
+  
