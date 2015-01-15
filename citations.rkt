@@ -821,9 +821,10 @@
 (define burke-masters
   (make-bib
    #:author "Burke Fetscher"
-   #:title "Property-based Automated Test Generation (unpublished)"
+   #:title "The Random Generation of Well-Typed Terms"
    #:date 2014
-   #:url "http://users.eecs.northwestern.edu/~baf111/masters"))
+   #:location (techrpt-location #:institution "Northwestern University"
+                                #:number "NU-EECS-14-05")))
 
 (define redex-benchmark
   (make-bib

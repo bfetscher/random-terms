@@ -1,6 +1,4 @@
 TODO
-change m.s. reference to TR number
-TODO
 add reference to supplemental materials
 TODO
 explain about even example
