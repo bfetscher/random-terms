@@ -117,9 +117,15 @@
      (render-metafunction disunify #:contract? contract?))))
 
 (define (check-pict [contract? #t])
-  (left-curly-brace-style
-   (λ ()
-     (render-metafunction check #:contract? contract?))))
+  (vl-append
+   (left-curly-brace-style
+    (λ ()
+      (parameterize ([metafunction-cases '(0)])
+        (render-metafunction check #:contract? contract?))))
+   (parameterize ([metafunction-cases '(1)]
+                  [metafunction-pict-style 'left-right])
+     (with-rewriters/params
+      (render-metafunction check #:contract? #f)))))
 
 (define (left-curly-brace-style t)
   (parameterize ([metafunction-pict-style 'up-down/vertical-side-conditions]
