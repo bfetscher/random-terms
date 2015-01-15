@@ -33,3 +33,10 @@ Thanks to the Ministry of Science and Technology of the R.O.C.
 for their support (under Contract MOST 103-2811-E-002-015)
 when Findler visited the CSIE department at National Taiwan University.
 Thanks also to the NSF for their support of this work.
+
+@(linebreak)
+This paper is available online at:
+@centered[@url["http://users.eecs.northwestern.edu/~baf111/random-judgments/"]]
+along with Redex models for all of the definitions in the paper and
+the raw data used to generate all of the plots.
+           

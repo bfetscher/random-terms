@@ -22,7 +22,10 @@
 @title[#:tag "sec:semantics"]{Derivation Generation in Detail}
 
 
-This section describes a formal model of the derivation generator.
+This section describes a formal model@note{The corresponding Redex
+   model is available from this paper's website (listed after the
+   conclusion), including a runnable simple example that may prove
+   helpful when reading this section.} of the derivation generator.
 The centerpiece of the model is a relation that rewrites programs consisting
 of metafunctions and judgment forms into the set of possible derivations 
 that they can generate. Our implementation has a structure similar to the
