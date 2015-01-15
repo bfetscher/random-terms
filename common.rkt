@@ -35,7 +35,8 @@
   (parameterize ([default-font-size 12]
                  [metafunction-font-size 12]
                  [default-font-size 12]
-                 [label-font-size 12])
+                 [label-font-size 12]
+                 [metafunction-up/down-indent 10])
     e1 e2 ...))
 
 (define (extend-style style-p [rule "Triplicate T4p"])
