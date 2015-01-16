@@ -21,6 +21,10 @@
 
 @title[#:tag "sec:semantics"]{Derivation Generation in Detail}
 
+@figure["fig:clp-grammar"
+        @list{The syntax of the derivation generator model.}
+              @(init-lang)]
+
 
 This section describes a formal model@note{The corresponding Redex
    model is available from this paper's website (listed after the
@@ -34,9 +38,10 @@ of the possible derivations that the rewriting relation can produce.
 Our model is based on @citet[clp-semantics]'s constraint logic programming
 semantics.
 
-@figure["fig:clp-grammar"
-        @list{The syntax of the derivation generator model.}
-              @(init-lang)]
+@figure["fig:clp-red"
+        @list{Reduction rules describing generation of the complete
+              tree of derivations.}
+        @(clp-red-pict)]
 
 The grammar in @figure-ref["fig:clp-grammar"] describes the language of the model.
 A program @clpt[P] consists of  definitions @clpt[D], which
@@ -49,10 +54,6 @@ Definitions can express both judgment forms and metafunctions. They are a strict
 generalization of judgment forms, and metafunctions are compiled
 into them via a process we discuss in @secref["sec:mf-semantics"].
 
-@figure["fig:clp-red"
-        @list{Reduction rules describing generation of the complete
-              tree of derivations.}
-        @(clp-red-pict)]
 
 The conclusion of each rule has the form @clpt[(d p)], where @clpt[d] is an 
 identifier naming the definition and @clpt[p] is a pattern.
@@ -388,6 +389,12 @@ Instead, it simply sorts them by the number of premises they have,
 preferring rules with fewer premises in an attempt to finish
 the derivation off quickly.
 
+@figure["fig:d-plots" 
+        @list{Density functions of the distributions used for the depth-dependent 
+              rule ordering, where the depth limit is @(format "~a" max-depth)
+              and there are @(format "~a" number-of-choices) rules.}
+        @(centered(d-plots 420))]
+
 The second refinement is the choice of how to randomly
 permute the list of candidate rules, and the generator uses
 two strategies. The first strategy is to just select
@@ -403,12 +410,6 @@ binomial distribution whose size matches the number of
 permutations and has probability proportional to the ratio of
 the current depth and the maximum depth. The sample determines
 which permutation to use.
-
-@figure["fig:d-plots" 
-        @list{Density functions of the distributions used for the depth-dependent 
-              rule ordering, where the depth limit is @(format "~a" max-depth)
-              and there are @(format "~a" number-of-choices) rules.}
-        @(centered(d-plots 420))]
 
 More concretely, imagine that the depth bound was 
 @(format "~a" max-depth) and there are 

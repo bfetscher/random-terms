@@ -54,6 +54,12 @@ the bug. For this study, each run continued for either
 or until the uncertainty in the average interval
 between such counterexamples became acceptably small.
 
+@figure["fig:lines"
+        @list{Random testing performance of the derivation
+              generator vs. ad hoc random generation on
+              the Redex Benchmark.}
+        @(line-plot/directory 24hr)]
+
 This study used 6 different models, each of which
 has between 3 and 9 different bugs introduced into it,
 for a total of 40 different bugs.
@@ -67,12 +73,6 @@ by @citet[delim-cont-cont], and the model of the Racket
 virtual machine from @citet[racket-virtual-machine].
 Detailed descriptions of all the models and bugs in the
 benchmark can be found in @citet[redex-benchmark].
-
-@figure["fig:lines"
-        @list{Random testing performance of the derivation
-              generator vs. ad hoc random generation on
-              the Redex Benchmark.}
-        @(line-plot/directory 24hr)]
 
 @Figure-ref["fig:points"] summarizes the results of the
 comparison on a per-bug basis. The y-axis is time
@@ -156,6 +156,34 @@ the details.
                     @bold{Time/Ctrex. (s)}))
 
 
+
+@figure["fig:table" 
+        @list{Comparison of the derivation
+              generator and a hand-written typed term
+              generator. ∞ indicates runs where no
+              counterexamples were found. Runs marked with *
+              found only one counterexample, which gives
+              low confidence to their figures. }]{
+  @centered{
+    @tabular[#:sep @hspace[1]
+             (cons
+              table-head
+              (append
+               (cons (cons @bold{Property 1} (build-list 4 (λ (_) "")))
+                     (make-table table-prop1-data))
+               (cons (cons @bold{Property 2} (build-list 4 (λ (_) "")))
+                     (make-table table-prop2-data))))]
+     }}
+
+
+
+@figure["fig:size-hists"
+        @list{Histograms of the sizes (number of internal nodes)
+              of terms produced by the different runs.
+              The vertical scale of each plot is one twentieth
+              of the total number of terms in that run.}]{
+         @centered[(hists-pict 200 430)]}
+
 Implementing this language in Redex was easy: we were
 able to port the formal description in @citet[palka-diss]
 directly into Redex with little difficulty.
@@ -178,25 +206,6 @@ as the strictness of Haskell expressions should not be influenced by optimizatio
 changing the order of evaluation is allowed for a Haskell compiler to some extent, so
 counterexamples from the second property usually demonstrate interesting cases of
 the compiler behavior, rather than bugs.
-
-
-@figure["fig:table" 
-        @list{Comparison of the derivation
-              generator and a hand-written typed term
-              generator. ∞ indicates runs where no
-              counterexamples were found. Runs marked with *
-              found only one counterexample, which gives
-              low confidence to their figures. }]{
-  @centered{
-    @tabular[#:sep @hspace[1]
-             (cons
-              table-head
-              (append
-               (cons (cons @bold{Property 1} (build-list 4 (λ (_) "")))
-                     (make-table table-prop1-data))
-               (cons (cons @bold{Property 2} (build-list 4 (λ (_) "")))
-                     (make-table table-prop2-data))))]
-     }}
 
 @Figure-ref["fig:table"] summarizes the results of our comparison 
 of the two generators. Each row represents a run of one of the 
@@ -242,14 +251,6 @@ Property two was more difficult for the hand-written
 generator, and our first try in Redex was unable to 
 find any counterexamples there.
 
-
-
-@figure["fig:size-hists"
-        @list{Histograms of the sizes (number of internal nodes)
-              of terms produced by the different runs.
-              The vertical scale of each plot is one twentieth
-              of the total number of terms in that run.}]{
-         @centered[(hists-pict 200 430)]}
 
 Comparing the test cases from both generators,
 we found that Redex was producing
