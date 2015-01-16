@@ -59,7 +59,7 @@ identifier naming the definition and @clpt[p] is a pattern.
 The premises @clpt[a] may consist of literal goals @clpt[(d p)] or disequational
 constraints @clpt[δ]. We dive into the operational meaning behind
 disequational constraints later in this section, but as their form in 
-@figure-ref["fig:clp-grammar"] suggests, they are the negation of an equation, 
+@figure-ref["fig:clp-grammar"] suggests, they are a disjunction of negated equations, 
 in which the variables listed following @clpt[∀] are universally quantified.
 The remaining variables in a disequation are implicitly existentially
 quantified, as are the variables in equations.
@@ -133,7 +133,7 @@ Specifically, when the second clause in a metafunction fires,
 then the pattern in the first clause must not match, in contrast to
 the rules in the model, which fire regardless of their relative order. Accordingly,
 the compilation process that translates metafunctions into the model must
-insert disequation constraints to capture the ordering of the cases.
+insert disequational constraints to capture the ordering of the cases.
 
 As an example, consider the
 metafunction definition of @clpt[g] on the left and some example applications on the right:
@@ -316,7 +316,7 @@ disequation @clpt[(∀ (x) (x ≠ p))] is guaranteed to be false because
 every pattern admits at least one concrete term. This is where
 @clpt[param-elim] comes in. It cleans up the result of @clpt[unify]
 by eliminating all clauses that, when negated and placed back
-under the quantifier would be guaranteed to hold so the reasoning
+under the quantifier would be guaranteed false, so the reasoning
 in the previous paragraph holds and the second case of @clpt[disunify]
 behaves properly.
 
@@ -335,13 +335,14 @@ is to clean up the unifier by removing redundant and useless
 clauses. 
 
 There are two ways in which clauses can be false. In addition
-to clauses has the form @clpt[(x = p)] where
+to clauses of the form @clpt[(x = p)] where
 @clpt[x] is one of the universally quantified variables, 
 it may also be the case that we have a clause of the form
 @clpt[(x_1 = x)] and, as before, @clpt[x] is one of
 the universally quantified variables. This clause also must
 be dropped, according to the same reasoning (since @clpt[=] is symmetric).
-But some care must be taken here to avoid losing transitive inequalities.
+But, since variables on the right hand side of an equation may also appear elsewhere,
+some care must be taken here to avoid losing transitive inequalities.
 The function @clpt[elim-x] (not shown) handles this situation, constructing a new
 set of clauses without @clpt[x] but, in the case that we also have
 @clpt[(x_2 = x)], adds back the equation @clpt[(x_1 = x_2)]. For the
@@ -502,7 +503,7 @@ matches any Racket integer, and @slpt[:any] matches any Racket s-expression.
 From the perspective of the unifier, @slpt[:integer] is a term that
 may be unified with any integer, the result of which is the integer itself.
 The value of the term in the current substitution is then updated.
-Unification of built-in patterns produce the expected results; 
+Unification of built-in patterns produces the expected results; 
 for example unifying @slpt[:real] and @slpt[:natural] produces @slpt[:natural], whereas
 unifying @slpt[:real] and @slpt[:string] fails.
 

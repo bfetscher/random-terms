@@ -23,7 +23,7 @@ this naive technique is
 effective@~cite[run-your-research klein-masters racket-virtual-machine].
 With typed models, however, such randomly generated terms rarely
 type check and so the testing process spends most of its
-time rejecting ill-typed terms instead actually testing the model.
+time rejecting ill-typed terms instead of actually testing the model.
 
 To make testing more effective, we built a solver that randomly
 generates solutions to problems involving a subset of first-order logic

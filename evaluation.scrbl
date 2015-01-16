@@ -204,7 +204,7 @@ generators, with a few varying parameters. We refer
 to @citet[palka-diss]'s generator as ``hand-written.'' It takes
 a size parameter, which we varied over 50, 70, and 90 for each property.
 ``Redex poly'' is our initial implementation of this system in the Redex,
-the direction translation of the language from @citet[palka-diss].
+the direct translation of the language from @citet[palka-diss].
 The Redex generator takes a depth
 parameter, which we vary over 6,7,8, and, in one case, 10.
 The depths are chosen so that both generators target
