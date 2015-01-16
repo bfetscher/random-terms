@@ -193,7 +193,7 @@ over all variables in the previous clause's left-hand side.
 
 The constraint solver maintains a set of equations and
 disequations that captures invariants of the current
-derivation that it is building. These contraints are called
+derivation that it is building. These constraints are called
 the constraint store and are kept in the canonical form 
 @clpt[C], as shown in @figure-ref["fig:clp-grammar"], with
 the additional constraint that the equational portion of the
@@ -325,7 +325,7 @@ The last case in @clpt[disunify] covers the situation
 where @clpt[unify] composed with @clpt[param-elim] returns a non-empty substitution. 
 In this case, we do not yet know if the disequation is true or false, so we collect
 the substitution that @clpt[unify] returned back into a disequation and return it,
-to be saved in the contraint store.
+to be saved in the constraint store.
 
 This brings us to @clpt[param-elim], in 
 @figure-ref["fig:dis-help"]. Its first argument is a
