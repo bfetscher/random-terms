@@ -6,7 +6,7 @@
          redex/reduction-semantics
          redex/pict
          redex/tut-subst
-         "../common.rkt")
+         "../paper/common.rkt")
 
 (provide (all-defined-out))
 

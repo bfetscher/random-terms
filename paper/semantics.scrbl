@@ -19,6 +19,7 @@
           (only-in pict hbl-append)
           "dist-pict.rkt")
 
+
 @title[#:tag "sec:semantics"]{Derivation Generation in Detail}
 
 @figure["fig:clp-grammar"
@@ -55,6 +56,7 @@ generalization of judgment forms, and metafunctions are compiled
 into them via a process we discuss in @secref["sec:mf-semantics"].
 
 
+@;{
 The conclusion of each rule has the form @clpt[(d p)], where @clpt[d] is an 
 identifier naming the definition and @clpt[p] is a pattern.
 The premises @clpt[a] may consist of literal goals @clpt[(d p)] or disequational
@@ -146,7 +148,6 @@ other form will reduce to @clpt[1]. To generate conclusions of the judgment
 corresponding to the second clause, we have to be careful not to generate
 anything that matches the first.
 
-@;{
 Leaving this here for reference...
 Suppose p are patterns, t are terms (essentially patterns with no variables from this perspective), 
 and s are substitutions (finite maps from variables to patterns). s(p) applies a substitution
@@ -188,7 +189,7 @@ Each disequality is between the left-hand side patterns of one of the previous
 clauses and the left-hand side of the current clause, and it is quantified 
 over all variables in the previous clause's left-hand side.
 
-
+@;{
 @section[#:tag "sec:solve"]{The Constraint Solver}
 
 The constraint solver maintains a set of equations and
@@ -543,3 +544,4 @@ tends not to happen very often for practical Redex models.@note{To be more
   models 3.3±0.3% of the time, on the ``rvm-6'' model 8.6±2.9% of the time,
   and are not observed on the other models.}
   
+}

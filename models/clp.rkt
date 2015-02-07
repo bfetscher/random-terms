@@ -6,7 +6,7 @@
          "pats.rkt"
          "program.rkt"
          "disunify-a.rkt"
-         "../common.rkt")
+         "../paper/common.rkt")
 
 (provide (all-defined-out))
 

@@ -9,8 +9,7 @@
          "common.rkt"
          "deriv-layout.rkt"
          (rename-in "../models/typesetting.rkt" 
-                    [lang-pict lp])
-         "metafunc-ctcs.rkt")
+                    [lang-pict lp]))
 
 (provide lang-pict
          judgment-pict
@@ -25,11 +24,7 @@
          c-ext-pict
          r-lang-pict
          unify-func-pict
-         du-pict
          unify-init-pict
-         du-init-pict
-         unify-func-pict/contract
-         param-elim-func-pict/contract
          eqt
          feqt
          fneqt
@@ -291,7 +286,7 @@
                 (render-language redex-lang #:nts '(p))
                 (render-language redex-lang #:nts '(t))
                 (render-language redex-lang #:nts '(a x f b)))))))
-  
+  #|
 (define (unify-func-pict/contract)
   (vl-append
    (metafunction-signature
@@ -309,3 +304,4 @@
 (define (du-pict)
   (vl-append 20
              (param-elim-func-pict/contract)))
+|#

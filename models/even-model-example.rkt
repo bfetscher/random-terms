@@ -1,6 +1,5 @@
 #lang racket
-(require redex 
-         "../common.rkt"
+(require redex
          "clp.rkt"
          "pats.rkt"
          "program.rkt")
@@ -10,46 +9,40 @@
          state0
          state1-simplified
          state->C
-         state->a
-         even?-pict)
+         state->a)
 
 ;; This is the Redex code for the example below:
-  (define-language L
-    (n ::= z (s n)))
-  
-  (define-metafunction L
-    [(even? z) true]
-    [(even? (s (s n))) (even? n)]
-    [(even? n) false])
+(define-language L
+  (n ::= z (s n)))
 
-(define (even?-pict)
-  (parameterize ([metafunction-pict-style 'left-right])
-    (with-font-params
-     (render-metafunction even?))))
-  
+(define-metafunction L
+  [(even? z) true]
+  [(even? (s (s n))) (even? n)]
+  [(even? n) false])
+
 (module+ test
   (test-equal (term (even? z)) (term true))
   (test-equal (term (even? (s z))) (term false))
   (test-equal (term (even? (s (s z)))) (term true))
   (test-equal (term (even? (s (s (s z))))) (term false)))
-  
-  (define-judgment-form L
-    #:mode (odd I)
-    [(where false (even? n))
-     --------
-     (odd n)])
-  
+
+(define-judgment-form L
+  #:mode (odd I)
+  [(where false (even? n))
+   --------
+   (odd n)])
+
 (module+ test
   (test-equal (judgment-holds (odd z)) #f)
   (test-equal (judgment-holds (odd (s z))) #t)
   (test-equal (judgment-holds (odd (s (s z)))) #f)
   (test-equal (judgment-holds (odd (s (s (s z))))) #t))
-  
-  (define (to-nat n)
-    (match n
-      [`z 0]
-      [`(s ,n) (+ 1 (to-nat n))]))
-  
+
+(define (to-nat n)
+  (match n
+    [`z 0]
+    [`(s ,n) (+ 1 (to-nat n))]))
+
 (module+ test
   (define ht (make-hash))
   (for ([x (in-range 100)])
@@ -98,7 +91,6 @@
              "expected a single terminal state, got ~a" (length terminal-states)))
     (car terminal-states)))
 
-
 (define (rewrite-variable orig-exp src dest)
   (define found-it? #f)
   (begin0 
@@ -127,7 +119,6 @@
   [(rewrite-pattern 2) true]
   [(rewrite-pattern 3) false]
   [(rewrite-pattern x) x])
-
 
 (define-metafunction pats/mf
   rewrite-eqn : e -> any
@@ -178,11 +169,11 @@
 
 (define (reduction-pretty-printer v port width text)
   (default-pretty-printer
-   (match v
-     [`(,program ⊢ ,gs ∥ ,cstrs)
-      `(P ⊢ ,(term (rewrite-as ,gs)) ∥ ,(term (rewrite-C ,cstrs)))]
-     [else (error 'reduction-pretty-printer "bad reductions state: ~s" v)])
-   port width text))
+    (match v
+      [`(,program ⊢ ,gs ∥ ,cstrs)
+       `(P ⊢ ,(term (rewrite-as ,gs)) ∥ ,(term (rewrite-C ,cstrs)))]
+      [else (error 'reduction-pretty-printer "bad reductions state: ~s" v)])
+    port width text))
 
 #;(traces R state0
           #:pp reduction-pretty-printer)

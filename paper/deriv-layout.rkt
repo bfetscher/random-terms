@@ -11,13 +11,16 @@
 
 (provide STLC
          lookup
-         (all-defined-out)
          lookup-both-pict
          stlc-term
          infer
          eqt/lang
          neqt/lang
-         space)
+         space
+         typ
+         et
+         eqt
+         neqt)
 
 (define space
   (ghost (render-term STLC x)))

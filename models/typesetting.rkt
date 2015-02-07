@@ -7,7 +7,7 @@
          "clp.rkt"
          "disunify-a.rkt"
          "du-typesetting.rkt"
-         "../common.rkt")
+         "../paper/common.rkt")
 
 (provide (all-defined-out))
 
