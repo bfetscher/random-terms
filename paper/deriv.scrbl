@@ -7,7 +7,7 @@
           scribble/latex-prefix
           scribble/latex-properties
           (only-in slideshow/pict scale-to-fit scale)
-          (only-in "models/stlc.rkt" stlc-min-lang-types)
+          (only-in "../models/stlc.rkt" stlc-min-lang-types)
           "deriv-layout.rkt"
           "common.rkt")
 

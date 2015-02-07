@@ -1,6 +1,6 @@
 #lang racket
 
-(require "models/stlc.rkt"
+(require "../models/stlc.rkt"
          "common.rkt"
          redex/reduction-semantics
          redex/pict

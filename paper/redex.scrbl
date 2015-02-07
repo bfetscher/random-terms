@@ -6,13 +6,13 @@
           scriblib/footnote
           racket/match
           racket/sandbox
-          "models/stlc.rkt"
+          "../models/stlc.rkt"
           "citations.rkt"
           (for-syntax racket/syntax))
 
 @(define stlc-stxobjs
    (parameterize ([port-count-lines-enabled #t])
-     (call-with-input-file "models/stlc.rkt"
+     (call-with-input-file "../models/stlc.rkt"
        (λ (in)
          (read-line in)
          (let loop ([ds '()])
@@ -25,7 +25,7 @@
 
 @(stlc-eval '(require redex/reduction-semantics
                       racket/pretty
-                      "models/stlc.rkt"))
+                      "../models/stlc.rkt"))
 
 @(stlc-eval '(pretty-print-columns 60))
 
@@ -517,11 +517,11 @@ Thus it is unsurprising that test coverage is so poor.
          'at-least-2-red "Reduces twice or more"
          'uses-if-0 "Uses if-0 rule"))
 @(define (table-trials)
-   (call-with-input-file "models/stlc-stats.rktd"
+   (call-with-input-file "../models/stlc-stats.rktd"
      (λ (in)
        (read in))))
 @(define (table-data)
-   (call-with-input-file "models/stlc-stats.rktd"
+   (call-with-input-file "../models/stlc-stats.rktd"
      (λ (in)
        (read in)
        (read in))))

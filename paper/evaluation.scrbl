@@ -5,9 +5,9 @@
           scriblib/footnote
           slideshow/pict
           "citations.rkt"
-          "results/plot-points.rkt"
-          "results/plot-lines.rkt"
-          "results/ghc-data.rkt")
+          "../results/plot-points.rkt"
+          "../results/plot-lines.rkt"
+          "../results/ghc-data.rkt")
 
 @title[#:tag "sec:evaluation"]{Evaluating the Generator}
 

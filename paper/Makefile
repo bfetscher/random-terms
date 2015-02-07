@@ -18,7 +18,7 @@ clean:
 	find . \( -name '*.pdf' -o -name '*.log' -o -name '*.out' -o -name '*.aux' \) -exec rm -f {} \;
 
 test:
-	raco make models/disunify-a.rkt 
-	raco test models/disunify-a.rkt
-	raco make models/test.rkt
-	racket models/test.rkt
+	raco make ../models/disunify-a.rkt 
+	raco test ../models/disunify-a.rkt
+	raco make ../models/test.rkt
+	racket ../models/test.rkt

@@ -3,12 +3,12 @@
 (require slideshow/pict
          redex/reduction-semantics
          redex/pict
-         "models/pats.rkt"
-         "models/disunify-a.rkt"
-         "models/du-typesetting.rkt"
+         "../models/pats.rkt"
+         "../models/disunify-a.rkt"
+         "../models/du-typesetting.rkt"
          "common.rkt"
          "deriv-layout.rkt"
-         (rename-in "models/typesetting.rkt" 
+         (rename-in "../models/typesetting.rkt" 
                     [lang-pict lp])
          "metafunc-ctcs.rkt")
 

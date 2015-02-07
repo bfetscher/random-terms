@@ -7,13 +7,13 @@
           racket/pretty
           (only-in pict vc-append ghost)
           (only-in slideshow/pict scale-to-fit scale)
-          (only-in "models/stlc.rkt" stlc-type-pict-horiz)
+          (only-in "../models/stlc.rkt" stlc-type-pict-horiz)
           (only-in pict vl-append blank)
           "citations.rkt"
           "typesetting.rkt"
-          "models/clp.rkt"
-          "models/even-model-example.rkt"
-          (except-in "models/typesetting.rkt" lang-pict)
+          "../models/clp.rkt"
+          "../models/even-model-example.rkt"
+          (except-in "../models/typesetting.rkt" lang-pict)
           "pat-grammar.rkt"
           "common.rkt"
           (only-in pict hbl-append)

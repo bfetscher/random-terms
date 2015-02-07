@@ -2,7 +2,7 @@
 
 @(require scriblib/figure
           (only-in slideshow/pict scale)
-          "models/typesetting.rkt")
+          "../models/typesetting.rkt")
 
 @title{Appendix}
 
