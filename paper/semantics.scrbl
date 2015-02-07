@@ -146,24 +146,6 @@ other form will reduce to @clpt[1]. To generate conclusions of the judgment
 corresponding to the second clause, we have to be careful not to generate
 anything that matches the first.
 
-Leaving this here for reference...
-Suppose p are patterns, t are terms (essentially patterns with no variables from this perspective), 
-and s are substitutions (finite maps from variables to patterns). s(p) applies a substitution
-to a pattern.
-
-1. Matching is easy to define:
-Matches[p,t] <=> \exists s, s(p) = t
-
-2. If a match doesn’t exist:
-\not Matches[p,t] <=> \not \exists s, s)p) = t <=> \forall s, s(p) =/= t
-
-3: Finally, given two patterns, there is a notion of it being possible to cause the 
-match to fail by instantiating the second pattern in some way, call it “excludable”:
-Excludable[p_1, p_2] <=> \exists s, \not Matches[p_1, s(p_2)]
-
-Expanding out the final definition, it becomes the more complicated looking:
-\exists s_1, \forall s, s(p_1) =/= s_1(p_2)}
-
 Applying the same idea as @clpt[lookup] in @secref["sec:deriv"], 
 we reach this incorrect translation:
 @centered{@(incorrect-g-jdg-pict)}
