@@ -6,8 +6,6 @@
 
 (provide awkward-even
          awkward-even-rw
-         state0
-         state1-simplified
          state->C
          state->a)
 
@@ -52,6 +50,7 @@
   
   #;
   (printf "found: ~s\n" ht))
+
 ;; where we use this to translate into the model:
 ;;   0 = z
 ;;   1 = s
@@ -59,20 +58,25 @@
 ;;   3 = false
 ;;   (even (lst <bool> <nat>)) is the shape of 'even'
 
+; We can translate the above metafunction (even?) into the model as follows:
+; (compile-M in models/program.rkt has the formal definiton of the translation)
 (define awkward-even
   (term (((even (lst 2 0)) ←)
-         ((even (lst b_ (lst 1 (lst 1 n_)))) ← (even (lst b_ n_)))
-         ((even (lst 3 n_))
+         ((even (lst b (lst 1 (lst 1 n)))) ← (even (lst b n)))
+         ((even (lst 3 n))
           ← 
-          (∀ (n_1) (∨ (n_ ≠ (lst 1 (lst 1 n_1)))))
-          (∀ () (∨ (n_ ≠ 0)))))))
+          (∀ (n_1) (∨ (n ≠ (lst 1 (lst 1 n_1)))))
+          (∀ () (∨ (n ≠ 0)))))))
 
 
 (define awkward-even-P
   (term (,awkward-even)))
 
+; necessary for because some operations in the model, 
+; i.e. freshening, are stateful
 (caching-enabled? #f)
 
+; initial state, corresponds to the call: (even? (s (s (s z))))
 (define state0
   (term 
    (,awkward-even-P
@@ -80,35 +84,6 @@
     ((even (lst 3 (lst 1 (lst 1 (lst 1 0))))))
     ∥
     (∧ (∧) (∧)))))
-
-(define state1
-  (let ()
-    (define one-step (apply-reduction-relation R state0))
-    (define (no-successor? state) (null? (apply-reduction-relation R state)))
-    (define terminal-states (filter no-successor? one-step))
-    (unless (= 1 (length terminal-states))
-      (error 'even-model-example.rkt 
-             "expected a single terminal state, got ~a" (length terminal-states)))
-    (car terminal-states)))
-
-(define (rewrite-variable orig-exp src dest)
-  (define found-it? #f)
-  (begin0 
-    (let loop ([exp orig-exp])
-      (cond
-        [(pair? exp) (cons (loop (car exp)) (loop (cdr exp)))]
-        [(equal? exp src) 
-         (set! found-it? #t)
-         dest]
-        [(equal? exp dest) (error 'rewrite-variable "found occurrence of ~s in ~s" dest exp)]
-        [else exp]))
-    (unless found-it?
-      (error 'rewrite-variable "never found ~s in ~s" src orig-exp))))
-
-(define state1-simplified
-  (rewrite-variable 
-   state1
-   'n__3 'n_2))
 
 (define-metafunction pats/mf
   rewrite-pattern : p -> any
@@ -175,6 +150,8 @@
       [else (error 'reduction-pretty-printer "bad reductions state: ~s" v)])
     port width text))
 
-#;(traces R state0
-          #:pp reduction-pretty-printer)
+(module+ main
+  ; buil a reduction graph for state0
+  (traces R state0
+          #:pp reduction-pretty-printer))
 
