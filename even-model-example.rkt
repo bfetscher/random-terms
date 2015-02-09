@@ -1,8 +1,8 @@
 #lang racket
 (require redex
-         "clp.rkt"
-         "pats.rkt"
-         "program.rkt")
+         "models/clp.rkt"
+         "models/pats.rkt"
+         "models/program.rkt")
 
 (provide awkward-even
          awkward-even-rw
