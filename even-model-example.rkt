@@ -151,7 +151,7 @@
     port width text))
 
 (module+ main
-  ; buil a reduction graph for state0
+  ; build a reduction graph for state0
   (traces R state0
           #:pp reduction-pretty-printer))
 

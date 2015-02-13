@@ -3,3 +3,4 @@
 *.pdf
 compiled/
 .DS_Store
+*.gz

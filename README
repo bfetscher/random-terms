@@ -1,0 +1,32 @@
+This directory contains Redex models and data for the ESOP 2015 paper:
+
+     _Making Random Judgments:_
+     _Automatically Generating Well-Typed Terms From the Definition of a Type-System_
+
+by Fetscher, Claessen, Palka, Hughes, and Findler
+
+The best place is to start is with 'even-model-example.rkt',
+which contains an example metafunction definition and the
+corresponding translation into the model. Running this file
+produces the reduction graph for this program given a
+specific intial goal. The example metafunction defines a
+(contrived) even? predicate on naturals. The reduction graph
+shows a succesful derivation for (even? 3) = false, and
+another reduction path that is stuck because a disequational
+constraint fails. See the model itself for further details.
+
+Other parts of the archive:
+paper/ contains the paper source
+models/ contains all of the redex models, specifically:
+models/pats.rkt defines the grammars used in the modesl
+models/clp.rkt defines the reduction relation
+models/disunify-a.rkt contains definitions used in the constraint solver
+results/ contains the raw data used in the paper, specifically:
+results/24-hr has the data from the all benchmark runs
+results/ghc has the data from the comparison Palka et al's generator
+results/fail-count has the data used in footnote 5
+
+Also see the related repository on Github:
+
+     https://github.com/bfetscher/random-terms
+     

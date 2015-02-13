@@ -12,7 +12,6 @@
           "citations.rkt"
           "typesetting.rkt"
           "../models/clp.rkt"
-          "../models/even-model-example.rkt"
           (except-in "../models/typesetting.rkt" lang-pict)
           "pat-grammar.rkt"
           "common.rkt"
@@ -374,7 +373,7 @@ the derivation off quickly.
         @list{Density functions of the distributions used for the depth-dependent 
               rule ordering, where the depth limit is @(format "~a" max-depth)
               and there are @(format "~a" number-of-choices) rules.}
-        @(centered(d-plots 420))]
+        @(centered (d-plots 420))]
 
 The second refinement is the choice of how to randomly
 permute the list of candidate rules, and the generator uses
