@@ -183,7 +183,7 @@
                     ("Redex non-poly (depth: 8)" "test38_2ex_redex_8_nopoly_2014-10-14.aggr")))
 
 
-(define (hists-pict height width)
+(define (hists-pict height width [font-size 12])
   (define name/aggrs
     (for/list ([np (in-list hists-cmp)])
       (list (first np) (parse-aggr (build-path data (second np))))))
@@ -194,7 +194,7 @@
          (map (match-lambda [(list n a)
                              (parameterize ([plot-y-ticks no-ticks]
                                             [plot-x-far-ticks no-ticks]
-                                            [plot-font-size 12]
+                                            [plot-font-size font-size]
                                             [plot-title n]
                                             [plot-height height]
                                             [plot-width (round (/ width 3))]
