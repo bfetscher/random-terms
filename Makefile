@@ -29,7 +29,7 @@ random-judgments.tar.gz: clean
 	cp poly-gen/*.rkt random-judgments/poly-gen
 	cp poly-gen/*.hs random-judgments/poly-gen
 	cp poly-gen/README random-judgments/poly-gen
-	echo 'poly-gen\/ contains the models used in the second evaluation' \
+	echo 'poly-gen/ contains the models used in the second evaluation' \
 		>> random-judgments/README
 	rm -rf poly-gen
 	tar -cvzf random-judgments.tar.gz random-judgments
