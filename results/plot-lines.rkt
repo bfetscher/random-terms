@@ -7,7 +7,8 @@
 
 (provide (all-defined-out))
 
-(define (line-plot/directory dir-path)
+(define (line-plot/directory dir-path
+                             #:interval-line [i-line #f])
   (define-values (d-stats _)
     (process-data
      (extract-data/log-directory dir-path)
@@ -21,14 +22,14 @@
                  [type-symbols type->sym]
                  [type-names type->name]
                  [type-colors type->color])
-    (plot-pict (make-renderers d-stats)
+    (plot-pict (make-renderers d-stats #:interval-line i-line)
                #:x-min 0.05)))
 
 (define line-styles
   (list 'solid 'dot 'long-dash
         'short-dash 'dot-dash))
 
-(define (make-renderers stats)
+(define (make-renderers stats #:interval-line [i-line #f])
   (define max-t (apply max (map third stats)))
   
   ;; (listof (list/c type data))
@@ -44,7 +45,6 @@
                  (list a c) 
                  l))))
       (list type (reverse (cons (list max-t (/ (length pts) 2)) pts)))))
-  
   (unless (= 2 (length types+datas)) 
     (error 'plot-lines.rkt "ack: assuming that there are only two competitors"))
   (define-values (_ crossover-points)
@@ -76,23 +76,55 @@
                        crossover-points)]
                 [else
                  crossover-points]))))
-  (for/list ([type+pts (in-list types+datas)]
-             [n (in-naturals)])
-    (define type (list-ref type+pts 0))
-    (define pts (list-ref type+pts 1))
-    (lines
-     (reverse pts)
-     ;#:width 2
-     #:color ((type-colors) type)
-     #:style (list-ref line-styles n)
-     #:label ((type-names) type))))
-
+  (define (interval-line num-bugs)
+    (define (find-envelope data)
+      (let loop ([d data])
+        (define bot (first d))
+        (define top (second d))
+        (if (and (equal? (second bot) num-bugs)
+                 ((second top) . > . num-bugs)
+                 (equal? (first bot) (first top)))
+            (first top)
+            (loop (cdr d)))))
+    (define y (+ num-bugs 0.5))
+    (define pts (for/list ([td (in-list types+datas)])
+                  (list (find-envelope (second td))
+                        y)))
+    (lines pts
+           #:color "black"
+           #:width 2
+           #:label (format "ratio at ~a: ~a"
+                           num-bugs
+                           (format-interval (first (first pts))
+                                            (first (second pts))))))
+  (append
+   (for/list ([type+pts (in-list types+datas)]
+              [n (in-naturals)])
+     (define type (list-ref type+pts 0))
+     (define pts (list-ref type+pts 1))
+     (lines
+      (reverse pts)
+      ;#:width 2
+      #:color ((type-colors) type)
+      #:style (list-ref line-styles n)
+      #:label ((type-names) type)))
+   (if i-line
+       (list (interval-line i-line))
+       empty)))
+  
 (define (format-time number)
   (cond
     [(<= number 60) (number+unit/s number "second")]
     [(<= number (* 60 60)) (number+unit/s (/ number 60) "minute")]
     [(<= number (* 60 60 24)) (number+unit/s (/ number 60 60) "hour")]
     [else (number+unit/s (/ number 60 60 24) "day")]))
+
+(define (format-interval num1 num2)
+  (define ratio (if (num1 . > . num2)
+                    (/ num1 num2)
+                    (/ num2 num1)))
+  (define pow (/ (log ratio) (log 10)))
+  (format "10^~a" (real->decimal-string pow 1)))
 
 (define (number+unit/s raw-n unit) 
   (define n (round raw-n))

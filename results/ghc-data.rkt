@@ -9,7 +9,8 @@
 (provide make-table
          table-prop1-data
          table-prop2-data
-         hists-pict)
+         hists-pict
+         hists-cmp)
 
 (define test-aggr (build-path data
                               "test32_2ex_hand_50_2014-10-11.aggr"))
@@ -178,14 +179,15 @@
              (scale-hist (add-zeros chist the-max) 10000))))
           '())))))
 
-(define hists-cmp '(("Hand-written (size: 90)" "test33_2ex_hand_90_2014-10-11.aggr")
+(define hists-cmp
+  (make-parameter '(("Hand-written (size: 90)" "test33_2ex_hand_90_2014-10-11.aggr")
                     ("Redex poly (depth: 8)" "test29_2ex_redex_8_2014-10-11.aggr")
-                    ("Redex non-poly (depth: 8)" "test38_2ex_redex_8_nopoly_2014-10-14.aggr")))
+                    ("Redex non-poly (depth: 8)" "test38_2ex_redex_8_nopoly_2014-10-14.aggr"))))
 
 
-(define (hists-pict height width [font-size 12] [rect-style 'transparent])
+(define (hists-pict height width [font-size 12] [rect-style 'transparent] [show-cexps #f])
   (define name/aggrs
-    (for/list ([np (in-list hists-cmp)])
+    (for/list ([np (in-list (hists-cmp))])
       (list (first np) (parse-aggr (build-path data (second np))))))
   (define x-max (apply max (map (match-lambda [(list n a)
                                                (get-max (aggr-tries-hist a))])
@@ -199,5 +201,5 @@
                                             [plot-height height]
                                             [plot-width (round (/ width 3))]
                                             [rectangle-style rect-style])
-                               (aggr-hist a #f (tries/20 a) x-max #f))])
+                               (aggr-hist a show-cexps (tries/20 a) x-max #f))])
               name/aggrs)))

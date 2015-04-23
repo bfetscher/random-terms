@@ -25,8 +25,3 @@ results/ contains the raw data used in the paper, specifically:
 results/24-hr has the data from the all benchmark runs
 results/ghc has the data from the comparison Palka et al's generator
 results/fail-count has the data used in footnote 5
-
-Also see the related repository on Github:
-
-     https://github.com/bfetscher/random-terms
-     
