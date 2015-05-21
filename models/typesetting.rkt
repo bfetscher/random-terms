@@ -72,10 +72,6 @@
   (with-rewriters/params
    (render-metafunction compile-M #:contract? #t)))
 
-(define (compile-M-help-pict)
-  (with-rewriters/params
-   (render-metafunction compile-M-help #:contract? #t)))
-
 (define (extract-apps-J-pict)
   (with-rewriters/params
    (render-metafunction extract-apps-D #:contract? #t)))
@@ -157,8 +153,7 @@
     (vl-append 40
                (vl-append 10
                           (compile-pict)
-                          (compile-M-pict)
-                          (compile-M-help-pict))
+                          (compile-M-pict))
                (vl-append 10
                           (extract-apps-J-pict)
                           (extract-apps-r-pict)

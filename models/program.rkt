@@ -12,29 +12,28 @@
   [(compile ((r ...) ...))
    ((extract-apps-D (r ...)) ...)]
   [(compile (D_0 ... M D_1 ...))
-   (compile (D_0 ... (compile-M M) D_1 ...))])
+   (compile (D_0 ... (compile-M (freshen-cases M)) D_1 ...))])
 
 (define-metafunction program
   compile-M : M -> D
-  [(compile-M M)
-   ,(parameterize ([fresh-index 0])
-      (term (compile-M-help (freshen-cases M))))])
-
-(define-metafunction program
-  compile-M-help : M -> D
-  [(compile-M-help (((f p_in) = p_out)))
+  [(compile-M (((f p_in) = p_out)))
    (((f (lst p_in p_out)) ←))]
-  [(compile-M-help (((f_0 p_1) = p_2) ... ((f p_in) = p_out)))
+  [(compile-M (((f_0 p_1) = p_2) ... ((f p_in) = p_out)))
    (r ... ((f (lst p_in p_out)) ← (∀ (vars p_1) (∨ (p_1 ≠ p_in))) ...))
-   (where (r ...) (compile-M-help (((f_0 p_1) = p_2) ...)))])
+   (where (r ...) (compile-M (((f_0 p_1) = p_2) ...)))])
 
 (define-metafunction program
-  freshen-cases : M -> M
-  [(freshen-cases ()) 
+  [(freshen-cases M)
+   ,(parameterize ([fresh-index 0])
+      (term (fc M)))])
+
+(define-metafunction program
+  fc : M -> M
+  [(fc ()) 
    ()]
-  [(freshen-cases (((f p_1) = p_2) c ...))
+  [(fc (((f p_1) = p_2) c ...))
    (((f (freshen-p () p_1)) = (freshen-p () p_2)) c_f ...)
-   (where (c_f ...) (freshen-cases (c ...)))
+   (where (c_f ...) (fc (c ...)))
    (side-condition (inc-fresh-index))])
 
 (define-metafunction program
@@ -71,8 +70,8 @@
      (((f (lst x_1 x_2)) = 2)
       ((f x) = 1))))
    (term
-    (((f (lst (lst x_1_2 x_2_2) 2)) ←)
-     ((f (lst x_1 1)) ← (∀ (x_1_2 x_2_2) (∨ ((lst x_1_2 x_2_2) ≠ x_1))))))))
+    (((f (lst (lst x_1 x_2) 2)) ←)
+     ((f (lst x 1)) ← (∀ (x_1 x_2) (∨ ((lst x_1 x_2) ≠ x))))))))
 
 (define-metafunction program
   extract-apps-D : (r ...) -> (r ...)
